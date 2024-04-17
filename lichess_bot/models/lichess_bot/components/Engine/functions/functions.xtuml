@@ -1,0 +1,19 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine is
+
+	package functions is
+		@dialect("oal");
+		@function_num(1);
+		function resignAll() is
+			@noparse
+			select many games from instances of Game;
+			for each game in games
+				game.resign();
+			end for;
+			@endnoparse
+		end function;
+
+	end package;
+
+end;

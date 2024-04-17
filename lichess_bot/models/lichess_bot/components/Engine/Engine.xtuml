@@ -4,6 +4,7 @@ within lichess_bot::components is
 
 	component Engine is
 		
+		package functions;
 		package games;
 		
 		required port chess implements LichessAPI is
@@ -26,6 +27,7 @@ within lichess_bot::components is
 			@dialect("oal");
 			message draw(game_id: in string, accept: in boolean) return Result to provider;
 
+			@dialect("oal");
 			message getUser() return User to provider;
 
 			@dialect("oal");
@@ -81,6 +83,7 @@ within lichess_bot::components is
 			message gameFinish(game_event: in GameEventInfo) from provider is
 				@noparse
 				LOG::LogInfo(message:"Game finish: " + param.game_event.id);
+				// r = chess::chat(game_id:param.game_event.id, text:"Gg", room:Room::PLAYER);
 				@endnoparse
 			end message;
 
@@ -96,8 +99,8 @@ within lichess_bot::components is
 						create object instance game of Game;
 						relate game to challenge across R1;
 					end if;
-					//bot = chess::getUser();
-					if g.white.name == "levifish" then
+					bot = chess::getUser();
+					if g.white.name == bot.username then
 						game.color = Color::WHITE;
 					else
 						game.color = Color::BLACK;
@@ -106,7 +109,7 @@ within lichess_bot::components is
 					if not (game.game_state.status == GameStatus::CREATED or game.game_state.status == GameStatus::STARTED) then
 							generate Game2:'game over'(status:game.game_state.status) to game;
 					else
-						if game.is_my_turn() then
+						if game.is_our_turn() then
 							generate Game4:'ready to play' to game;
 						else
 							generate Game1:'waiting on move' to game;
@@ -122,6 +125,7 @@ within lichess_bot::components is
 			message gameStart(game_event: in GameEventInfo) from provider is
 				@noparse
 				LOG::LogInfo(message:"Game start: " + param.game_event.id);
+				// r = chess::chat(game_id:param.game_event.id, text:"Good luck!", room:Room::PLAYER);
 				g = param.game_event;
 				select any challenge from instances of Challenge where selected.id == g.id;
 				if not empty challenge then
@@ -147,7 +151,7 @@ within lichess_bot::components is
 					if not (game.game_state.status == GameStatus::CREATED or game.game_state.status == GameStatus::STARTED) then
 							generate Game2:'game over'(status:game.game_state.status) to game;
 					else
-						if game.is_my_turn() then
+						if game.is_our_turn() then
 							generate Game4:'ready to play' to game;
 						else
 							generate Game1:'waiting on move' to game;

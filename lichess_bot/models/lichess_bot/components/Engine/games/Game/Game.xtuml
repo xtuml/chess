@@ -17,9 +17,21 @@ within lichess_bot::components::Engine::games is
 
 		@dialect("oal");
 		@operation_num(1);
-		operation is_my_turn() return boolean is
+		operation is_our_turn() return boolean is
 			@noparse
 			return self.color == Color::WHITE and self.game_state.moves.length % 2 == 0 or self.color == Color::BLACK and self.game_state.moves.length % 2 == 1;
+			@endnoparse
+		end operation;
+
+		@dialect("oal");
+		@operation_num(2);
+		operation resign() is
+			@noparse
+			if self.game_state.moves.length > 1 then
+				r = chess::resign(game_id:self.id);
+			else
+				r = chess::abort(game_id:self.id);
+			end if;
 			@endnoparse
 		end operation;
 
