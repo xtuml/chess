@@ -24,6 +24,7 @@ import types.APIException;
 import types.BotEvent;
 import types.BotEventType;
 import types.ChatLine;
+import types.DeclineReason;
 import types.Game;
 import types.GameEvent;
 import types.GameEventType;
@@ -115,9 +116,9 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	@Override
-	public Result declineChallenge(String challengeId) {
+	public Result declineChallenge(String challengeId, DeclineReason reason) {
 		return postRequest(String.format("%s/api/challenge/%s/decline", baseUrl, challengeId),
-				"application/x-www-form-urlencoded", Map.of("reason", "generic"));
+				"application/x-www-form-urlencoded", Map.of("reason", reason.getValue()));
 	}
 
 	@Override

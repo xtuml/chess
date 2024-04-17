@@ -49,10 +49,28 @@ within lichess_bot::components::Engine::games::Challenge is
 
 	state pending is
 		@noparse
-		// TODO logic to consider which challenges to accept
 		accept_challenge = true;
+		reason = DeclineReason::GENERIC;
 		
-		if accept_challenge
+		// only accept the challenge if not currently in a game
+		select any game from instances of Game where (selected.game_state.status == GameStatus::CREATED or selected.game_state.status == GameStatus::STARTED);
+		if not empty game then
+			accept_challenge = false;
+			reason = DeclineReason::LATER;
+		end if;
+		
+		// only accept unrated standard games
+		if self.rated then
+			accept_challenge = false;
+			reason = DeclineReason::CASUAL;
+		end if;
+		
+		if self.variant != Variant::STANDARD then
+			accept_challenge = false;
+			reason = DeclineReason::STANDARD;
+		end if;
+		
+		if accept_challenge then
 			result = chess::acceptChallenge(challenge_id:self.id);
 			if result.result then
 				generate Challenge3:'accept challenge' to self;
@@ -60,7 +78,7 @@ within lichess_bot::components::Engine::games::Challenge is
 				generate Challenge5:'error'(message:result.error.error) to self;
 			end if;
 		else
-			result = chess::declineChallenge(challenge_id:self.id);
+			result = chess::declineChallenge(challenge_id:self.id, reason:reason);
 			if result.result then
 				generate Challenge2:'reject challenge' to self;
 			else

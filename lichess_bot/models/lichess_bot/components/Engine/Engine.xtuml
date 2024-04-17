@@ -22,7 +22,7 @@ within lichess_bot::components is
 			message connect() return Result to provider;
 
 			@dialect("oal");
-			message declineChallenge(challenge_id: in string) return Result to provider;
+			message declineChallenge(challenge_id: in string, reason: in DeclineReason) return Result to provider;
 
 			@dialect("oal");
 			message draw(game_id: in string, accept: in boolean) return Result to provider;
@@ -45,6 +45,7 @@ within lichess_bot::components is
 				challenge.id = c.id;
 				challenge.challenger = c.challenger;
 				challenge.variant = c.variant;
+				challenge.rated = c.rated;
 				challenge.timeControl = c.timeControl;
 				challenge.color = c.color;
 				challenge.status = c.status;

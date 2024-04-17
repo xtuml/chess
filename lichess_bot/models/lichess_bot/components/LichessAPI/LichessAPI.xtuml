@@ -10,7 +10,7 @@ within lichess_bot::components is
 		message resign(game_id: in string) return Result to provider;
 		message draw(game_id: in string, accept: in boolean) return Result to provider;
 		message acceptChallenge(challenge_id: in string) return Result to provider;
-		message declineChallenge(challenge_id: in string) return Result to provider;
+		message declineChallenge(challenge_id: in string, reason: in DeclineReason) return Result to provider;
 		message connect() return Result to provider;
 		message getUser() return User to provider;
 		

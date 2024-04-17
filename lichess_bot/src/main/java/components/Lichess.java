@@ -8,6 +8,7 @@ import lichess.LichessAPIProvider;
 import lichess.LichessAPISubscriber;
 import types.APIException;
 import types.Challenge;
+import types.DeclineReason;
 import types.Game;
 import types.GameEventInfo;
 import types.GameState;
@@ -62,8 +63,8 @@ public class Lichess implements ILichessAPIToProvider {
 	}
 
 	@Override
-	public Result declineChallenge(ComponentInstance_c senderReceiver, String challengeId) {
-		return lichess.declineChallenge(challengeId);
+	public Result declineChallenge(ComponentInstance_c senderReceiver, String challengeId, DeclineReason reason) {
+		return lichess.declineChallenge(challengeId, reason);
 	}
 	
 	@Override

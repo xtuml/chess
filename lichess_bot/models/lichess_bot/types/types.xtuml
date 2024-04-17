@@ -63,6 +63,20 @@ within lichess_bot is
 			RANDOM
 		);
 
+		type DeclineReason is enum (
+			GENERIC, 
+			LATER, 
+			TOOFAST, 
+			TOOSLOW, 
+			TIMECONTROL, 
+			RATED, 
+			CASUAL, 
+			STANDARD, 
+			VARIANT, 
+			NOBOT, 
+			ONLYBOT
+		);
+
 		type Game is structure
 			id: string;
 			variant: Variant;

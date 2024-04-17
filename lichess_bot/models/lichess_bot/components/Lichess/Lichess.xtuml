@@ -19,7 +19,7 @@ within lichess_bot::components is
 			message connect() return Result to provider;
 
 			@dialect("oal");
-			message declineChallenge(challenge_id: in string) return Result to provider;
+			message declineChallenge(challenge_id: in string, reason: in DeclineReason) return Result to provider;
 
 			@dialect("oal");
 			message draw(game_id: in string, accept: in boolean) return Result to provider;

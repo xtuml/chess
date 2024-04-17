@@ -58,5 +58,8 @@ shapes :
   shape : User
     render : structured_data_type "lichess_bot::types::User"
     bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+  shape : DeclineReason
+    render : enumeration_data_type "lichess_bot::types::DeclineReason"
+    bounds : x : 3960.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :

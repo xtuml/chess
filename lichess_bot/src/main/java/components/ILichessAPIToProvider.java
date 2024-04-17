@@ -2,6 +2,7 @@ package components;
 
 import org.xtuml.bp.core.ComponentInstance_c;
 
+import types.DeclineReason;
 import types.Result;
 import types.Room;
 import types.User;
@@ -20,7 +21,7 @@ public interface ILichessAPIToProvider {
 
 	Result acceptChallenge(ComponentInstance_c senderReceiver, String challengeId);
 
-	Result declineChallenge(ComponentInstance_c senderReceiver, String challengeId);
+	Result declineChallenge(ComponentInstance_c senderReceiver, String challengeId, DeclineReason reason);
 
 	Result connect(ComponentInstance_c senderReceiver);
 	

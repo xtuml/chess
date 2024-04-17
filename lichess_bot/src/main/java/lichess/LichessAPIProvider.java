@@ -1,5 +1,6 @@
 package lichess;
 
+import types.DeclineReason;
 import types.Result;
 import types.Room;
 import types.User;
@@ -18,7 +19,7 @@ public interface LichessAPIProvider {
 
 	Result acceptChallenge(String challengeId);
 
-	Result declineChallenge(String challengeId);
+	Result declineChallenge(String challengeId, DeclineReason reason);
 	
 	User getUser();
 
