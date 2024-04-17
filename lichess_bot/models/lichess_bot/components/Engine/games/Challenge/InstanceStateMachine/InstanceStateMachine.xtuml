@@ -34,11 +34,11 @@ within lichess_bot::components::Engine::games::Challenge is
 	event error('message': in string);
 
 	@event_num(6);
-	event 'game over';
+	event 'challenge complete';
 
 	state model is
 
-		|                        | 'respond to challenge' | 'reject challenge'     | 'accept challenge'     | 'challenger canceled'  | error                  | 'game over'            |
+		|                        | 'respond to challenge' | 'reject challenge'     | 'accept challenge'     | 'challenger canceled'  | error                  | 'challenge complete'   |
 		| ---------------------- | ---------------------- | ---------------------- | ---------------------- | ---------------------- | ---------------------- | ---------------------- |
 		| created                | pending                | cannot_happen          | cannot_happen          | cannot_happen          | cannot_happen          | cannot_happen          |
 		| pending                | cannot_happen          | complete               | 'in progress'          | complete               | complete               | cannot_happen          |
@@ -101,7 +101,7 @@ within lichess_bot::components::Engine::games::Challenge is
 		@endnoparse
 	end state;
 
-	transition 'in progress' ['game over'] => complete is
+	transition 'in progress' ['challenge complete'] => complete is
 		@noparse
 		LOG::LogInfo(message:"Challenge complete (game over): " + self.id);
 		@endnoparse

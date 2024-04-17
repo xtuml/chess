@@ -82,8 +82,8 @@ connectors :
     texts :
       text :
         bounds : x : 4443.0 y : 3485.0 width : 73.0 height : 49.0 where : middle
-  connector : inprogress____Challenge6__gameover
-    render : transition "lichess_bot::components::Engine::games::Challenge::Instance State Machine::in progress::Challenge6: game over"
+  connector : inprogress____Challenge6__challengecomplete
+    render : transition "lichess_bot::components::Engine::games::Challenge::Instance State Machine::in progress::Challenge6: challenge complete"
     polyline :
       segment :
         start : x : 4954.0 y : 3265.0

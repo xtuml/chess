@@ -93,31 +93,33 @@ within lichess_bot::components is
 				@noparse
 				LOG::LogInfo(message:"Game full: " + param.game.id);
 				g = param.game;
-				select any challenge from instances of Challenge where selected.id == g.id;
-				if not empty challenge then
-					select one game related by challenge->Game[R1];
-					if empty game then
-						create object instance game of Game;
-						relate game to challenge across R1;
+				select any game from instances of Game where selected.id == g.id;
+				if empty game then
+					create object instance game of Game;
+					game.id = g.id;
+				end if;
+				select one challenge related by game->Challenge[R1];
+				if empty challenge then
+					select any challenge from instances of Challenge where selected.id == g.id;
+					if not empty challenge then
+						relate challenge to game across R1;
 					end if;
-					bot = chess::getUser();
-					if g.white.name == bot.username then
-						game.color = Color::WHITE;
-					else
-						game.color = Color::BLACK;
-					end if;
-					game.game_state = g.gameState;
-					if not (game.game_state.status == GameStatus::CREATED or game.game_state.status == GameStatus::STARTED) then
-							generate Game2:'game over'(status:game.game_state.status) to game;
-					else
-						if game.is_our_turn() then
-							generate Game4:'ready to play' to game;
-						else
-							generate Game1:'waiting on move' to game;
-						end if;
-					end if;
+				end if;
+				bot = chess::getUser();
+				if g.white.name == bot.username then
+					game.color = Color::WHITE;
 				else
-					// TODO handle this error case
+					game.color = Color::BLACK;
+				end if;
+				game.game_state = g.gameState;
+				if not (game.game_state.status == GameStatus::CREATED or game.game_state.status == GameStatus::STARTED) then
+						generate Game2:'game over'(status:game.game_state.status) to game;
+				else
+					if game.is_our_turn() then
+						generate Game4:'ready to play' to game;
+					else
+						generate Game1:'waiting on move' to game;
+					end if;
 				end if;
 				@endnoparse
 			end message;
@@ -128,15 +130,17 @@ within lichess_bot::components is
 				LOG::LogInfo(message:"Game start: " + param.game_event.id);
 				// r = chess::chat(game_id:param.game_event.id, text:"Good luck!", room:Room::PLAYER);
 				g = param.game_event;
-				select any challenge from instances of Challenge where selected.id == g.id;
-				if not empty challenge then
-					select one game related by challenge->Game[R1];
-					if empty game then
-						create object instance game of Game;
-						relate game to challenge across R1;
+				select any game from instances of Game where selected.id == g.id;
+				if empty game then
+					create object instance game of Game;
+					game.id = g.id;
+				end if;
+				select one challenge related by game->Challenge[R1];
+				if empty challenge then
+					select any challenge from instances of Challenge where selected.id == g.id;
+					if not empty challenge then
+						relate challenge to game across R1;
 					end if;
-				else
-					// TODO handle this error case
 				end if;
 				@endnoparse
 			end message;

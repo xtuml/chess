@@ -6,8 +6,11 @@ within lichess_bot::components::Engine::games is
 	@class_num(2);
 	class Game is
 
+		id: string;
+
 		@ref_mode("referred_to");
-		id: referential (R1.Challenge.id) string;
+		@use_prefix(prefix="challenge_");
+		challenge_id: referential (R1.Challenge.id) string;
 
 		color: Color;
 
