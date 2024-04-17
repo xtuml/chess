@@ -99,3 +99,13 @@ the Chess Programming Wiki found
 [here](https://www.chessprogramming.org/Main_Page). The official rules of chess
 can be found [here](https://www.fide.com/FIDE/handbook/LawsOfChess.pdf).
 
+
+## Issues
+
+If you are having an issue with BridgePoint, Verifier, or the project itself,
+please check the [issue tracker](https://support.onefact.net) to see if the
+behavior matches an existing issue. [This custom
+query](https://support.onefact.net/projects/bridgepoint/issues?query_id=169)
+has been created to track issues specifically relating to this modeling
+challenge. If you don't find the issue you are looking for, please raise a new
+issue [here](https://support.onefact.net/projects/bridgepoint/issues/new)
