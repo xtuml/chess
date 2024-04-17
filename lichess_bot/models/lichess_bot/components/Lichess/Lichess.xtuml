@@ -19,6 +19,9 @@ within lichess_bot::components is
 			message connect() return Result to provider;
 
 			@dialect("oal");
+			message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return Result to provider;
+
+			@dialect("oal");
 			message declineChallenge(challenge_id: in string, reason: in DeclineReason) return Result to provider;
 
 			@dialect("oal");

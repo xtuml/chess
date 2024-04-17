@@ -13,6 +13,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import types.APIException;
 import types.BotEvent;
 import types.BotEventType;
 import types.ChatLine;
+import types.Color;
 import types.DeclineReason;
 import types.Game;
 import types.GameEvent;
@@ -33,6 +35,7 @@ import types.Result;
 import types.Room;
 import types.User;
 import types.UserTitle;
+import types.Variant;
 import types.adapters.LichessTypeAdapterFactory;
 
 public class LichessAPIConnection implements LichessAPIProvider {
@@ -128,6 +131,22 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		} else {
 			return new User();
 		}
+	}
+
+	@Override
+	public Result createChallenge(String user, boolean rated, int clock_limit, int clock_increment, Color color,
+			Variant variant, String fen) {
+		final var params = new HashMap<String, String>();
+		params.put("rated", Boolean.toString(rated));
+		params.put("clock.limit", Integer.toString(clock_limit));
+		params.put("clock.increment", Integer.toString(clock_increment));
+		params.put("color", color.name().toLowerCase());
+		params.put("variant", variant.getValue());
+		if (fen != null && !fen.isEmpty()) {
+			params.put("fen", fen);
+		}
+		return postRequest(String.format("%s/api/challenge/%s", baseUrl, user),
+				"application/x-www-form-urlencoded", params);
 	}
 
 	private Result upgradeAccount() {

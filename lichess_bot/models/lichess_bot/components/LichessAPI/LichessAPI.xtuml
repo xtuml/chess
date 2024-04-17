@@ -13,6 +13,7 @@ within lichess_bot::components is
 		message declineChallenge(challenge_id: in string, reason: in DeclineReason) return Result to provider;
 		message connect() return Result to provider;
 		message getUser() return User to provider;
+		message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return Result to provider;
 		
 		message gameStart(game_event: in GameEventInfo) from provider;
 		message gameFinish(game_event: in GameEventInfo) from provider;

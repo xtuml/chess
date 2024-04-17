@@ -8,6 +8,7 @@ import lichess.LichessAPIProvider;
 import lichess.LichessAPISubscriber;
 import types.APIException;
 import types.Challenge;
+import types.Color;
 import types.DeclineReason;
 import types.Game;
 import types.GameEventInfo;
@@ -15,6 +16,7 @@ import types.GameState;
 import types.Result;
 import types.Room;
 import types.User;
+import types.Variant;
 
 public class Lichess implements ILichessAPIToProvider {
 
@@ -53,7 +55,7 @@ public class Lichess implements ILichessAPIToProvider {
 	}
 
 	@Override
-	public Result draw(ComponentInstance_c senderReceiver, String gameId, boolean accept) {
+	public Result draw(ComponentInstance_c senderReceiver, String gameId, Boolean accept) {
 		return lichess.draw(gameId, accept);
 	}
 
@@ -70,6 +72,12 @@ public class Lichess implements ILichessAPIToProvider {
 	@Override
 	public User getUser(ComponentInstance_c senderReceiver) {
 		return lichess.getUser();
+	}
+
+	@Override
+	public Result createChallenge(ComponentInstance_c senderReceiver, String user, Boolean rated, int clock_limit,
+			int clock_increment, Color color, Variant variant, String fen) {
+		return lichess.createChallenge(user, rated, clock_limit, clock_increment, color, variant, fen);
 	}
 
 	private class LichessAPIHandler implements LichessAPISubscriber {

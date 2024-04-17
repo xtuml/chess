@@ -22,6 +22,9 @@ within lichess_bot::components is
 			message connect() return Result to provider;
 
 			@dialect("oal");
+			message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return Result to provider;
+
+			@dialect("oal");
 			message declineChallenge(challenge_id: in string, reason: in DeclineReason) return Result to provider;
 
 			@dialect("oal");
@@ -41,15 +44,45 @@ within lichess_bot::components is
 				@noparse
 				LOG::LogInfo(message:"Received challenge: " + param.challenge.id);
 				c = param.challenge;
-				create object instance challenge of Challenge;
-				challenge.id = c.id;
-				challenge.challenger = c.challenger;
-				challenge.variant = c.variant;
-				challenge.rated = c.rated;
-				challenge.timeControl = c.timeControl;
-				challenge.color = c.color;
-				challenge.status = c.status;
-				generate Challenge1:'respond to challenge' to challenge;
+				
+				bot = chess::getUser();
+				
+				// handle incoming challenges
+				if c.challenger.id != bot.id then
+				
+					accept_challenge = true;
+					reason = DeclineReason::GENERIC;
+				
+					// only accept the challenge if not currently in a game
+					select any game from instances of Game where (selected.game_state.status == GameStatus::CREATED or selected.game_state.status == GameStatus::STARTED);
+					if not empty game then
+							accept_challenge = false;
+							reason = DeclineReason::LATER;
+					end if;
+				
+					// only accept unrated standard games
+					if c.rated then
+							accept_challenge = false;
+							reason = DeclineReason::CASUAL;
+					end if;
+				
+					if c.variant != Variant::STANDARD then
+							accept_challenge = false;
+							reason = DeclineReason::STANDARD;
+					end if;
+				
+					// send the accept or decline message
+					if accept_challenge then
+							result = chess::acceptChallenge(challenge_id:c.id);
+					else
+							result = chess::declineChallenge(challenge_id:c.id, reason:reason);
+					end if;
+					
+				else
+					
+					LOG::LogInfo(message: "Watch outgoing challenge at: " + c.url );
+				
+				end if;
 				@endnoparse
 			end message;
 
@@ -57,11 +90,6 @@ within lichess_bot::components is
 			message challengeCanceled(challenge: in Challenge) from provider is
 				@noparse
 				LOG::LogInfo(message:"Challenge canceled: " + param.challenge.id);
-				c = param.challenge;
-				select any challenge from instances of Challenge where selected.id == c.id;
-				if not empty challenge then
-					generate Challenge4:'challenger canceled' to challenge;
-				end if;
 				@endnoparse
 			end message;
 
@@ -93,25 +121,26 @@ within lichess_bot::components is
 				@noparse
 				LOG::LogInfo(message:"Game full: " + param.game.id);
 				g = param.game;
+				
+				// find/create the game
 				select any game from instances of Game where selected.id == g.id;
 				if empty game then
 					create object instance game of Game;
 					game.id = g.id;
 				end if;
-				select one challenge related by game->Challenge[R1];
-				if empty challenge then
-					select any challenge from instances of Challenge where selected.id == g.id;
-					if not empty challenge then
-						relate challenge to game across R1;
-					end if;
-				end if;
+				
+				// set color for the game
 				bot = chess::getUser();
 				if g.white.name == bot.username then
 					game.color = Color::WHITE;
 				else
 					game.color = Color::BLACK;
 				end if;
+				
+				// update the game state
 				game.game_state = g.gameState;
+				
+				// TODO
 				if not (game.game_state.status == GameStatus::CREATED or game.game_state.status == GameStatus::STARTED) then
 						generate Game2:'game over'(status:game.game_state.status) to game;
 				else
@@ -130,17 +159,12 @@ within lichess_bot::components is
 				LOG::LogInfo(message:"Game start: " + param.game_event.id);
 				// r = chess::chat(game_id:param.game_event.id, text:"Good luck!", room:Room::PLAYER);
 				g = param.game_event;
+				
+				// find/create a game
 				select any game from instances of Game where selected.id == g.id;
 				if empty game then
 					create object instance game of Game;
 					game.id = g.id;
-				end if;
-				select one challenge related by game->Challenge[R1];
-				if empty challenge then
-					select any challenge from instances of Challenge where selected.id == g.id;
-					if not empty challenge then
-						relate challenge to game across R1;
-					end if;
 				end if;
 				@endnoparse
 			end message;

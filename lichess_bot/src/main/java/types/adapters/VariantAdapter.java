@@ -29,7 +29,7 @@ public class VariantAdapter extends TypeAdapter<Variant> {
 	@Override
 	public void write(JsonWriter writer, Variant value) throws IOException {
 		writer.beginObject();
-		writer.name("key").value(value.name());
+		writer.name("key").value(value.getValue());
 		writer.endObject();
 	}
 

@@ -1,7 +1,26 @@
 package types;
 
 public enum Variant {
+	
+	STANDARD("standard"),
+	CHESS960("chess960"),
+	CRAZYHOUSE("crazyhouse"),
+	ANTICHESS("antichess"),
+	ATOMIC("atomic"),
+	HORDE("horde"),
+	KINGOFTHEHILL("kingOfTheHill"),
+	RACINGKINGS("racingKings"),
+	THREECHECK("threeCheck"),
+	FROMPOSITION("fromPosition");
 
-	STANDARD, CHESS960, CRAZYHOUSE, ANTICHESS, ATOMIC, HORDE, KINGOFTHEHILL, RACINGKINGS, THREECHECK, FROMPOSITION
+	private final String value;
+
+	Variant(String value) {
+		this.value = value;
+	}
+	
+	public String getValue() {
+		return value;
+	}
 
 }

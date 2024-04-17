@@ -8,10 +8,6 @@ within lichess_bot::components::Engine::games is
 
 		id: string;
 
-		@ref_mode("referred_to");
-		@use_prefix(prefix="challenge_");
-		challenge_id: referential (R1.Challenge.id) string;
-
 		color: Color;
 
 		game_state: GameState;

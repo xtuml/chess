@@ -4,8 +4,27 @@ within lichess_bot::components::Engine is
 
 	package functions is
 		@dialect("oal");
+		@function_num(2);
+		function challenge_bot() is
+			@noparse
+			r = chess::createChallenge(
+				user: "maia1",
+				rated: false,
+				clock_limit: 300,
+				clock_increment: 0,
+				color: Color::RANDOM,
+				variant: Variant::STANDARD,
+				fen: ""
+			);
+			if not r.result then
+				LOG::LogFailure(message: "Failed to create challenge: " + r.error.error);
+			end if;
+			@endnoparse
+		end function;
+
+		@dialect("oal");
 		@function_num(1);
-		function resignAll() is
+		function resign_all() is
 			@noparse
 			select many games from instances of Game;
 			for each game in games

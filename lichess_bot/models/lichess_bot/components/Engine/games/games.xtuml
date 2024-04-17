@@ -3,11 +3,7 @@
 within lichess_bot::components::Engine is
 
 	package games is
-		class Challenge;
 		class Game;
-		relationship R1 is Challenge conditionally produces one Game,
-		                   Game conditionally 'originates from' one Challenge;
-
 	end package;
 
 end;

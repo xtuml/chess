@@ -2,10 +2,12 @@ package components;
 
 import org.xtuml.bp.core.ComponentInstance_c;
 
+import types.Color;
 import types.DeclineReason;
 import types.Result;
 import types.Room;
 import types.User;
+import types.Variant;
 
 public interface ILichessAPIToProvider {
 
@@ -17,7 +19,7 @@ public interface ILichessAPIToProvider {
 
 	Result resign(ComponentInstance_c senderReceiver, String gameId);
 
-	Result draw(ComponentInstance_c senderReceiver, String gameId, boolean accept);
+	Result draw(ComponentInstance_c senderReceiver, String gameId, Boolean accept);
 
 	Result acceptChallenge(ComponentInstance_c senderReceiver, String challengeId);
 
@@ -26,5 +28,7 @@ public interface ILichessAPIToProvider {
 	Result connect(ComponentInstance_c senderReceiver);
 	
 	User getUser(ComponentInstance_c senderReceiver);
+	
+	Result createChallenge(ComponentInstance_c senderReceiver, String user, Boolean rated, int clock_limit, int clock_increment, Color color, Variant variant, String fen);
 
 }

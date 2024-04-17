@@ -49,11 +49,6 @@ within lichess_bot::components::Engine::games::Game is
 	state 'game over'(status: in GameStatus) is
 		@noparse
 		LOG::LogInfo(message:"Game: " + self.id + ": Game over!");
-		select one challenge related by self->Challenge[R1];
-		if not empty challenge then
-			unrelate self from challenge across R1;
-			generate Challenge6:'challenge complete' to challenge;
-		end if;
 		delete object instance self;
 		@endnoparse
 	end state;

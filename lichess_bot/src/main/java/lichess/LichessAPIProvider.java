@@ -1,9 +1,11 @@
 package lichess;
 
+import types.Color;
 import types.DeclineReason;
 import types.Result;
 import types.Room;
 import types.User;
+import types.Variant;
 
 public interface LichessAPIProvider {
 
@@ -22,5 +24,7 @@ public interface LichessAPIProvider {
 	Result declineChallenge(String challengeId, DeclineReason reason);
 	
 	User getUser();
+
+	Result createChallenge(String user, boolean rated, int clock_limit, int clock_increment, Color color, Variant variant, String fen);
 
 }
