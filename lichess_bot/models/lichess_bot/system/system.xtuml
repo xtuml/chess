@@ -1,0 +1,11 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot is
+
+	package system is
+		component Engine is lichess_bot::components::Engine;
+		component Lichess is lichess_bot::components::Lichess;
+		satisfaction is Engine::chess -(o- Lichess::API;
+	end package;
+
+end;

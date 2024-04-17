@@ -1,0 +1,173 @@
+// BP 7.1.6 content: Component syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components is
+
+	component Engine is
+		
+		package games;
+		
+		required port chess implements LichessAPI is
+
+			@dialect("oal");
+			message abort(game_id: in string) return Result to provider;
+
+			@dialect("oal");
+			message acceptChallenge(challenge_id: in string) return Result to provider;
+
+			@dialect("oal");
+			message chat(game_id: in string, text: in string, room: in Room) return Result to provider;
+
+			@dialect("oal");
+			message connect() return Result to provider;
+
+			@dialect("oal");
+			message declineChallenge(challenge_id: in string) return Result to provider;
+
+			@dialect("oal");
+			message draw(game_id: in string, accept: in boolean) return Result to provider;
+
+			message getUser() return User to provider;
+
+			@dialect("oal");
+			message move(game_id: in string, move: in string) return Result to provider;
+
+			@dialect("oal");
+			message resign(game_id: in string) return Result to provider;
+
+			@dialect("oal");
+			message challenge(challenge: in Challenge) from provider is
+				@noparse
+				LOG::LogInfo(message:"Received challenge: " + param.challenge.id);
+				c = param.challenge;
+				create object instance challenge of Challenge;
+				challenge.id = c.id;
+				challenge.challenger = c.challenger;
+				challenge.variant = c.variant;
+				challenge.timeControl = c.timeControl;
+				challenge.color = c.color;
+				challenge.status = c.status;
+				generate Challenge1:'respond to challenge' to challenge;
+				@endnoparse
+			end message;
+
+			@dialect("oal");
+			message challengeCanceled(challenge: in Challenge) from provider is
+				@noparse
+				LOG::LogInfo(message:"Challenge canceled: " + param.challenge.id);
+				c = param.challenge;
+				select any challenge from instances of Challenge where selected.id == c.id;
+				if not empty challenge then
+					generate Challenge4:'challenger canceled' to challenge;
+				end if;
+				@endnoparse
+			end message;
+
+			@dialect("oal");
+			message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider is
+				@noparse
+				LOG::LogInfo(message:"Chat line: " + param.game_id + ", " + param.username + ": " + param.text);
+				@endnoparse
+			end message;
+
+			@dialect("oal");
+			message error(error: in APIException) from provider is
+				@noparse
+				LOG::LogFailure(message:"API error: " +  param.error.error);
+				ARCH::shutdown();
+				@endnoparse
+			end message;
+
+			@dialect("oal");
+			message gameFinish(game_event: in GameEventInfo) from provider is
+				@noparse
+				LOG::LogInfo(message:"Game finish: " + param.game_event.id);
+				@endnoparse
+			end message;
+
+			@dialect("oal");
+			message gameFull(game: in Game) from provider is
+				@noparse
+				LOG::LogInfo(message:"Game full: " + param.game.id);
+				g = param.game;
+				select any challenge from instances of Challenge where selected.id == g.id;
+				if not empty challenge then
+					select one game related by challenge->Game[R1];
+					if empty game then
+						create object instance game of Game;
+						relate game to challenge across R1;
+					end if;
+					//bot = chess::getUser();
+					if g.white.name == "levifish" then
+						game.color = Color::WHITE;
+					else
+						game.color = Color::BLACK;
+					end if;
+					game.game_state = g.gameState;
+					if not (game.game_state.status == GameStatus::CREATED or game.game_state.status == GameStatus::STARTED) then
+							generate Game2:'game over'(status:game.game_state.status) to game;
+					else
+						if game.is_my_turn() then
+							generate Game4:'ready to play' to game;
+						else
+							generate Game1:'waiting on move' to game;
+						end if;
+					end if;
+				else
+					// TODO handle this error case
+				end if;
+				@endnoparse
+			end message;
+
+			@dialect("oal");
+			message gameStart(game_event: in GameEventInfo) from provider is
+				@noparse
+				LOG::LogInfo(message:"Game start: " + param.game_event.id);
+				g = param.game_event;
+				select any challenge from instances of Challenge where selected.id == g.id;
+				if not empty challenge then
+					select one game related by challenge->Game[R1];
+					if empty game then
+						create object instance game of Game;
+						relate game to challenge across R1;
+					end if;
+				else
+					// TODO handle this error case
+				end if;
+				@endnoparse
+			end message;
+
+			@dialect("oal");
+			message gameState(game_id: in string, game_state: in GameState) from provider is
+				@noparse
+				LOG::LogInfo(message:"Game state: " + param.game_id);
+				g = param.game_state;
+				select any game from instances of Game where selected.id == param.game_id;
+				if not empty game then
+					game.game_state = g;
+					if not (game.game_state.status == GameStatus::CREATED or game.game_state.status == GameStatus::STARTED) then
+							generate Game2:'game over'(status:game.game_state.status) to game;
+					else
+						if game.is_my_turn() then
+							generate Game4:'ready to play' to game;
+						else
+							generate Game1:'waiting on move' to game;
+						end if;
+					end if;
+				else
+					// TODO handle this error case
+				end if;
+				@endnoparse
+			end message;
+
+			@dialect("oal");
+			message opponentGone(game_id: in string) from provider is
+				@noparse
+				LOG::LogInfo(message:"Opponent gone: " + param.game_id);
+				@endnoparse
+			end message;
+
+		end port;
+
+	end component;
+
+end;

@@ -1,0 +1,21 @@
+render : "lichess_bot::components::Lichess"
+
+shapes :
+  shape : lichess_bot____components____Lichess container
+    render : component_container "lichess_bot::components::Lichess"
+    bounds : x : 4100.0 y : 3100.0 width : 800.0 height : 800.0
+
+connectors :
+  connector : API____LichessAPI
+    render : provided_interface "lichess_bot::components::Lichess::API::LichessAPI"
+    polyline :
+      segment :
+        start : x : 4900.0 y : 3480.0
+        end :   x : 4975.0 y : 3480.0
+    anchors :
+      start :
+        point : x : 4900.0 y : 3480.0
+        shape : lichess_bot____components____Lichess
+      end :
+        point : x : 4975.0 y : 3480.0
+    texts :

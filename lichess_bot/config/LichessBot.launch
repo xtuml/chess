@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.xtuml.bp.debug.ui.BPApplication">
+    <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
+    <booleanAttribute key="org.xtuml.bp.debug.ui.BPApplication.activity" value="false"/>
+    <booleanAttribute key="org.xtuml.bp.debug.ui.BPApplication.deterministic" value="false"/>
+    <mapAttribute key="org.xtuml.bp.debug.ui.BPApplication.models">
+        <mapEntry key="lichess_bot" value="lichess_bot::system::lichess_bot::components::Engine_INTERNALTOKEN_1_INTERNALTOKEN_None_INTERNALTOKEN_enabled_TOKEN_lichess_bot::system::lichess_bot::components::Lichess_INTERNALTOKEN_1_INTERNALTOKEN_lichess_bot::components::Lichess::API::LichessAPI::connect_INTERNALTOKEN_enabled_TOKEN_"/>
+    </mapAttribute>
+    <booleanAttribute key="org.xtuml.bp.debug.ui.BPApplication.simtime" value="false"/>
+    <intAttribute key="org.xtuml.bp.debug.ui.BPApplication.timeout" value="0"/>
+</launchConfiguration>

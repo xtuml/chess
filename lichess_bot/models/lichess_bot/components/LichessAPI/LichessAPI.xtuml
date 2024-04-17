@@ -1,0 +1,29 @@
+// BP 7.1.6 content: Interface syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components is
+
+	interface LichessAPI is
+		
+		message move(game_id: in string, move: in string) return Result to provider;
+		message chat(game_id: in string, text: in string, room: in Room) return Result to provider;
+		message abort(game_id: in string) return Result to provider;
+		message resign(game_id: in string) return Result to provider;
+		message draw(game_id: in string, accept: in boolean) return Result to provider;
+		message acceptChallenge(challenge_id: in string) return Result to provider;
+		message declineChallenge(challenge_id: in string) return Result to provider;
+		message connect() return Result to provider;
+		message getUser() return User to provider;
+		
+		message gameStart(game_event: in GameEventInfo) from provider;
+		message gameFinish(game_event: in GameEventInfo) from provider;
+		message challenge(challenge: in Challenge) from provider;
+		message challengeCanceled(challenge: in Challenge) from provider;
+		message gameFull(game: in Game) from provider;
+		message gameState(game_id: in string, game_state: in GameState) from provider;
+		message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
+		message opponentGone(game_id: in string) from provider;
+		message error(error: in APIException) from provider;
+		
+	end interface;
+
+end;

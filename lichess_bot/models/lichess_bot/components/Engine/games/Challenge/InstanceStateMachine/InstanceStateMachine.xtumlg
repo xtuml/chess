@@ -1,0 +1,119 @@
+render : "lichess_bot::components::Engine::games::Challenge::Instance State Machine"
+
+shapes :
+  shape : created
+    render : state "lichess_bot::components::Engine::games::Challenge::Instance State Machine::created"
+    bounds : x : 4092.0 y : 3264.0 width : 132.0 height : 85.0
+  shape : pending
+    render : state "lichess_bot::components::Engine::games::Challenge::Instance State Machine::pending"
+    bounds : x : 4380.0 y : 3228.0 width : 253.0 height : 180.0
+  shape : inprogress
+    render : state "lichess_bot::components::Engine::games::Challenge::Instance State Machine::in progress"
+    bounds : x : 4800.0 y : 3096.0 width : 252.0 height : 169.0
+  shape : complete
+    render : state "lichess_bot::components::Engine::games::Challenge::Instance State Machine::complete"
+    bounds : x : 4380.0 y : 3612.0 width : 288.0 height : 144.0
+
+connectors :
+  connector : created____Challenge1__respondtochallenge
+    render : transition "lichess_bot::components::Engine::games::Challenge::Instance State Machine::created::Challenge1: respond to challenge"
+    polyline :
+      segment :
+        start : x : 4224.0 y : 3300.0
+        end :   x : 4380.0 y : 3300.0
+    anchors :
+      start :
+        point : x : 4224.0 y : 3300.0
+        shape : created
+      end :
+        point : x : 4380.0 y : 3300.0
+        shape : pending
+    texts :
+      text :
+        bounds : x : 4268.0 y : 3244.0 width : 71.0 height : 49.0 where : middle
+  connector : pending____Challenge3__acceptchallenge
+    render : transition "lichess_bot::components::Engine::games::Challenge::Instance State Machine::pending::Challenge3: accept challenge"
+    polyline :
+      segment :
+        start : x : 4583.0 y : 3228.0
+        end :   x : 4583.0 y : 3175.0
+      segment :
+        start : x : 4583.0 y : 3175.0
+        end :   x : 4800.0 y : 3175.0
+    anchors :
+      start :
+        point : x : 4583.0 y : 3228.0
+        shape : pending
+      end :
+        point : x : 4583.0 y : 3175.0
+        shape : inprogress
+    texts :
+      text :
+        bounds : x : 4556.0 y : 3152.0 width : 0.0 height : 0.0 where : middle
+  connector : pending____Challenge5__error
+    render : transition "lichess_bot::components::Engine::games::Challenge::Instance State Machine::pending::Challenge5: error"
+    polyline :
+      segment :
+        start : x : 4583.0 y : 3408.0
+        end :   x : 4583.0 y : 3612.0
+    anchors :
+      start :
+        point : x : 4583.0 y : 3408.0
+        shape : pending
+      end :
+        point : x : 4583.0 y : 3612.0
+        shape : complete
+    texts :
+      text :
+        bounds : x : 4594.0 y : 3489.0 width : 91.0 height : 36.0 where : middle
+  connector : pending____Challenge4__challengercanceled
+    render : transition "lichess_bot::components::Engine::games::Challenge::Instance State Machine::pending::Challenge4: challenger canceled"
+    polyline :
+      segment :
+        start : x : 4522.0 y : 3408.0
+        end :   x : 4522.0 y : 3612.0
+    anchors :
+      start :
+        point : x : 4522.0 y : 3408.0
+        shape : pending
+      end :
+        point : x : 4522.0 y : 3612.0
+        shape : complete
+    texts :
+      text :
+        bounds : x : 4443.0 y : 3485.0 width : 73.0 height : 49.0 where : middle
+  connector : inprogress____Challenge6__gameover
+    render : transition "lichess_bot::components::Engine::games::Challenge::Instance State Machine::in progress::Challenge6: game over"
+    polyline :
+      segment :
+        start : x : 4954.0 y : 3265.0
+        end :   x : 4954.0 y : 3698.0
+      segment :
+        start : x : 4954.0 y : 3698.0
+        end :   x : 4668.0 y : 3698.0
+    anchors :
+      start :
+        point : x : 4954.0 y : 3265.0
+        shape : inprogress
+      end :
+        point : x : 4954.0 y : 3698.0
+        shape : complete
+    texts :
+      text :
+        bounds : x : 4776.0 y : 3664.0 width : 0.0 height : 0.0 where : middle
+  connector : pending____Challenge2__rejectchallenge
+    render : transition "lichess_bot::components::Engine::games::Challenge::Instance State Machine::pending::Challenge2: reject challenge"
+    polyline :
+      segment :
+        start : x : 4432.0 y : 3408.0
+        end :   x : 4432.0 y : 3612.0
+    anchors :
+      start :
+        point : x : 4432.0 y : 3408.0
+        shape : pending
+      end :
+        point : x : 4432.0 y : 3612.0
+        shape : complete
+    texts :
+      text :
+        bounds : x : 4349.0 y : 3486.0 width : 73.0 height : 49.0 where : middle

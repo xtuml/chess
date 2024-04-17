@@ -1,0 +1,17 @@
+render : "lichess_bot::EEs"
+
+shapes :
+  shape : Architecture
+    render : ee "lichess_bot::EEs::Architecture"
+    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+  shape : ChessLib
+    render : ee "lichess_bot::EEs::ChessLib"
+    bounds : x : 220.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Logging
+    render : ee "lichess_bot::EEs::Logging"
+    bounds : x : 440.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Time
+    render : ee "lichess_bot::EEs::Time"
+    bounds : x : 880.0 y : 0.0 width : 200.0 height : 150.0
+
+connectors :

@@ -1,0 +1,42 @@
+render : "lichess_bot::system"
+
+shapes :
+  shape : lichess_bot____components____Engine
+    render : component_reference "lichess_bot::system::lichess_bot::components::Engine"
+    bounds : x : 408.0 y : 144.0 width : 200.0 height : 150.0
+  shape : lichess_bot____components____Lichess
+    render : component_reference "lichess_bot::system::lichess_bot::components::Lichess"
+    bounds : x : 48.0 y : 144.0 width : 200.0 height : 150.0
+
+connectors :
+  connector : lichess_bot____components____Lichess____API____LichessAPI
+    render : provided_interface "lichess_bot::system::lichess_bot::components::Lichess::API::LichessAPI"
+    polyline :
+      segment :
+        start : x : 248.0 y : 216.0
+        end :   x : 323.0 y : 216.0
+    anchors :
+      start :
+        point : x : 248.0 y : 216.0
+        shape : lichess_bot____components____Lichess
+      end :
+        point : x : 323.0 y : 216.0
+    texts :
+      text :
+        bounds : x : 294.0 y : 177.0 width : 0.0 height : 0.0 where : middle
+  connector : lichess_bot____components____Engine____chess____LichessAPI
+    render : required_interface "lichess_bot::system::lichess_bot::components::Engine::chess::LichessAPI"
+    polyline :
+      segment :
+        start : x : 408.0 y : 216.0
+        end :   x : 323.0 y : 216.0
+    anchors :
+      start :
+        point : x : 408.0 y : 216.0
+        shape : lichess_bot____components____Engine
+      end :
+        point : x : 323.0 y : 216.0
+        connector : lichess_bot____components____Lichess____API____LichessAPI
+    texts :
+      text :
+        bounds : x : 337.0 y : 178.0 width : 0.0 height : 0.0 where : middle

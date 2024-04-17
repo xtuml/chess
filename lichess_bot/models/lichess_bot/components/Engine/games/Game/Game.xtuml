@@ -1,0 +1,28 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::games is
+
+	@key_letters("Game");
+	@class_num(2);
+	class Game is
+
+		@ref_mode("referred_to");
+		id: referential (R1.Challenge.id) string;
+
+		color: Color;
+
+		game_state: GameState;
+
+		preferred identifier is (id);
+
+		@dialect("oal");
+		@operation_num(1);
+		operation is_my_turn() return boolean is
+			@noparse
+			return self.color == Color::WHITE and self.game_state.moves.length % 2 == 0 or self.color == Color::BLACK and self.game_state.moves.length % 2 == 1;
+			@endnoparse
+		end operation;
+
+	end class;
+
+end;

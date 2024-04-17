@@ -1,0 +1,27 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::games is
+
+	@key_letters("Challenge");
+	@class_num(1);
+	class Challenge is
+
+		id: string;
+
+		challenger: Player;
+
+		variant: Variant;
+
+		rated: boolean;
+
+		timeControl: TimeControl;
+
+		color: Color;
+
+		status: ChallengeStatus;
+
+		preferred identifier is (id);
+
+	end class;
+
+end;

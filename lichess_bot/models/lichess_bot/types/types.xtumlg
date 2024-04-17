@@ -1,0 +1,62 @@
+render : "lichess_bot::types"
+
+shapes :
+  shape : GameEventInfo
+    render : structured_data_type "lichess_bot::types::GameEventInfo"
+    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameState
+    render : structured_data_type "lichess_bot::types::GameState"
+    bounds : x : 220.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Player
+    render : structured_data_type "lichess_bot::types::Player"
+    bounds : x : 440.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Result
+    render : structured_data_type "lichess_bot::types::Result"
+    bounds : x : 660.0 y : 0.0 width : 200.0 height : 150.0
+  shape : TimeControl
+    render : structured_data_type "lichess_bot::types::TimeControl"
+    bounds : x : 880.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Challenge
+    render : structured_data_type "lichess_bot::types::Challenge"
+    bounds : x : 1100.0 y : 0.0 width : 200.0 height : 150.0
+  shape : ChatLine
+    render : structured_data_type "lichess_bot::types::ChatLine"
+    bounds : x : 1320.0 y : 0.0 width : 200.0 height : 150.0
+  shape : ChallengeDirection
+    render : enumeration_data_type "lichess_bot::types::ChallengeDirection"
+    bounds : x : 1540.0 y : 0.0 width : 200.0 height : 150.0
+  shape : ChallengeStatus
+    render : enumeration_data_type "lichess_bot::types::ChallengeStatus"
+    bounds : x : 1760.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Color
+    render : enumeration_data_type "lichess_bot::types::Color"
+    bounds : x : 1980.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameSource
+    render : enumeration_data_type "lichess_bot::types::GameSource"
+    bounds : x : 2200.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameSpeed
+    render : enumeration_data_type "lichess_bot::types::GameSpeed"
+    bounds : x : 2420.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameStatus
+    render : enumeration_data_type "lichess_bot::types::GameStatus"
+    bounds : x : 2640.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Room
+    render : enumeration_data_type "lichess_bot::types::Room"
+    bounds : x : 2860.0 y : 0.0 width : 200.0 height : 150.0
+  shape : UserTitle
+    render : enumeration_data_type "lichess_bot::types::UserTitle"
+    bounds : x : 3080.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Variant
+    render : enumeration_data_type "lichess_bot::types::Variant"
+    bounds : x : 3300.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Game
+    render : structured_data_type "lichess_bot::types::Game"
+    bounds : x : 3520.0 y : 0.0 width : 200.0 height : 150.0
+  shape : APIException
+    render : structured_data_type "lichess_bot::types::APIException"
+    bounds : x : 3740.0 y : 0.0 width : 200.0 height : 150.0
+  shape : User
+    render : structured_data_type "lichess_bot::types::User"
+    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+
+connectors :

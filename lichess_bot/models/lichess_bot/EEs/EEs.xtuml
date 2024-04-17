@@ -1,0 +1,152 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot is
+
+	package EEs is
+		@key_letters("ARCH");
+		@realized;
+		external Architecture is
+			@dialect("oal");
+			bridge shutdown() is
+				@noparse
+				control stop;
+				@endnoparse
+			end bridge;
+
+		end external;
+
+		@key_letters("ChessLib");
+		@realized;
+		external ChessLib is
+			@dialect("oal");
+			bridge legalMoves(moves: in sequence of string) return sequence of string;
+
+		end external;
+
+		@key_letters("LOG");
+		@realized;
+		external Logging is
+			@dialect("oal");
+			bridge LogDate(d: in date, 'message': in string);
+
+			@dialect("oal");
+			bridge LogFailure('message': in string);
+
+			@dialect("oal");
+			bridge LogInfo('message': in string);
+
+			@dialect("oal");
+			bridge LogInteger('message': in integer);
+
+			@dialect("oal");
+			bridge LogReal('message': in string, r: in real);
+
+			@dialect("oal");
+			bridge LogSuccess('message': in string);
+
+			@dialect("oal");
+			bridge LogTime('message': in string, t: in timestamp);
+
+		end external;
+
+		//! The Time external entity provides date, timestamp, and timer related operations.
+		@key_letters("TIM");
+		@realized;
+		external Time is
+			//! Provide an offset to artificially advance time.
+			@dialect("oal");
+			bridge advance_time(microseconds: in timestamp) return timestamp;
+
+			@dialect("oal");
+			bridge create_date(day: in integer, hour: in integer, minute: in integer, month: in integer, second: in integer, year: in integer) return date;
+
+			@dialect("oal");
+			bridge current_clock() return timestamp;
+
+			@dialect("oal");
+			bridge current_date() return date;
+
+			//! Return the number of seconds since the epoch.
+			@dialect("oal");
+			bridge current_seconds() return integer;
+
+			@dialect("oal");
+			bridge get_day(date: in date) return integer;
+
+			@dialect("oal");
+			bridge get_hour(date: in date) return integer;
+
+			@dialect("oal");
+			bridge get_minute(date: in date) return integer;
+
+			@dialect("oal");
+			bridge get_month(date: in date) return integer;
+
+			@dialect("oal");
+			bridge get_second(date: in date) return integer;
+
+			@dialect("oal");
+			bridge get_year(date: in date) return integer;
+
+			//! Set the date and time for the timebase.  This will affect integer values representing time.
+			@dialect("oal");
+			bridge set_epoch(day: in integer, month: in integer, year: in integer);
+
+			//! Set the current time in an absolute manner.
+			@dialect("oal");
+			bridge set_time(day: in integer, hour: in integer, microsecond: in integer, minute: in integer, month: in integer, second: in integer, year: in integer) return timestamp;
+
+			@dialect("oal");
+			bridge time_of_day(timeval: in timestamp) return timestamp;
+
+			//! This bridge operation attempts to add the specified number of microseconds to a
+			//! passed existing timer. If the timer exists (that is, it has not expired), a TRUE
+			//! value is returned. If the timer no longer exists, a FALSE value is returned.
+			@dialect("oal");
+			bridge timer_add_time(microseconds: in integer, timer_inst_ref: in timer) return boolean;
+
+			//! This bridge operation cancels and deletes the passed timer instance. If the
+			//! timer exists (that is, it had not expired), a TRUE value is returned. If the
+			//! timer no longer exists, a FALSE value is returned.
+			@dialect("oal");
+			bridge timer_cancel(timer_inst_ref: in timer) return boolean;
+
+			//! Returns the time remaining (in microseconds) for the passed timer instance. If
+			//! the timer has expired, a zero value is returned.
+			@dialect("oal");
+			bridge timer_remaining_time(timer_inst_ref: in timer) return integer;
+
+			//! This bridge operation attempts to set the passed existing timer to expire in
+			//! the specified number of microseconds. If the timer exists (that is, it has not
+			//! expired), a TRUE value is returned. If the timer no longer exists, a FALSE value
+			//! is returned.
+			@dialect("oal");
+			bridge timer_reset_time(microseconds: in integer, timer_inst_ref: in timer) return boolean;
+
+			//! This bridge operation starts a timer set to expire in the specified number of
+			//! microseconds, generating the passed event upon expiration. Returns the instance
+			//! handle of the timer.
+			@dialect("oal");
+			bridge timer_start(event_inst: in 'inst<Event>', microseconds: in integer) return timer;
+
+			//! This bridge operation starts a timer set to expire in the specified number of
+			//! microseconds, generating the passed event upon expiration. Upon expiration, the
+			//! timer will be restarted and fire again in the specified number of microseconds
+			//! generating the passed event. This bridge operation returns the instance handle
+			//! of the timer.
+			@dialect("oal");
+			bridge timer_start_recurring(event_inst: in 'inst<Event>', microseconds: in integer) return timer;
+
+			//! Format a timestamp into a string according the the specified string using the Java standard.
+			@dialect("oal");
+			bridge timestamp_format(timestamp: in timestamp, format: in string) return string;
+
+			//! Turn the input numeric timestamp into a string.
+			@dialect("oal");
+			bridge timestamp_to_string(timestamp: in timestamp) return string;
+
+		end external;
+
+	end package;
+
+end;

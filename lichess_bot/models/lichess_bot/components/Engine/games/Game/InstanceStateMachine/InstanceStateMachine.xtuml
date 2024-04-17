@@ -1,0 +1,94 @@
+// BP 7.1.6 content: InstanceStateMachine syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::games::Game is
+
+	@state_num(1);
+	@dialect("oal");
+	state created;
+
+	@state_num(3);
+	@dialect("oal");
+	state 'game over';
+
+	@state_num(4);
+	@dialect("oal");
+	state 'our turn';
+
+	@state_num(5);
+	@dialect("oal");
+	state 'their turn';
+
+	@state_num(6);
+	@dialect("oal");
+	state 'playing move';
+
+	@event_num(1);
+	event 'waiting on move';
+
+	@event_num(2);
+	event 'game over'(status: in GameStatus);
+
+	@event_num(3);
+	event 'play move'(move: in string);
+
+	@event_num(4);
+	event 'ready to play';
+
+	state model is
+
+		|                   | 'waiting on move' | 'game over'       | 'play move'       | 'ready to play'   |
+		| ----------------- | ----------------- | ----------------- | ----------------- | ----------------- |
+		| created           | 'their turn'      | cannot_happen     | cannot_happen     | 'our turn'        |
+		| 'game over'       | ignore            | cannot_happen     | ignore            | ignore            |
+		| 'our turn'        | ignore            | 'game over'       | 'playing move'    | ignore            |
+		| 'their turn'      | ignore            | 'game over'       | ignore            | 'our turn'        |
+		| 'playing move'    | 'their turn'      | 'game over'       | cannot_happen     | ignore            |
+
+	end state model;
+
+	state 'game over'(status: in GameStatus) is
+		@noparse
+		LOG::LogInfo(message:"Game: " + self.id + ": Game over!");
+		select one challenge related by self->Challenge[R1];
+		generate Challenge6:'game over' to challenge;
+		unrelate self from challenge across R1;
+		delete object instance self;
+		@endnoparse
+	end state;
+
+	state 'our turn' is
+		@noparse
+		// In this state action, start the process of finding the next move. When the
+		// move is chosen, generate the 'play move' event to this instance of Game.
+		
+		// select a random legal move
+		legal_moves = ChessLib::legalMoves(moves:self.game_state.moves);
+		if legal_moves.length > 0
+		   
+			// select a move using the current timestamp as random noise
+			i = 0;  // coerce integer
+			i = TIM::current_clock() % legal_moves.length;
+			move = legal_moves[i];
+			
+			create event instance e of Game3:'play move'(move:move) to self;
+			t = TIM::timer_start(event_inst:e, microseconds:0);  // play ASAP
+		
+		end if;
+		@endnoparse
+	end state;
+
+	state 'playing move'(move: in string) is
+		@noparse
+		// play the move
+		result = chess::move(game_id:self.id, move:param.move);
+		if result.result then
+			generate Game1:'waiting on move' to self;
+		else
+		  // TODO handle error here
+		  // TODO maybe go back and try again
+		  LOG::LogFailure(message:"Failed to make move: " + result.error.error);
+		end if;
+		@endnoparse
+	end state;
+
+end;

@@ -1,0 +1,147 @@
+render : "lichess_bot::components::Engine::games::Game::Instance State Machine"
+
+shapes :
+  shape : created
+    render : state "lichess_bot::components::Engine::games::Game::Instance State Machine::created"
+    bounds : x : 4092.0 y : 3204.0 width : 204.0 height : 156.0
+  shape : gameover
+    render : state "lichess_bot::components::Engine::games::Game::Instance State Machine::game over"
+    bounds : x : 5088.0 y : 3060.0 width : 204.0 height : 144.0
+  shape : ourturn
+    render : state "lichess_bot::components::Engine::games::Game::Instance State Machine::our turn"
+    bounds : x : 4428.0 y : 3024.0 width : 312.0 height : 228.0
+  shape : theirturn
+    render : state "lichess_bot::components::Engine::games::Game::Instance State Machine::their turn"
+    bounds : x : 4476.0 y : 3420.0 width : 205.0 height : 121.0
+  shape : playingmove
+    render : state "lichess_bot::components::Engine::games::Game::Instance State Machine::playing move"
+    bounds : x : 4836.0 y : 3240.0 width : 193.0 height : 145.0
+
+connectors :
+  connector : ourturn____Game3__playmove
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::our turn::Game3: play move"
+    polyline :
+      segment :
+        start : x : 4740.0 y : 3167.0
+        end :   x : 4914.0 y : 3167.0
+      segment :
+        start : x : 4914.0 y : 3167.0
+        end :   x : 4914.0 y : 3240.0
+    anchors :
+      start :
+        point : x : 4740.0 y : 3167.0
+        shape : ourturn
+      end :
+        point : x : 4914.0 y : 3167.0
+        shape : playingmove
+    texts :
+      text :
+        bounds : x : 4779.0 y : 3144.0 width : 0.0 height : 0.0 where : middle
+  connector : playingmove____Game1__waitingonmove
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::playing move::Game1: waiting on move"
+    polyline :
+      segment :
+        start : x : 4908.0 y : 3385.0
+        end :   x : 4907.0 y : 3468.0
+      segment :
+        start : x : 4907.0 y : 3468.0
+        end :   x : 4681.0 y : 3468.0
+    anchors :
+      start :
+        point : x : 4908.0 y : 3385.0
+        shape : playingmove
+      end :
+        point : x : 4907.0 y : 3468.0
+        shape : theirturn
+    texts :
+      text :
+        bounds : x : 4744.0 y : 3436.0 width : 0.0 height : 0.0 where : middle
+  connector : created____Game4__readytoplay
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::created::Game4: ready to play"
+    polyline :
+      segment :
+        start : x : 4247.0 y : 3204.0
+        end :   x : 4247.0 y : 3107.0
+      segment :
+        start : x : 4247.0 y : 3107.0
+        end :   x : 4428.0 y : 3107.0
+    anchors :
+      start :
+        point : x : 4247.0 y : 3204.0
+        shape : created
+      end :
+        point : x : 4247.0 y : 3107.0
+        shape : ourturn
+    texts :
+      text :
+        bounds : x : 4232.0 y : 3075.0 width : 0.0 height : 0.0 where : middle
+  connector : theirturn____Game4__readytoplay
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::their turn::Game4: ready to play"
+    polyline :
+      segment :
+        start : x : 4559.0 y : 3420.0
+        end :   x : 4559.0 y : 3252.0
+    anchors :
+      start :
+        point : x : 4559.0 y : 3420.0
+        shape : theirturn
+      end :
+        point : x : 4559.0 y : 3252.0
+        shape : ourturn
+    texts :
+      text :
+        bounds : x : 4434.0 y : 3330.0 width : 0.0 height : 0.0 where : middle
+  connector : ourturn____Game2__gameover
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::our turn::Game2: game over"
+    polyline :
+      segment :
+        start : x : 4740.0 y : 3095.0
+        end :   x : 5088.0 y : 3095.0
+    anchors :
+      start :
+        point : x : 4740.0 y : 3095.0
+        shape : ourturn
+      end :
+        point : x : 5088.0 y : 3095.0
+        shape : gameover
+    texts :
+      text :
+        bounds : x : 4865.0 y : 3057.0 width : 0.0 height : 0.0 where : middle
+  connector : playingmove____Game2__gameover
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::playing move::Game2: game over"
+    polyline :
+      segment :
+        start : x : 5029.0 y : 3287.0
+        end :   x : 5112.0 y : 3287.0
+      segment :
+        start : x : 5112.0 y : 3287.0
+        end :   x : 5112.0 y : 3204.0
+    anchors :
+      start :
+        point : x : 5029.0 y : 3287.0
+        shape : playingmove
+      end :
+        point : x : 5112.0 y : 3287.0
+        shape : gameover
+    texts :
+      text :
+        bounds : x : 5042.0 y : 3299.0 width : 0.0 height : 0.0 where : middle
+  connector : theirturn____Game2__gameover
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::their turn::Game2: game over"
+    polyline :
+      segment :
+        start : x : 4681.0 y : 3515.0
+        end :   x : 5217.0 y : 3515.0
+      segment :
+        start : x : 5217.0 y : 3515.0
+        end :   x : 5217.0 y : 3204.0
+    anchors :
+      start :
+        point : x : 4681.0 y : 3515.0
+        shape : theirturn
+      end :
+        point : x : 5217.0 y : 3515.0
+        shape : gameover
+    texts :
+      text :
+        bounds : x : 5053.0 y : 3484.0 width : 0.0 height : 0.0 where : middle

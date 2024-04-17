@@ -1,0 +1,5 @@
+package types;
+
+public enum BotEventType {
+	GAMESTART, GAMEFINISH, CHALLENGE, CHALLENGECANCELED, CHALLENGEDECLINED
+}

@@ -1,0 +1,31 @@
+render : "lichess_bot::components::Engine::games"
+
+shapes :
+  shape : Challenge
+    render : class "lichess_bot::components::Engine::games::Challenge"
+    bounds : x : 4344.0 y : 3144.0 width : 241.0 height : 169.0
+  shape : Game
+    render : class "lichess_bot::components::Engine::games::Game"
+    bounds : x : 4788.0 y : 3144.0 width : 241.0 height : 169.0
+
+connectors :
+  connector : R1
+    render : association "lichess_bot::components::Engine::games::R1"
+    polyline :
+      segment :
+        start : x : 4585.0 y : 3228.0
+        end :   x : 4788.0 y : 3228.0
+    anchors :
+      start :
+        point : x : 4585.0 y : 3228.0
+        shape : Challenge
+      end :
+        point : x : 4788.0 y : 3228.0
+        shape : Game
+    texts :
+      text :
+        bounds : x : 4588.0 y : 3238.0 width : 0.0 height : 0.0 where : start
+      text :
+        bounds : x : 4680.0 y : 3190.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 4722.0 y : 3237.0 width : 0.0 height : 0.0 where : end
