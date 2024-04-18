@@ -7,6 +7,9 @@ within lichess_bot is
 		@realized;
 		external Architecture is
 			@dialect("oal");
+			bridge openURL(url: in string);
+
+			@dialect("oal");
 			bridge shutdown() is
 				@noparse
 				control stop;

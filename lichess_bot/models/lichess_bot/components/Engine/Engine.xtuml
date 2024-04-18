@@ -81,6 +81,7 @@ within lichess_bot::components is
 				else
 					
 					LOG::LogInfo(message: "Watch outgoing challenge at: " + c.url );
+					ARCH::openURL(url:c.url);
 				
 				end if;
 				@endnoparse
