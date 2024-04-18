@@ -11,7 +11,7 @@ Verifier.
 ### Download BridgePoint
 
 Download the latest version of BridgePoint from
-[here](https://s3.amazonaws.com/xtuml-releases/nightly-build/buildfiles.html).
+[here](https://s3.amazonaws.com/xtuml-releases/12804-build/buildfiles.html).
 Due to ongoing development related to this project, an engineering branch build
 is required to run the project.
 
