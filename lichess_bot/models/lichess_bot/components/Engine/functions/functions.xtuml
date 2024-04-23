@@ -10,7 +10,7 @@ within lichess_bot::components::Engine is
 			r = chess::createChallenge(
 				user: "maia1",
 				rated: false,
-				clock_limit: 300,
+				clock_limit: 900,
 				clock_increment: 0,
 				color: Color::RANDOM,
 				variant: Variant::STANDARD,
@@ -19,6 +19,25 @@ within lichess_bot::components::Engine is
 			if not r.result then
 				LOG::LogFailure(message: "Failed to create challenge: " + r.error.error);
 			end if;
+			@endnoparse
+		end function;
+
+		@dialect("oal");
+		@function_num(3);
+		function init() is
+			@noparse
+			// load configuration properties
+			select any bot from instances of Bot;
+			if empty bot then
+				create object instance bot of Bot;
+				bot.config = PROP::loadProperties(file_name:"lichess_bot.properties");
+			end if;
+			
+			// connect to the Lichess API and start listening for events
+			send chess::connect(properties: bot.config);
+			
+			// get the bot user
+			bot.user = chess::getUser();
 			@endnoparse
 		end function;
 

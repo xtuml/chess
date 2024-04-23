@@ -52,6 +52,23 @@ within lichess_bot is
 
 		end external;
 
+		@key_letters("PROP");
+		@realized;
+		external Properties is
+			@dialect("oal");
+			bridge loadProperties(file_name: in string) return Properties;
+
+			@dialect("oal");
+			bridge getString(properties: in Properties, name: in string, default_value: in string) return string;
+
+			@dialect("oal");
+			bridge getInteger(properties: in Properties, name: in string, default_value: in integer) return integer;
+
+			@dialect("oal");
+			bridge getBoolean(properties: in Properties, name: in string, default_value: in boolean) return boolean;
+
+		end external;
+
 		//! The Time external entity provides date, timestamp, and timer related operations.
 		@key_letters("TIM");
 		@realized;

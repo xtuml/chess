@@ -2,7 +2,6 @@ package lichess;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -15,28 +14,29 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import types.APIException;
-import types.BotEvent;
-import types.BotEventType;
-import types.ChatLine;
-import types.Color;
-import types.DeclineReason;
-import types.Game;
-import types.GameEvent;
-import types.GameEventType;
-import types.GameState;
-import types.Result;
-import types.Room;
-import types.User;
-import types.UserTitle;
-import types.Variant;
 import types.adapters.LichessTypeAdapterFactory;
+import types.lichess.APIException;
+import types.lichess.BotEvent;
+import types.lichess.BotEventType;
+import types.lichess.ChatLine;
+import types.lichess.Color;
+import types.lichess.DeclineReason;
+import types.lichess.Game;
+import types.lichess.GameEvent;
+import types.lichess.GameEventType;
+import types.lichess.GameState;
+import types.lichess.Result;
+import types.lichess.Room;
+import types.lichess.User;
+import types.lichess.UserTitle;
+import types.lichess.Variant;
 
 public class LichessAPIConnection implements LichessAPIProvider {
 
@@ -48,7 +48,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	private LichessAPISubscriber peer;
 	private User user;
 
-	public LichessAPIConnection(PrintStream logger, LichessAPISubscriber peer) {
+	public LichessAPIConnection(PrintStream logger, LichessAPISubscriber peer, Properties props) {
 		this.logger = logger;
 		this.peer = peer;
 
@@ -58,14 +58,8 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		gson = builder.create();
 
 		// load configuration
-		final var props = new Properties();
-		try {
-			props.load(getClass().getClassLoader().getResourceAsStream("lichess_bot.properties"));
-			this.baseUrl = props.getProperty("api_base_url");
-			this.accessToken = props.getProperty("access_token");
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+		this.baseUrl = props.getProperty("api_base_url");
+		this.accessToken = props.getProperty("access_token");
 
 		// create the HTTP client
 		client = HttpClient.newBuilder().followRedirects(Redirect.NORMAL).connectTimeout(Duration.ofSeconds(20))
@@ -82,7 +76,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		}
 
 		// create a thread to wait for events
-		final var t = new Thread(this::handleBotEvents);
+		final var t = new Thread(this::handleBotEvents, "BotEventsThread");
 		t.start();
 
 	}
@@ -126,11 +120,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 
 	@Override
 	public User getUser() {
-		if (user != null) {
-			return user;
-		} else {
-			return new User();
-		}
+		return Optional.ofNullable(user).orElse(new User());
 	}
 
 	@Override
@@ -138,15 +128,17 @@ public class LichessAPIConnection implements LichessAPIProvider {
 			Variant variant, String fen) {
 		final var params = new HashMap<String, String>();
 		params.put("rated", Boolean.toString(rated));
-		params.put("clock.limit", Integer.toString(clock_limit));
-		params.put("clock.increment", Integer.toString(clock_increment));
+		if (clock_limit >= 0 && clock_increment >= 0) {
+			params.put("clock.limit", Integer.toString(clock_limit));
+			params.put("clock.increment", Integer.toString(clock_increment));
+		}
 		params.put("color", color.name().toLowerCase());
 		params.put("variant", variant.getValue());
 		if (fen != null && !fen.isEmpty()) {
 			params.put("fen", fen);
 		}
-		return postRequest(String.format("%s/api/challenge/%s", baseUrl, user),
-				"application/x-www-form-urlencoded", params);
+		return postRequest(String.format("%s/api/challenge/%s", baseUrl, user), "application/x-www-form-urlencoded",
+				params);
 	}
 
 	private Result upgradeAccount() {
@@ -196,7 +188,8 @@ public class LichessAPIConnection implements LichessAPIProvider {
 						switch (event.getType()) {
 						case BotEventType.GAMESTART:
 							// create a new thread to handle this game
-							final var t = new Thread(() -> this.handleGameEvents(event.getGame().getId()));
+							final var t = new Thread(() -> this.handleGameEvents(event.getGame().getId()),
+									String.format("GameEventsThread (%s)", event.getGame().getId()));
 							t.start();
 							peer.gameStart(this, event.getGame());
 							break;

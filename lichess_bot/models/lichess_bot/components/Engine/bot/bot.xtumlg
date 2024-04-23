@@ -1,0 +1,8 @@
+render : "lichess_bot::components::Engine::bot"
+
+shapes :
+  shape : Bot
+    render : class "lichess_bot::components::Engine::bot::Bot"
+    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+
+connectors :

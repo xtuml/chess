@@ -1,11 +1,11 @@
 package lichess;
 
-import types.APIException;
-import types.Challenge;
-import types.Game;
-import types.GameEventInfo;
-import types.GameState;
-import types.Room;
+import types.lichess.APIException;
+import types.lichess.Challenge;
+import types.lichess.Game;
+import types.lichess.GameEventInfo;
+import types.lichess.GameState;
+import types.lichess.Room;
 
 public abstract class AbstractLichessAPISubscriber implements LichessAPISubscriber {
 

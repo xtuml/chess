@@ -10,6 +10,9 @@ shapes :
   shape : LichessAPI
     render : interface "lichess_bot::components::LichessAPI"
     bounds : x : 634.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Instrumentation
+    render : interface "lichess_bot::components::Instrumentation"
+    bounds : x : 854.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :
   connector : Lichess____API____LichessAPI
@@ -42,3 +45,16 @@ connectors :
     texts :
       text :
         bounds : x : 298.0 y : 33.0 width : 0.0 height : 0.0 where : middle
+  connector : Engine____inst____Instrumentation
+    render : provided_interface "lichess_bot::components::Engine::inst::Instrumentation"
+    polyline :
+      segment :
+        start : x : 480.0 y : 150.0
+        end :   x : 479.0 y : 222.0
+    anchors :
+      start :
+        point : x : 480.0 y : 150.0
+        shape : Engine
+      end :
+        point : x : 479.0 y : 222.0
+    texts :

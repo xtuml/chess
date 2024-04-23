@@ -1,0 +1,15 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::bot is
+
+	@key_letters("Bot");
+	@class_num(1);
+	class Bot is
+
+		user: User;
+
+		config: Properties;
+
+	end class;
+
+end;

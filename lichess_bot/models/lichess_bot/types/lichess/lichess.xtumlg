@@ -1,0 +1,65 @@
+render : "lichess_bot::types::lichess"
+
+shapes :
+  shape : ChallengeDirection
+    render : enumeration_data_type "lichess_bot::types::lichess::ChallengeDirection"
+    bounds : x : 1790.0 y : 0.0 width : 200.0 height : 150.0
+  shape : ChallengeStatus
+    render : enumeration_data_type "lichess_bot::types::lichess::ChallengeStatus"
+    bounds : x : 2040.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Color
+    render : enumeration_data_type "lichess_bot::types::lichess::Color"
+    bounds : x : 2290.0 y : 0.0 width : 200.0 height : 150.0
+  shape : DeclineReason
+    render : enumeration_data_type "lichess_bot::types::lichess::DeclineReason"
+    bounds : x : 4210.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameSource
+    render : enumeration_data_type "lichess_bot::types::lichess::GameSource"
+    bounds : x : 4460.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameSpeed
+    render : enumeration_data_type "lichess_bot::types::lichess::GameSpeed"
+    bounds : x : 4710.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameStatus
+    render : enumeration_data_type "lichess_bot::types::lichess::GameStatus"
+    bounds : x : 4960.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Room
+    render : enumeration_data_type "lichess_bot::types::lichess::Room"
+    bounds : x : 5210.0 y : 0.0 width : 200.0 height : 150.0
+  shape : UserTitle
+    render : enumeration_data_type "lichess_bot::types::lichess::UserTitle"
+    bounds : x : 5460.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Variant
+    render : enumeration_data_type "lichess_bot::types::lichess::Variant"
+    bounds : x : 5710.0 y : 0.0 width : 200.0 height : 150.0
+  shape : APIException
+    render : structured_data_type "lichess_bot::types::lichess::APIException"
+    bounds : x : 5960.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Challenge
+    render : structured_data_type "lichess_bot::types::lichess::Challenge"
+    bounds : x : 6210.0 y : 0.0 width : 200.0 height : 150.0
+  shape : ChatLine
+    render : structured_data_type "lichess_bot::types::lichess::ChatLine"
+    bounds : x : 6460.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Game
+    render : structured_data_type "lichess_bot::types::lichess::Game"
+    bounds : x : 6710.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameEventInfo
+    render : structured_data_type "lichess_bot::types::lichess::GameEventInfo"
+    bounds : x : 6960.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameState
+    render : structured_data_type "lichess_bot::types::lichess::GameState"
+    bounds : x : 7210.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Player
+    render : structured_data_type "lichess_bot::types::lichess::Player"
+    bounds : x : 7460.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Result
+    render : structured_data_type "lichess_bot::types::lichess::Result"
+    bounds : x : 7710.0 y : 0.0 width : 200.0 height : 150.0
+  shape : TimeControl
+    render : structured_data_type "lichess_bot::types::lichess::TimeControl"
+    bounds : x : 7960.0 y : 0.0 width : 200.0 height : 150.0
+  shape : User
+    render : structured_data_type "lichess_bot::types::lichess::User"
+    bounds : x : 8210.0 y : 0.0 width : 200.0 height : 150.0
+
+connectors :

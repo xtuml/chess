@@ -16,9 +16,6 @@ within lichess_bot::components is
 			message chat(game_id: in string, text: in string, room: in Room) return Result to provider;
 
 			@dialect("oal");
-			message connect() return Result to provider;
-
-			@dialect("oal");
 			message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return Result to provider;
 
 			@dialect("oal");
@@ -44,6 +41,9 @@ within lichess_bot::components is
 
 			@dialect("oal");
 			message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
+
+			@dialect("oal");
+			message connect(properties: in Properties) to provider;
 
 			@dialect("oal");
 			message error(error: in APIException) from provider;

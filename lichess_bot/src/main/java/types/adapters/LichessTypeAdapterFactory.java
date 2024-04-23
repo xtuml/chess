@@ -6,8 +6,8 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 
-import types.GameStatus;
-import types.Variant;
+import types.lichess.GameStatus;
+import types.lichess.Variant;
 
 public class LichessTypeAdapterFactory implements TypeAdapterFactory {
 	

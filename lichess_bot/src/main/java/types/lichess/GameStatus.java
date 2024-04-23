@@ -1,4 +1,4 @@
-package types;
+package types.lichess;
 
 import java.util.stream.Stream;
 

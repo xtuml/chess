@@ -6,7 +6,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import types.Variant;
+import types.lichess.Variant;
 
 public class VariantAdapter extends TypeAdapter<Variant> {
 

@@ -1,13 +1,15 @@
 package components;
 
+import java.util.Properties;
+
 import org.xtuml.bp.core.ComponentInstance_c;
 
-import types.Color;
-import types.DeclineReason;
-import types.Result;
-import types.Room;
-import types.User;
-import types.Variant;
+import types.lichess.Color;
+import types.lichess.DeclineReason;
+import types.lichess.Result;
+import types.lichess.Room;
+import types.lichess.User;
+import types.lichess.Variant;
 
 public interface ILichessAPIToProvider {
 
@@ -25,7 +27,7 @@ public interface ILichessAPIToProvider {
 
 	Result declineChallenge(ComponentInstance_c senderReceiver, String challengeId, DeclineReason reason);
 
-	Result connect(ComponentInstance_c senderReceiver);
+	void connect(ComponentInstance_c senderReceiver, Properties properties);
 	
 	User getUser(ComponentInstance_c senderReceiver);
 	

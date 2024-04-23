@@ -1,22 +1,24 @@
 package components;
 
+import java.util.Properties;
+
 import org.xtuml.bp.core.ComponentInstance_c;
 import org.xtuml.bp.core.CorePlugin;
 
 import lichess.LichessAPIConnection;
 import lichess.LichessAPIProvider;
 import lichess.LichessAPISubscriber;
-import types.APIException;
-import types.Challenge;
-import types.Color;
-import types.DeclineReason;
-import types.Game;
-import types.GameEventInfo;
-import types.GameState;
-import types.Result;
-import types.Room;
-import types.User;
-import types.Variant;
+import types.lichess.APIException;
+import types.lichess.Challenge;
+import types.lichess.Color;
+import types.lichess.DeclineReason;
+import types.lichess.Game;
+import types.lichess.GameEventInfo;
+import types.lichess.GameState;
+import types.lichess.Result;
+import types.lichess.Room;
+import types.lichess.User;
+import types.lichess.Variant;
 
 public class Lichess implements ILichessAPIToProvider {
 
@@ -28,10 +30,11 @@ public class Lichess implements ILichessAPIToProvider {
 	}
 
 	@Override
-	public Result connect(ComponentInstance_c senderReceiver) {
-		lichess = new LichessAPIConnection(CorePlugin.out, new LichessAPIHandler());
-		lichess.initialize();
-		return Result.SUCCESS;
+	public void connect(ComponentInstance_c senderReceiver, Properties properties) {
+		if (lichess == null) {
+			lichess = new LichessAPIConnection(CorePlugin.out, new LichessAPIHandler(), properties);
+			lichess.initialize();
+		}
 	}
 
 	@Override

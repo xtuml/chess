@@ -1,11 +1,11 @@
 package lichess;
 
-import types.Color;
-import types.DeclineReason;
-import types.Result;
-import types.Room;
-import types.User;
-import types.Variant;
+import types.lichess.Color;
+import types.lichess.DeclineReason;
+import types.lichess.Result;
+import types.lichess.Room;
+import types.lichess.User;
+import types.lichess.Variant;
 
 public interface LichessAPIProvider {
 

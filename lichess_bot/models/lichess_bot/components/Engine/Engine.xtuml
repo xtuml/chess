@@ -4,6 +4,7 @@ within lichess_bot::components is
 
 	component Engine is
 		
+		package bot;
 		package functions;
 		package games;
 		
@@ -17,9 +18,6 @@ within lichess_bot::components is
 
 			@dialect("oal");
 			message chat(game_id: in string, text: in string, room: in Room) return Result to provider;
-
-			@dialect("oal");
-			message connect() return Result to provider;
 
 			@dialect("oal");
 			message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return Result to provider;
@@ -45,17 +43,19 @@ within lichess_bot::components is
 				LOG::LogInfo(message:"Received challenge: " + param.challenge.id);
 				c = param.challenge;
 				
-				bot = chess::getUser();
+				select any bot from instances of Bot;
 				
 				// handle incoming challenges
-				if c.challenger.id != bot.id then
+				if c.challenger.id != bot.user.id then
 				
 					accept_challenge = true;
 					reason = DeclineReason::GENERIC;
 				
-					// only accept the challenge if not currently in a game
-					select any game from instances of Game where (selected.game_state.status == GameStatus::CREATED or selected.game_state.status == GameStatus::STARTED);
-					if not empty game then
+					// only accept the challenge if not at the max number of active games
+					// default to one game at a time
+					max_games = PROP::getInteger(properties: bot.config, name: "max_games", default_value: 1);
+					select many games from instances of Game where (selected.game_state.status == GameStatus::CREATED or selected.game_state.status == GameStatus::STARTED);
+					if cardinality games >= max_games then
 							accept_challenge = false;
 							reason = DeclineReason::LATER;
 					end if;
@@ -81,7 +81,9 @@ within lichess_bot::components is
 				else
 					
 					LOG::LogInfo(message: "Watch outgoing challenge at: " + c.url );
-					ARCH::openURL(url:c.url);
+					if PROP::getBoolean(properties: bot.config, name: "auto_open_challenge_url", default_value: false) then
+						ARCH::openURL(url:c.url);
+					end if;
 				
 				end if;
 				@endnoparse
@@ -98,8 +100,16 @@ within lichess_bot::components is
 			message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider is
 				@noparse
 				LOG::LogInfo(message:"Chat line: " + param.game_id + ", " + param.username + ": " + param.text);
+				
+				// TODO
+				if (param.username == "maia1" and param.text == "Hi levifish, I'm currently taking my time like a human. If you type 'go' or 'fast' in the chat I'll play faster. gl hf") then
+					r = chess::chat(game_id:param.game_id, room:Room::PLAYER, text:"go");
+				end if;
 				@endnoparse
 			end message;
+
+			@dialect("oal");
+			message connect(properties: in Properties) to provider;
 
 			@dialect("oal");
 			message error(error: in APIException) from provider is
@@ -197,6 +207,18 @@ within lichess_bot::components is
 			message opponentGone(game_id: in string) from provider is
 				@noparse
 				LOG::LogInfo(message:"Opponent gone: " + param.game_id);
+				@endnoparse
+			end message;
+
+		end port;
+
+		provided port inst implements Instrumentation is
+
+			@dialect("oal");
+			@message_num(1);
+			message init() to provider is
+				@noparse
+				::init();
 				@endnoparse
 			end message;
 
