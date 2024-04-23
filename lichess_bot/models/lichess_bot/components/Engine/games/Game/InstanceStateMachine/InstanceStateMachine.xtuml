@@ -58,8 +58,16 @@ within lichess_bot::components::Engine::games::Game is
 		// In this state action, start the process of finding the next move. When the
 		// move is chosen, generate the 'play move' event to this instance of Game.
 		
+		// TODO handle takeback proposals
+		
+		// handle draw offers
+		if (self.color == Color::WHITE and self.game_state.bdraw) or
+			(self.color == Color::BLACK and self.game_state.wdraw) then
+			self.decline_draw();
+		end if;
+		
 		// select a random legal move
-		legal_moves = ChessLib::legalMoves(moves:self.game_state.moves);
+		legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(moves: self.game_state.moves));
 		if legal_moves.length > 0
 		   
 			// select a move using the current timestamp as random noise

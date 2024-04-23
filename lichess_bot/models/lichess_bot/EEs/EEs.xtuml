@@ -21,8 +21,31 @@ within lichess_bot is
 		@key_letters("ChessLib");
 		@realized;
 		external ChessLib is
+			//! Takes as input a string representing a move in LAN and returns the destination file as a string /[a-h]/
 			@dialect("oal");
-			bridge legalMoves(moves: in sequence of string) return sequence of string;
+			bridge destFile(move: in string) return string;
+
+			//! Takes as input a string representing a move in LAN and returns the destination rank as an integer 1-8
+			@dialect("oal");
+			bridge destRank(move: in string) return integer;
+
+			//! Takes as input a FEN string representing the current position
+			//! Returns a list of legal moves in the position
+			@dialect("oal");
+			bridge legalMoves(fen: in string) return sequence of string;
+
+			//! Takes as input a list of moves from the initial starting position representing the current position
+			//! Returns a FEN string representing the position
+			@dialect("oal");
+			bridge movesToFEN(moves: in sequence of string) return string;
+
+			//! Takes as input a string representing a move in LAN and returns the source file as a string /[a-h]/
+			@dialect("oal");
+			bridge sourceFile(move: in string) return string;
+
+			//! Takes as input a string representing a move in LAN and returns the source rank as an integer 1-8
+			@dialect("oal");
+			bridge sourceRank(move: in string) return integer;
 
 		end external;
 
@@ -56,16 +79,16 @@ within lichess_bot is
 		@realized;
 		external Properties is
 			@dialect("oal");
-			bridge loadProperties(file_name: in string) return Properties;
-
-			@dialect("oal");
-			bridge getString(properties: in Properties, name: in string, default_value: in string) return string;
+			bridge getBoolean(properties: in Properties, name: in string, default_value: in boolean) return boolean;
 
 			@dialect("oal");
 			bridge getInteger(properties: in Properties, name: in string, default_value: in integer) return integer;
 
 			@dialect("oal");
-			bridge getBoolean(properties: in Properties, name: in string, default_value: in boolean) return boolean;
+			bridge getString(properties: in Properties, name: in string, default_value: in string) return string;
+
+			@dialect("oal");
+			bridge loadProperties(file_name: in string) return Properties;
 
 		end external;
 

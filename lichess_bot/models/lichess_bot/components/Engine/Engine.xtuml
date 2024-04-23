@@ -66,7 +66,8 @@ within lichess_bot::components is
 							reason = DeclineReason::CASUAL;
 					end if;
 				
-					if c.variant != Variant::STANDARD then
+					// only accept standard games starting from the standard start position
+					if c.variant != Variant::STANDARD or not (c.initialFen == "" or c.initialFen == "startpos") then
 							accept_challenge = false;
 							reason = DeclineReason::STANDARD;
 					end if;
@@ -104,6 +105,16 @@ within lichess_bot::components is
 				// TODO
 				if (param.username == "maia1" and param.text == "Hi levifish, I'm currently taking my time like a human. If you type 'go' or 'fast' in the chat I'll play faster. gl hf") then
 					r = chess::chat(game_id:param.game_id, room:Room::PLAYER, text:"go");
+				end if;
+				
+				// reject draw offers
+				select any game from instances of Game where selected.id == param.game_id;
+				if not empty game then
+					if param.username == "lichess" and param.room == Room::PLAYER and
+						((game.color == Color::WHITE and param.text == "Black offers draw") or
+						(game.color == Color::BLACK and param.text == "White offers draw")) then
+						game.decline_draw();
+					end if;
 				end if;
 				@endnoparse
 			end message;
