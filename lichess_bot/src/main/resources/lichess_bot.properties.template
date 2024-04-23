@@ -1,2 +1,4 @@
 api_base_url=https://lichess.org
 access_token=<YOUR_LICHESS_ACCESS_TOKEN>
+max_games=10
+auto_open_challenge_url=true

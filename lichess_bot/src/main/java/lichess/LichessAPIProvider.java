@@ -19,6 +19,8 @@ public interface LichessAPIProvider {
 
 	Result draw(String gameId, boolean accept);
 
+	Result takeback(String gameId, boolean accept);
+
 	Result acceptChallenge(String challengeId);
 
 	Result declineChallenge(String challengeId, DeclineReason reason);

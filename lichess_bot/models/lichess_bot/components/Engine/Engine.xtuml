@@ -38,6 +38,9 @@ within lichess_bot::components is
 			message resign(game_id: in string) return Result to provider;
 
 			@dialect("oal");
+			message takeback(game_id: in string, accept: in boolean) return Result to provider;
+
+			@dialect("oal");
 			message challenge(challenge: in Challenge) from provider is
 				@noparse
 				LOG::LogInfo(message:"Received challenge: " + param.challenge.id);
@@ -102,19 +105,26 @@ within lichess_bot::components is
 				@noparse
 				LOG::LogInfo(message:"Chat line: " + param.game_id + ", " + param.username + ": " + param.text);
 				
-				// TODO
+				// TODO make the maia1 bot play faster
 				if (param.username == "maia1" and param.text == "Hi levifish, I'm currently taking my time like a human. If you type 'go' or 'fast' in the chat I'll play faster. gl hf") then
 					r = chess::chat(game_id:param.game_id, room:Room::PLAYER, text:"go");
 				end if;
 				
-				// reject draw offers
 				select any game from instances of Game where selected.id == param.game_id;
 				if not empty game then
+				
+					// handle takeback proposals
+					if param.username == "lichess" and param.room == Room::PLAYER and param.text == "Takeback sent" then
+						game.handle_takeback_proposal();
+					end if;
+				
+					// handle draw offers
 					if param.username == "lichess" and param.room == Room::PLAYER and
 						((game.color == Color::WHITE and param.text == "Black offers draw") or
 						(game.color == Color::BLACK and param.text == "White offers draw")) then
-						game.decline_draw();
+						game.handle_draw_offer();
 					end if;
+				
 				end if;
 				@endnoparse
 			end message;

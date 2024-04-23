@@ -23,6 +23,8 @@ public interface ILichessAPIToProvider {
 
 	Result draw(ComponentInstance_c senderReceiver, String gameId, Boolean accept);
 
+	Result takeback(ComponentInstance_c senderReceiver, String gameId, Boolean accept);
+
 	Result acceptChallenge(ComponentInstance_c senderReceiver, String challengeId);
 
 	Result declineChallenge(ComponentInstance_c senderReceiver, String challengeId, DeclineReason reason);

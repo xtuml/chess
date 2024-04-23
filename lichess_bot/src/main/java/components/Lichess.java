@@ -63,6 +63,11 @@ public class Lichess implements ILichessAPIToProvider {
 	}
 
 	@Override
+	public Result takeback(ComponentInstance_c senderReceiver, String gameId, Boolean accept) {
+		return lichess.takeback(gameId, accept);
+	}
+
+	@Override
 	public Result acceptChallenge(ComponentInstance_c senderReceiver, String challengeId) {
 		return lichess.acceptChallenge(challengeId);
 	}

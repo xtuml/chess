@@ -36,10 +36,19 @@ within lichess_bot::components::Engine::games is
 
 		@dialect("oal");
 		@operation_num(3);
-		operation decline_draw() is
+		operation handle_draw_offer() is
 			@noparse
 			r = chess::draw(game_id:self.id, accept:false);
 			r = chess::chat(game_id:self.id, text:"Never give up, never surrender!", room:Room::PLAYER);
+			@endnoparse
+		end operation;
+
+		@dialect("oal");
+		@operation_num(3);
+		operation handle_takeback_proposal() is
+			@noparse
+			r = chess::takeback(game_id:self.id, accept:false);
+			r = chess::chat(game_id:self.id, text:"No takebacks!", room:Room::PLAYER);
 			@endnoparse
 		end operation;
 

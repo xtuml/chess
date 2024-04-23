@@ -108,6 +108,11 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	@Override
+	public Result takeback(String gameId, boolean accept) {
+		return postRequest(String.format("%s/api/bot/game/%s/takeback/%s", baseUrl, gameId, accept ? "yes" : "no"));
+	}
+
+	@Override
 	public Result acceptChallenge(String challengeId) {
 		return postRequest(String.format("%s/api/challenge/%s/accept", baseUrl, challengeId));
 	}
