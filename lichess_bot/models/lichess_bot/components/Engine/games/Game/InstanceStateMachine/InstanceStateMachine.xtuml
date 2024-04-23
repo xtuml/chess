@@ -80,7 +80,7 @@ within lichess_bot::components::Engine::games::Game is
 			move = legal_moves[i];
 			
 			create event instance e of Game3:'play move'(move:move) to self;
-			t = TIM::timer_start(event_inst:e, microseconds:5000000);  // play ASAP
+			t = TIM::timer_start(event_inst:e, microseconds:0);  // play ASAP
 		
 		end if;
 		@endnoparse
