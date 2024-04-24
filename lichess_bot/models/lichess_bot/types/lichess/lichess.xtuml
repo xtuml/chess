@@ -162,11 +162,6 @@ within lichess_bot::types is
 			title: UserTitle;
 		end structure;
 
-		type Result is structure
-			result: boolean;
-			error: APIException;
-		end structure;
-
 		type Room is enum (
 			PLAYER, 
 			SPECTATOR

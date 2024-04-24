@@ -46,9 +46,6 @@ within lichess_bot::components::Engine is
 				variant: Variant::STANDARD,
 				fen: ""
 			);
-			if not r.result then
-				LOG::LogFailure(message: "Failed to create challenge: " + r.error.error);
-			end if;
 			@endnoparse
 		end function;
 

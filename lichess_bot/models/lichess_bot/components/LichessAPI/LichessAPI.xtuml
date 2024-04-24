@@ -4,16 +4,16 @@ within lichess_bot::components is
 
 	interface LichessAPI is
 		
-		message move(game_id: in string, move: in string) return Result to provider;
-		message chat(game_id: in string, text: in string, room: in Room) return Result to provider;
-		message abort(game_id: in string) return Result to provider;
-		message resign(game_id: in string) return Result to provider;
-		message draw(game_id: in string, accept: in boolean) return Result to provider;
-		message takeback(game_id: in string, accept: in boolean) return Result to provider;
-		message acceptChallenge(challenge_id: in string) return Result to provider;
-		message declineChallenge(challenge_id: in string, reason: in DeclineReason) return Result to provider;
+		message move(game_id: in string, move: in string) return boolean to provider;
+		message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
+		message abort(game_id: in string) return boolean to provider;
+		message resign(game_id: in string) return boolean to provider;
+		message draw(game_id: in string, accept: in boolean) return boolean to provider;
+		message takeback(game_id: in string, accept: in boolean) return boolean to provider;
+		message acceptChallenge(challenge_id: in string) return boolean to provider;
+		message declineChallenge(challenge_id: in string, reason: in DeclineReason) return boolean to provider;
 		message getUser() return User to provider;
-		message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return Result to provider;
+		message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return boolean to provider;
 		
 		message connect(properties: in Properties) to provider;
 		message gameStart(game_event: in GameEventInfo) from provider;

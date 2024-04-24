@@ -52,9 +52,6 @@ shapes :
   shape : Player
     render : structured_data_type "lichess_bot::types::lichess::Player"
     bounds : x : 7460.0 y : 0.0 width : 200.0 height : 150.0
-  shape : Result
-    render : structured_data_type "lichess_bot::types::lichess::Result"
-    bounds : x : 7710.0 y : 0.0 width : 200.0 height : 150.0
   shape : TimeControl
     render : structured_data_type "lichess_bot::types::lichess::TimeControl"
     bounds : x : 7960.0 y : 0.0 width : 200.0 height : 150.0

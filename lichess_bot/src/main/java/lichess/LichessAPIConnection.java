@@ -32,7 +32,6 @@ import types.lichess.Game;
 import types.lichess.GameEvent;
 import types.lichess.GameEventType;
 import types.lichess.GameState;
-import types.lichess.Result;
 import types.lichess.Room;
 import types.lichess.User;
 import types.lichess.UserTitle;
@@ -68,57 +67,52 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	public void initialize() {
-
 		// check if the account is a bot and upgrade if necessary
-		final var response = upgradeAccount();
-		if (!response.getResult()) {
-			peer.error(this, response.getError());
-		}
+		upgradeAccount();
 
 		// create a thread to wait for events
 		final var t = new Thread(this::handleBotEvents, "BotEventsThread");
 		t.start();
-
 	}
 
 	@Override
-	public Result move(String gameId, String move) {
+	public boolean move(String gameId, String move) {
 		return postRequest(String.format("%s/api/bot/game/%s/move/%s", baseUrl, gameId, move));
 	}
 
 	@Override
-	public Result chat(String gameId, String text, Room room) {
+	public boolean chat(String gameId, String text, Room room) {
 		return postRequest(String.format("%s/api/bot/game/%s/chat", baseUrl, gameId),
 				"application/x-www-form-urlencoded", Map.of("room", room.name().toLowerCase(), "text", text));
 	}
 
 	@Override
-	public Result abort(String gameId) {
+	public boolean abort(String gameId) {
 		return postRequest(String.format("%s/api/bot/game/%s/abort", baseUrl, gameId));
 	}
 
 	@Override
-	public Result resign(String gameId) {
+	public boolean resign(String gameId) {
 		return postRequest(String.format("%s/api/bot/game/%s/resign", baseUrl, gameId));
 	}
 
 	@Override
-	public Result draw(String gameId, boolean accept) {
+	public boolean draw(String gameId, boolean accept) {
 		return postRequest(String.format("%s/api/bot/game/%s/draw/%s", baseUrl, gameId, accept ? "yes" : "no"));
 	}
 
 	@Override
-	public Result takeback(String gameId, boolean accept) {
+	public boolean takeback(String gameId, boolean accept) {
 		return postRequest(String.format("%s/api/bot/game/%s/takeback/%s", baseUrl, gameId, accept ? "yes" : "no"));
 	}
 
 	@Override
-	public Result acceptChallenge(String challengeId) {
+	public boolean acceptChallenge(String challengeId) {
 		return postRequest(String.format("%s/api/challenge/%s/accept", baseUrl, challengeId));
 	}
 
 	@Override
-	public Result declineChallenge(String challengeId, DeclineReason reason) {
+	public boolean declineChallenge(String challengeId, DeclineReason reason) {
 		return postRequest(String.format("%s/api/challenge/%s/decline", baseUrl, challengeId),
 				"application/x-www-form-urlencoded", Map.of("reason", reason.getValue()));
 	}
@@ -129,7 +123,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	@Override
-	public Result createChallenge(String user, boolean rated, int clock_limit, int clock_increment, Color color,
+	public boolean createChallenge(String user, boolean rated, int clock_limit, int clock_increment, Color color,
 			Variant variant, String fen) {
 		final var params = new HashMap<String, String>();
 		params.put("rated", Boolean.toString(rated));
@@ -146,9 +140,10 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				params);
 	}
 
-	private Result upgradeAccount() {
+	private boolean upgradeAccount() {
 		logger.println("Upgrading to bot account...");
-		final var request = HttpRequest.newBuilder().uri(URI.create(String.format("%s/api/account", baseUrl)))
+		final var url = String.format("%s/api/account", baseUrl);
+		final var request = HttpRequest.newBuilder().uri(URI.create(url))
 				.timeout(Duration.ofMinutes(2)).header("Content-Type", "application/json")
 				.header("Authorization", String.format("Bearer %s", accessToken)).GET().build();
 		try {
@@ -158,28 +153,31 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				user = gson.fromJson(response.body(), User.class);
 				if (!UserTitle.BOT.equals(user.getTitle())) {
 					final var result = postRequest(String.format("%s/api/bot/account/upgrade", baseUrl));
-					if (result.getResult()) {
+					if (result) {
 						logger.printf("Congrats, %s! you are now a bot.\n", user.getUsername());
 					}
 					return result;
 				} else {
 					logger.printf("User '%s' is already a bot.\n", user.getUsername());
-					return Result.SUCCESS;
+					return true;
 				}
 			case 401:
-				return new Result(false, new APIException(response.statusCode(), response.body()));
+				peer.error(this, new APIException(url, response.statusCode(), response.body()));
+				return false;
 			default:
-				return new Result(false,
-						new APIException(String.format("Unexpected response code: %d", response.statusCode())));
+				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
+				return false;
 			}
 		} catch (IOException | InterruptedException e) {
-			return new Result(false, new APIException(e));
+			peer.error(this, new APIException(e));
+			return false;
 		}
 	}
 
 	private void handleBotEvents() {
 		logger.println("Waiting for incoming events...");
-		final var request = HttpRequest.newBuilder().uri(URI.create(String.format("%s/api/stream/event", baseUrl)))
+		final var url = String.format("%s/api/stream/event", baseUrl);
+		final var request = HttpRequest.newBuilder().uri(URI.create(url))
 				.timeout(Duration.ofMinutes(2)).header("Content-Type", "application/x-ndjson")
 				.header("Authorization", String.format("Bearer %s", accessToken)).GET().build();
 		try {
@@ -216,9 +214,9 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				break;
 			case 400:
 			case 401:
-				throw new APIException(response.statusCode(), response.body().collect(Collectors.joining("\n")));
+				throw new APIException(url, response.statusCode(), response.body().collect(Collectors.joining("\n")));
 			default:
-				throw new APIException(String.format("Unexpected response code: %d", response.statusCode()));
+				throw new APIException(url, response.statusCode(), "Unexpected response code");
 			}
 
 		} catch (IOException | InterruptedException e) {
@@ -232,8 +230,9 @@ public class LichessAPIConnection implements LichessAPIProvider {
 
 	private void handleGameEvents(String gameId) {
 		logger.printf("Handling events for game: %s\n", gameId);
+		final var url = String.format("%s/api/bot/game/stream/%s", baseUrl, gameId);
 		final var request = HttpRequest.newBuilder()
-				.uri(URI.create(String.format("%s/api/bot/game/stream/%s", baseUrl, gameId)))
+				.uri(URI.create(url))
 				.timeout(Duration.ofMinutes(2)).header("Content-Type", "application/x-ndjson")
 				.header("Authorization", String.format("Bearer %s", accessToken)).GET().build();
 		try {
@@ -267,9 +266,9 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				break;
 			case 400:
 			case 401:
-				throw new APIException(response.statusCode(), response.body().collect(Collectors.joining("\n")));
+				throw new APIException(url, response.statusCode(), response.body().collect(Collectors.joining("\n")));
 			default:
-				throw new APIException(String.format("Unexpected response code: %d", response.statusCode()));
+				throw new APIException(url, response.statusCode(), "Unexpected response code");
 			}
 
 		} catch (IOException | InterruptedException e) {
@@ -282,11 +281,11 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		logger.printf("Game over: %s\n", gameId);
 	}
 
-	private Result postRequest(String url) {
+	private boolean postRequest(String url) {
 		return postRequest(url, null, null);
 	}
 
-	private Result postRequest(String url, String contentType, Map<String, String> formParameters) {
+	private boolean postRequest(String url, String contentType, Map<String, String> formParameters) {
 		var requestBuilder = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
 				.header("Authorization", String.format("Bearer %s", accessToken));
 		if (contentType != null) {
@@ -299,16 +298,18 @@ public class LichessAPIConnection implements LichessAPIProvider {
 			final var response = client.send(requestBuilder.build(), BodyHandlers.ofString());
 			switch (response.statusCode()) {
 			case 200:
-				return Result.SUCCESS;
+				return true;
 			case 400:
 			case 401:
-				return new Result(false, new APIException(response.statusCode(), response.body()));
+				peer.error(this, new APIException(url, response.statusCode(), response.body()));
+				return false;
 			default:
-				return new Result(false,
-						new APIException(String.format("Unexpected response code: %d", response.statusCode())));
+				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
+				return false;
 			}
 		} catch (IOException | InterruptedException e) {
-			return new Result(false, new APIException(e));
+			peer.error(this, new APIException(e));
+			return false;
 		}
 	}
 

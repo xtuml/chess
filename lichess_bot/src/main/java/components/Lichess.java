@@ -15,7 +15,6 @@ import types.lichess.DeclineReason;
 import types.lichess.Game;
 import types.lichess.GameEventInfo;
 import types.lichess.GameState;
-import types.lichess.Result;
 import types.lichess.Room;
 import types.lichess.User;
 import types.lichess.Variant;
@@ -38,42 +37,42 @@ public class Lichess implements ILichessAPIToProvider {
 	}
 
 	@Override
-	public Result move(ComponentInstance_c senderReceiver, String gameId, String move) {
+	public boolean move(ComponentInstance_c senderReceiver, String gameId, String move) {
 		return lichess.move(gameId, move);
 	}
 
 	@Override
-	public Result chat(ComponentInstance_c senderReceiver, String gameId, String text, Room room) {
+	public boolean chat(ComponentInstance_c senderReceiver, String gameId, String text, Room room) {
 		return lichess.chat(gameId, text, room);
 	}
 
 	@Override
-	public Result abort(ComponentInstance_c senderReceiver, String gameId) {
+	public boolean abort(ComponentInstance_c senderReceiver, String gameId) {
 		return lichess.abort(gameId);
 	}
 
 	@Override
-	public Result resign(ComponentInstance_c senderReceiver, String gameId) {
+	public boolean resign(ComponentInstance_c senderReceiver, String gameId) {
 		return lichess.resign(gameId);
 	}
 
 	@Override
-	public Result draw(ComponentInstance_c senderReceiver, String gameId, Boolean accept) {
+	public boolean draw(ComponentInstance_c senderReceiver, String gameId, Boolean accept) {
 		return lichess.draw(gameId, accept);
 	}
 
 	@Override
-	public Result takeback(ComponentInstance_c senderReceiver, String gameId, Boolean accept) {
+	public boolean takeback(ComponentInstance_c senderReceiver, String gameId, Boolean accept) {
 		return lichess.takeback(gameId, accept);
 	}
 
 	@Override
-	public Result acceptChallenge(ComponentInstance_c senderReceiver, String challengeId) {
+	public boolean acceptChallenge(ComponentInstance_c senderReceiver, String challengeId) {
 		return lichess.acceptChallenge(challengeId);
 	}
 
 	@Override
-	public Result declineChallenge(ComponentInstance_c senderReceiver, String challengeId, DeclineReason reason) {
+	public boolean declineChallenge(ComponentInstance_c senderReceiver, String challengeId, DeclineReason reason) {
 		return lichess.declineChallenge(challengeId, reason);
 	}
 	
@@ -83,7 +82,7 @@ public class Lichess implements ILichessAPIToProvider {
 	}
 
 	@Override
-	public Result createChallenge(ComponentInstance_c senderReceiver, String user, Boolean rated, int clock_limit,
+	public boolean createChallenge(ComponentInstance_c senderReceiver, String user, Boolean rated, int clock_limit,
 			int clock_increment, Color color, Variant variant, String fen) {
 		return lichess.createChallenge(user, rated, clock_limit, clock_increment, color, variant, fen);
 	}

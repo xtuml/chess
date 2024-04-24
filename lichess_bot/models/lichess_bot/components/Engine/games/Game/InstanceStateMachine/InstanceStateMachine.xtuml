@@ -40,7 +40,7 @@ within lichess_bot::components::Engine::games::Game is
 		| ----------------- | ----------------- | ----------------- | ----------------- | ----------------- |
 		| created           | 'their turn'      | cannot_happen     | cannot_happen     | 'our turn'        |
 		| 'game over'       | ignore            | cannot_happen     | ignore            | ignore            |
-		| 'our turn'        | ignore            | 'game over'       | 'playing move'    | ignore            |
+		| 'our turn'        | ignore            | 'game over'       | 'playing move'    | 'our turn'        |
 		| 'their turn'      | ignore            | 'game over'       | ignore            | 'our turn'        |
 		| 'playing move'    | 'their turn'      | 'game over'       | cannot_happen     | ignore            |
 
@@ -89,13 +89,13 @@ within lichess_bot::components::Engine::games::Game is
 	state 'playing move'(move: in string) is
 		@noparse
 		// play the move
-		result = chess::move(game_id:self.id, move:param.move);
-		if result.result then
+		success = chess::move(game_id:self.id, move:param.move);
+		if success then
 			generate Game1:'waiting on move' to self;
 		else
-		  // TODO handle error here
-		  // TODO maybe go back and try again
-		  LOG::LogFailure(message:"Failed to make move: " + result.error.error);
+		  LOG::LogFailure(message:"Failed to make move.");
+		  create event instance e of Game4:'ready to play' to self;
+		  t = TIM::timer_start(event_inst: e, microseconds: 100000);  // short delay to slow down endless loop possibility
 		end if;
 		@endnoparse
 	end state;

@@ -11,34 +11,34 @@ within lichess_bot::components is
 		required port chess implements LichessAPI is
 
 			@dialect("oal");
-			message abort(game_id: in string) return Result to provider;
+			message abort(game_id: in string) return boolean to provider;
 
 			@dialect("oal");
-			message acceptChallenge(challenge_id: in string) return Result to provider;
+			message acceptChallenge(challenge_id: in string) return boolean to provider;
 
 			@dialect("oal");
-			message chat(game_id: in string, text: in string, room: in Room) return Result to provider;
+			message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
 
 			@dialect("oal");
-			message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return Result to provider;
+			message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return boolean to provider;
 
 			@dialect("oal");
-			message declineChallenge(challenge_id: in string, reason: in DeclineReason) return Result to provider;
+			message declineChallenge(challenge_id: in string, reason: in DeclineReason) return boolean to provider;
 
 			@dialect("oal");
-			message draw(game_id: in string, accept: in boolean) return Result to provider;
+			message draw(game_id: in string, accept: in boolean) return boolean to provider;
 
 			@dialect("oal");
 			message getUser() return User to provider;
 
 			@dialect("oal");
-			message move(game_id: in string, move: in string) return Result to provider;
+			message move(game_id: in string, move: in string) return boolean to provider;
 
 			@dialect("oal");
-			message resign(game_id: in string) return Result to provider;
+			message resign(game_id: in string) return boolean to provider;
 
 			@dialect("oal");
-			message takeback(game_id: in string, accept: in boolean) return Result to provider;
+			message takeback(game_id: in string, accept: in boolean) return boolean to provider;
 
 			@dialect("oal");
 			message challenge(challenge: in Challenge) from provider is
@@ -77,9 +77,9 @@ within lichess_bot::components is
 				
 					// send the accept or decline message
 					if accept_challenge then
-							result = chess::acceptChallenge(challenge_id:c.id);
+						result = chess::acceptChallenge(challenge_id:c.id);
 					else
-							result = chess::declineChallenge(challenge_id:c.id, reason:reason);
+						result = chess::declineChallenge(challenge_id:c.id, reason:reason);
 					end if;
 					
 				else
@@ -136,7 +136,6 @@ within lichess_bot::components is
 			message error(error: in APIException) from provider is
 				@noparse
 				LOG::LogFailure(message:"API error: " +  param.error.error);
-				ARCH::shutdown();
 				@endnoparse
 			end message;
 
@@ -144,7 +143,7 @@ within lichess_bot::components is
 			message gameFinish(game_event: in GameEventInfo) from provider is
 				@noparse
 				LOG::LogInfo(message:"Game finish: " + param.game_event.id);
-				// r = chess::chat(game_id:param.game_event.id, text:"Gg", room:Room::PLAYER);
+				r = chess::chat(game_id:param.game_event.id, text:"Gg", room:Room::PLAYER);
 				@endnoparse
 			end message;
 
@@ -189,7 +188,7 @@ within lichess_bot::components is
 			message gameStart(game_event: in GameEventInfo) from provider is
 				@noparse
 				LOG::LogInfo(message:"Game start: " + param.game_event.id);
-				// r = chess::chat(game_id:param.game_event.id, text:"Good luck!", room:Room::PLAYER);
+				r = chess::chat(game_id:param.game_event.id, text:"Good luck!", room:Room::PLAYER);
 				g = param.game_event;
 				
 				// find/create a game
