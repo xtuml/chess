@@ -70,9 +70,8 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		// check if the account is a bot and upgrade if necessary
 		upgradeAccount();
 
-		// create a thread to wait for events
-		final var t = new Thread(this::handleBotEvents, "BotEventsThread");
-		t.start();
+		// wait for incoming events
+		handleBotEvents();
 	}
 
 	@Override
@@ -143,8 +142,8 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	private boolean upgradeAccount() {
 		logger.println("Upgrading to bot account...");
 		final var url = String.format("%s/api/account", baseUrl);
-		final var request = HttpRequest.newBuilder().uri(URI.create(url))
-				.timeout(Duration.ofMinutes(2)).header("Content-Type", "application/json")
+		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
+				.header("Content-Type", "application/json")
 				.header("Authorization", String.format("Bearer %s", accessToken)).GET().build();
 		try {
 			final var response = client.send(request, BodyHandlers.ofString());
@@ -177,11 +176,10 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	private void handleBotEvents() {
 		logger.println("Waiting for incoming events...");
 		final var url = String.format("%s/api/stream/event", baseUrl);
-		final var request = HttpRequest.newBuilder().uri(URI.create(url))
-				.timeout(Duration.ofMinutes(2)).header("Content-Type", "application/x-ndjson")
+		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
+				.header("Content-Type", "application/x-ndjson")
 				.header("Authorization", String.format("Bearer %s", accessToken)).GET().build();
-		try {
-			final var response = client.send(request, BodyHandlers.ofLines());
+		client.sendAsync(request, BodyHandlers.ofLines()).thenAccept(response -> {
 			switch (response.statusCode()) {
 			case 200:
 				response.body().forEach(line -> {
@@ -189,11 +187,9 @@ public class LichessAPIConnection implements LichessAPIProvider {
 						logger.println(line);
 						final var event = gson.fromJson(line, BotEvent.class);
 						switch (event.getType()) {
-						case BotEventType.GAMESTART:
-							// create a new thread to handle this game
-							final var t = new Thread(() -> this.handleGameEvents(event.getGame().getId()),
-									String.format("GameEventsThread (%s)", event.getGame().getId()));
-							t.start();
+						case GAMESTART:
+							// start handling events for this game
+							handleGameEvents(event.getGame().getId());
 							peer.gameStart(this, event.getGame());
 							break;
 						case BotEventType.GAMEFINISH:
@@ -214,29 +210,22 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				break;
 			case 400:
 			case 401:
-				throw new APIException(url, response.statusCode(), response.body().collect(Collectors.joining("\n")));
+				peer.error(this, new APIException(url, response.statusCode(),
+						response.body().collect(Collectors.joining("\n"))));
+				break;
 			default:
-				throw new APIException(url, response.statusCode(), "Unexpected response code");
+				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
 			}
-
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace(logger);
-			peer.error(this, new APIException(e));
-		} catch (APIException e) {
-			e.printStackTrace(logger);
-			peer.error(this, e);
-		}
+		});
 	}
 
 	private void handleGameEvents(String gameId) {
 		logger.printf("Handling events for game: %s\n", gameId);
 		final var url = String.format("%s/api/bot/game/stream/%s", baseUrl, gameId);
-		final var request = HttpRequest.newBuilder()
-				.uri(URI.create(url))
-				.timeout(Duration.ofMinutes(2)).header("Content-Type", "application/x-ndjson")
+		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
+				.header("Content-Type", "application/x-ndjson")
 				.header("Authorization", String.format("Bearer %s", accessToken)).GET().build();
-		try {
-			final var response = client.send(request, BodyHandlers.ofLines());
+		client.sendAsync(request, BodyHandlers.ofLines()).thenAccept(response -> {
 			switch (response.statusCode()) {
 			case 200:
 				response.body().forEach(line -> {
@@ -266,18 +255,12 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				break;
 			case 400:
 			case 401:
-				throw new APIException(url, response.statusCode(), response.body().collect(Collectors.joining("\n")));
+				peer.error(this, new APIException(url, response.statusCode(),
+						response.body().collect(Collectors.joining("\n"))));
 			default:
-				throw new APIException(url, response.statusCode(), "Unexpected response code");
+				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
 			}
-
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace(logger);
-			peer.error(this, new APIException(e));
-		} catch (APIException e) {
-			e.printStackTrace(logger);
-			peer.error(this, e);
-		}
+		});
 		logger.printf("Game over: %s\n", gameId);
 	}
 
