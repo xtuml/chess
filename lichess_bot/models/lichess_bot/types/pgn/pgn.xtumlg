@@ -1,0 +1,17 @@
+render : "lichess_bot::types::pgn"
+
+shapes :
+  shape : PGNGame
+    render : structured_data_type "lichess_bot::types::pgn::PGNGame"
+    bounds : x : 4870.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Tag
+    render : structured_data_type "lichess_bot::types::pgn::Tag"
+    bounds : x : 5120.0 y : 0.0 width : 200.0 height : 150.0
+  shape : GameResult
+    render : enumeration_data_type "lichess_bot::types::pgn::GameResult"
+    bounds : x : 5340.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Line
+    render : structured_data_type "lichess_bot::types::pgn::Line"
+    bounds : x : 5560.0 y : 0.0 width : 200.0 height : 150.0
+
+connectors :

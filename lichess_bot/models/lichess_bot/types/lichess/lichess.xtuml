@@ -3,7 +3,6 @@
 within lichess_bot::types is
 
 	package lichess is
-		type APIException;
 		type ChallengeDirection;
 		type ChallengeStatus;
 		type Color;

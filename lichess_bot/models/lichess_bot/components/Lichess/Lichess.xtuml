@@ -25,9 +25,6 @@ within lichess_bot::components is
 			message draw(game_id: in string, accept: in boolean) return boolean to provider;
 
 			@dialect("oal");
-			message takeback(game_id: in string, accept: in boolean) return boolean to provider;
-
-			@dialect("oal");
 			message getUser() return User to provider;
 
 			@dialect("oal");
@@ -35,6 +32,9 @@ within lichess_bot::components is
 
 			@dialect("oal");
 			message resign(game_id: in string) return boolean to provider;
+
+			@dialect("oal");
+			message takeback(game_id: in string, accept: in boolean) return boolean to provider;
 
 			@dialect("oal");
 			message challenge(challenge: in Challenge) from provider;

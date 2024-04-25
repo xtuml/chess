@@ -162,7 +162,7 @@ connectors :
         point : x : 4655.0 y : 3023.0
         shape : ourturn
       end :
-        point : x : 4523.0 y : 3023.0
+        point : x : 4655.0 y : 2974.0
         shape : ourturn
     texts :
       text :

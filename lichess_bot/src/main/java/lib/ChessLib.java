@@ -49,12 +49,18 @@ public class ChessLib {
 		}
 	}
 
-	public static String movesToFEN(List<String> moves) {
+	public static String movesToFEN(String initialFen, List<String> moves) {
+		final var fen = initialFen == null || initialFen.isEmpty() || initialFen.equals("startpos") ? STARTPOS
+				: initialFen;
 		if (moves.size() > 0) {
-			final var moveList = new MoveList();
+			final var moveList = new MoveList(fen);
 			moveList.loadFromSan(moves.stream().collect(Collectors.joining(" ")));
 			return moveList.getFen();
 		}
+		return fen;
+	}
+	
+	public static String startpos() {
 		return STARTPOS;
 	}
 

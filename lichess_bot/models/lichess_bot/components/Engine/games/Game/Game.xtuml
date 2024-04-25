@@ -52,6 +52,26 @@ within lichess_bot::components::Engine::games is
 			@endnoparse
 		end operation;
 
+		@dialect("oal");
+		@operation_num(4);
+		operation update_game_state(game_state: in GameState) is
+			@noparse
+			// update game state
+			self.game_state = param.game_state;
+			
+			// check if the game is over
+			if not (self.game_state.status == GameStatus::CREATED or self.game_state.status == GameStatus::STARTED) then
+					generate Game2:'game over'(status: self.game_state.status) to self;
+			else
+				if self.is_our_turn() then
+					generate Game4:'ready to play' to self;
+				else
+					generate Game1:'waiting on move' to self;
+				end if;
+			end if;
+			@endnoparse
+		end operation;
+
 	end class;
 
 end;

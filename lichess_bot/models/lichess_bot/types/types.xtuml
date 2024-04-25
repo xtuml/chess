@@ -6,6 +6,7 @@ within lichess_bot is
 		type Properties is 'inst_ref<Mapping>';
 
 		package lichess;
+		package pgn;
 	end package;
 
 end;

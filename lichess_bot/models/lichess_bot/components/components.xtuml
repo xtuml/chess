@@ -5,8 +5,10 @@ within lichess_bot is
 	package components is
 		interface Instrumentation;
 		interface LichessAPI;
+		interface PGNParsing;
 		component Engine;
 		component Lichess;
+		component PGNParser;
 	end package;
 
 end;

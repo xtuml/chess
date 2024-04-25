@@ -169,18 +169,7 @@ within lichess_bot::components is
 				end if;
 				
 				// update the game state
-				game.game_state = g.gameState;
-				
-				// TODO
-				if not (game.game_state.status == GameStatus::CREATED or game.game_state.status == GameStatus::STARTED) then
-						generate Game2:'game over'(status:game.game_state.status) to game;
-				else
-					if game.is_our_turn() then
-						generate Game4:'ready to play' to game;
-					else
-						generate Game1:'waiting on move' to game;
-					end if;
-				end if;
+				game.update_game_state(game_state: g.gameState);
 				@endnoparse
 			end message;
 
@@ -204,21 +193,9 @@ within lichess_bot::components is
 			message gameState(game_id: in string, game_state: in GameState) from provider is
 				@noparse
 				LOG::LogInfo(message:"Game state: " + param.game_id);
-				g = param.game_state;
 				select any game from instances of Game where selected.id == param.game_id;
 				if not empty game then
-					game.game_state = g;
-					if not (game.game_state.status == GameStatus::CREATED or game.game_state.status == GameStatus::STARTED) then
-							generate Game2:'game over'(status:game.game_state.status) to game;
-					else
-						if game.is_our_turn() then
-							generate Game4:'ready to play' to game;
-						else
-							generate Game1:'waiting on move' to game;
-						end if;
-					end if;
-				else
-					// TODO handle this error case
+					game.update_game_state(game_state: param.game_state);
 				end if;
 				@endnoparse
 			end message;

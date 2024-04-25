@@ -1,0 +1,17 @@
+// BP 7.1.6 content: Component syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components is
+
+	@realized;
+	component PGNParser is
+		provided port parser implements PGNParsing is
+
+			@dialect("oal");
+			@message_num(1);
+			message parse(filename: in string) return sequence of PGNGame to provider;
+
+		end port;
+
+	end component;
+
+end;

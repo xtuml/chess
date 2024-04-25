@@ -3,58 +3,81 @@ render : "lichess_bot::components"
 shapes :
   shape : Lichess
     render : component "lichess_bot::components::Lichess"
-    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : 60.0 y : 84.0 width : 200.0 height : 150.0
   shape : Engine
     render : component "lichess_bot::components::Engine"
-    bounds : x : 384.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : 444.0 y : 84.0 width : 200.0 height : 150.0
   shape : LichessAPI
     render : interface "lichess_bot::components::LichessAPI"
-    bounds : x : 634.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : 694.0 y : 84.0 width : 200.0 height : 150.0
   shape : Instrumentation
     render : interface "lichess_bot::components::Instrumentation"
-    bounds : x : 854.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : 914.0 y : 84.0 width : 200.0 height : 150.0
+  shape : PGNParser
+    render : component "lichess_bot::components::PGNParser"
+    bounds : x : 60.0 y : 288.0 width : 200.0 height : 150.0
+  shape : PGNParsing
+    render : interface "lichess_bot::components::PGNParsing"
+    bounds : x : 1134.0 y : 84.0 width : 200.0 height : 150.0
 
 connectors :
   connector : Lichess____API____LichessAPI
     render : provided_interface "lichess_bot::components::Lichess::API::LichessAPI"
     polyline :
       segment :
-        start : x : 200.0 y : 71.0
-        end :   x : 263.0 y : 71.0
+        start : x : 260.0 y : 156.0
+        end :   x : 323.0 y : 156.0
     anchors :
       start :
-        point : x : 200.0 y : 71.0
+        point : x : 260.0 y : 156.0
         shape : Lichess
       end :
-        point : x : 263.0 y : 71.0
+        point : x : 323.0 y : 156.0
     texts :
       text :
-        bounds : x : 181.0 y : 33.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : 241.0 y : 118.0 width : 0.0 height : 0.0 where : middle
   connector : Engine____chess____LichessAPI
     render : required_interface "lichess_bot::components::Engine::chess::LichessAPI"
     polyline :
       segment :
-        start : x : 384.0 y : 71.0
-        end :   x : 311.0 y : 71.0
+        start : x : 444.0 y : 156.0
+        end :   x : 371.0 y : 156.0
     anchors :
       start :
-        point : x : 384.0 y : 71.0
+        point : x : 444.0 y : 156.0
         shape : Engine
       end :
-        point : x : 311.0 y : 71.0
+        point : x : 371.0 y : 156.0
     texts :
       text :
-        bounds : x : 298.0 y : 33.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : 358.0 y : 118.0 width : 0.0 height : 0.0 where : middle
   connector : Engine____inst____Instrumentation
     render : provided_interface "lichess_bot::components::Engine::inst::Instrumentation"
     polyline :
       segment :
-        start : x : 480.0 y : 150.0
-        end :   x : 479.0 y : 222.0
+        start : x : 540.0 y : 234.0
+        end :   x : 539.0 y : 306.0
     anchors :
       start :
-        point : x : 480.0 y : 150.0
+        point : x : 540.0 y : 234.0
         shape : Engine
       end :
-        point : x : 479.0 y : 222.0
+        point : x : 539.0 y : 306.0
     texts :
+      text :
+        bounds : x : 432.0 y : 264.0 width : 0.0 height : 0.0 where : middle
+  connector : PGNParser____parser____PGNParsing
+    render : provided_interface "lichess_bot::components::PGNParser::parser::PGNParsing"
+    polyline :
+      segment :
+        start : x : 260.0 y : 342.0
+        end :   x : 335.0 y : 342.0
+    anchors :
+      start :
+        point : x : 260.0 y : 342.0
+        shape : PGNParser
+      end :
+        point : x : 335.0 y : 342.0
+    texts :
+      text :
+        bounds : x : 266.0 y : 304.0 width : 0.0 height : 0.0 where : middle

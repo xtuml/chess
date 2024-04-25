@@ -24,13 +24,11 @@ import com.google.gson.GsonBuilder;
 import types.adapters.LichessTypeAdapterFactory;
 import types.lichess.APIException;
 import types.lichess.BotEvent;
-import types.lichess.BotEventType;
 import types.lichess.ChatLine;
 import types.lichess.Color;
 import types.lichess.DeclineReason;
 import types.lichess.Game;
 import types.lichess.GameEvent;
-import types.lichess.GameEventType;
 import types.lichess.GameState;
 import types.lichess.Room;
 import types.lichess.User;
@@ -192,13 +190,13 @@ public class LichessAPIConnection implements LichessAPIProvider {
 							handleGameEvents(event.getGame().getId());
 							peer.gameStart(this, event.getGame());
 							break;
-						case BotEventType.GAMEFINISH:
+						case GAMEFINISH:
 							peer.gameFinish(this, event.getGame());
 							break;
-						case BotEventType.CHALLENGE:
+						case CHALLENGE:
 							peer.challenge(this, event.getChallenge());
 							break;
-						case BotEventType.CHALLENGECANCELED:
+						case CHALLENGECANCELED:
 							peer.challengeCanceled(this, event.getChallenge());
 							break;
 						default:
@@ -233,17 +231,17 @@ public class LichessAPIConnection implements LichessAPIProvider {
 						logger.println(line);
 						final var event = gson.fromJson(line, GameEvent.class);
 						switch (event.getType()) {
-						case GameEventType.GAMEFULL:
+						case GAMEFULL:
 							peer.gameFull(this, gson.fromJson(line, Game.class));
 							break;
-						case GameEventType.GAMESTATE:
+						case GAMESTATE:
 							peer.gameState(this, gameId, gson.fromJson(line, GameState.class));
 							break;
-						case GameEventType.CHATLINE:
+						case CHATLINE:
 							final var chatLine = gson.fromJson(line, ChatLine.class);
 							peer.chatLine(this, gameId, chatLine.getUsername(), chatLine.getText(), chatLine.getRoom());
 							break;
-						case GameEventType.OPPONENTGONE:
+						case OPPONENTGONE:
 							// TODO figure this out
 							break;
 						default:

@@ -1,0 +1,34 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::types is
+
+	package pgn is
+		type GameResult;
+		type Line;
+		type Tag;
+		type GameResult is enum (
+			WHITE_WIN, 
+			BLACK_WIN, 
+			DRAW, 
+			ASTERISK
+		);
+
+		type Line is structure
+			move: string;
+			continuations: sequence of Line;
+		end structure;
+
+		type PGNGame is structure
+			tags: sequence of Tag;
+			moves: sequence of Line;
+			result: GameResult;
+		end structure;
+
+		type Tag is structure
+			name: string;
+			value: string;
+		end structure;
+
+	end package;
+
+end;

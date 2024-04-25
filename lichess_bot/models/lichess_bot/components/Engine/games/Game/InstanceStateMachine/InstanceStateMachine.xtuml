@@ -71,7 +71,7 @@ within lichess_bot::components::Engine::games::Game is
 		end if;
 		
 		// select a random legal move
-		legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(moves: self.game_state.moves));
+		legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: "startpos", moves: self.game_state.moves));
 		if legal_moves.length > 0
 		   
 			// select a move using the current timestamp as random noise
