@@ -167,3 +167,17 @@ connectors :
     texts :
       text :
         bounds : x : 4540.0 y : 2936.0 width : 0.0 height : 0.0 where : middle
+  connector : created____Game1__waitingonmove
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::created::Game1: waiting on move"
+    polyline :
+      segment :
+        start : x : 4296.0 y : 3200.0
+        end :   x : 4476.0 y : 3480.0
+    anchors :
+      start :
+        point : x : 4296.0 y : 3200.0
+        shape : created
+      end :
+        point : x : 4476.0 y : 3480.0
+        shape : theirturn
+    texts :
