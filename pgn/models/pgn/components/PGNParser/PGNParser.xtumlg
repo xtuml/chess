@@ -1,13 +1,13 @@
-render : "lichess_bot::components::PGNParser"
+render : "pgn::components::PGNParser"
 
 shapes :
-  shape : lichess_bot____components____PGNParser container
-    render : component_container "lichess_bot::components::PGNParser"
+  shape : pgn____components____PGNParser container
+    render : component_container "pgn::components::PGNParser"
     bounds : x : 4100.0 y : 3100.0 width : 800.0 height : 800.0
 
 connectors :
   connector : parser____PGNParsing
-    render : provided_interface "lichess_bot::components::PGNParser::parser::PGNParsing"
+    render : provided_interface "pgn::components::PGNParser::parser::PGNParsing"
     polyline :
       segment :
         start : x : 4900.0 y : 3384.0
@@ -15,7 +15,7 @@ connectors :
     anchors :
       start :
         point : x : 4900.0 y : 3384.0
-        shape : lichess_bot____components____PGNParser
+        shape : pgn____components____PGNParser
       end :
         point : x : 4980.0 y : 3384.0
     texts :

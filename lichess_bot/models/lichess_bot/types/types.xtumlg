@@ -7,8 +7,5 @@ shapes :
   shape : lichess
     render : package "lichess_bot::types::lichess"
     bounds : x : 4400.0 y : 0.0 width : 200.0 height : 150.0
-  shape : pgn
-    render : package "lichess_bot::types::pgn"
-    bounds : x : 5060.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :

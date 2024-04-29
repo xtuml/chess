@@ -1,6 +1,6 @@
 // BP 7.1.6 content: Component syschar: 3 persistence-version: 7.1.6
 
-within lichess_bot::components is
+within pgn::components is
 
 	@realized;
 	component PGNParser is

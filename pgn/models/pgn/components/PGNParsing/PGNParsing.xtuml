@@ -1,6 +1,6 @@
 // BP 7.1.6 content: Interface syschar: 3 persistence-version: 7.1.6
 
-within lichess_bot::components is
+within pgn::components is
 
 	interface PGNParsing is
 		

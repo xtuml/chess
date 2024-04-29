@@ -1,0 +1,26 @@
+render : "pgn::components"
+
+shapes :
+  shape : PGNParsing
+    render : interface "pgn::components::PGNParsing"
+    bounds : x : 1384.0 y : 84.0 width : 200.0 height : 150.0
+  shape : PGNParser
+    render : component "pgn::components::PGNParser"
+    bounds : x : 1604.0 y : 84.0 width : 200.0 height : 150.0
+
+connectors :
+  connector : PGNParser____parser____PGNParsing
+    render : provided_interface "pgn::components::PGNParser::parser::PGNParsing"
+    polyline :
+      segment :
+        start : x : 1804.0 y : 155.0
+        end :   x : 1895.0 y : 155.0
+    anchors :
+      start :
+        point : x : 1804.0 y : 155.0
+        shape : PGNParser
+      end :
+        point : x : 1895.0 y : 155.0
+    texts :
+      text :
+        bounds : x : 1818.0 y : 117.0 width : 0.0 height : 0.0 where : middle

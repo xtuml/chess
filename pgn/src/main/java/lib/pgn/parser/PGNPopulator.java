@@ -38,10 +38,17 @@ public class PGNPopulator extends PGNBaseVisitor<Object> {
 	private Board board = new Board();
 
 	public static List<PGNGame> parse(String filename) {
+		return parse(filename, null);
+	}
+
+	public static List<PGNGame> parse(String filename, ClassLoader cl) {
+		if (cl == null) {
+			cl = PGNPopulator.class.getClassLoader();
+		}
 		try {
 
 			// Tokenize the file
-			final var pgnStream = Optional.ofNullable(PGNPopulator.class.getClassLoader().getResourceAsStream(filename));
+			final var pgnStream = Optional.ofNullable(cl.getResourceAsStream(filename));
 			final var input = CharStreams
 					.fromStream(pgnStream.orElseThrow(() -> new IOException("File not found: " + filename)));
 			final var lexer = new PGNLexer(input);
@@ -145,7 +152,8 @@ public class PGNPopulator extends PGNBaseVisitor<Object> {
 		final var move = board.undoMove();
 		final var oldBoard = board;
 		board = oldBoard.clone();
-		final var variation = visitElement_sequence(ctx.element_sequence()).get(0); // recursive sequence is always exactly one line
+		final var variation = visitElement_sequence(ctx.element_sequence()).get(0); // recursive sequence is always
+																					// exactly one line
 		board = oldBoard;
 		board.doMove(move);
 		return variation;
@@ -167,12 +175,6 @@ public class PGNPopulator extends PGNBaseVisitor<Object> {
 	@Override
 	public GameResult visitGame_termination(Game_terminationContext ctx) {
 		return GameResult.fromValue(ctx.getText());
-	}
-
-	public static void main(String[] args) {
-		final var parser = new PGNParser(null);
-		final var pgn = parser.parse(null, "openings/white/ScholarsMate.pgn");
-		System.out.println("LEVI");
 	}
 
 }

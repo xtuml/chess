@@ -43,3 +43,5 @@ connectors :
       end :
         point : x : 2541.0 y : 3972.0
     texts :
+      text :
+        bounds : x : 2435.0 y : 3930.0 width : 0.0 height : 0.0 where : middle

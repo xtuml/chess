@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
     <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-        <listEntry value="/lichess_bot/lib/antlr4-4.13.1-complete.jar"/>
+        <listEntry value="/pgn/lib/antlr4-4.13.1-complete.jar"/>
     </listAttribute>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="1"/>
@@ -18,6 +18,6 @@
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.antlr.v4.Tool"/>
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="lichess_bot"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-o src/main/java/lib/pgn/parser -Xexact-output-dir -package lib.pgn.parser -no-listener -visitor src/main/antlr4/PGN.g4"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="lichess_bot"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="pgn"/>
     <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED" value="true"/>
 </launchConfiguration>

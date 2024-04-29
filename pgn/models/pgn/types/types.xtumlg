@@ -1,0 +1,8 @@
+render : "pgn::types"
+
+shapes :
+  shape : pgn
+    render : package "pgn::types::pgn"
+    bounds : x : 5310.0 y : 0.0 width : 200.0 height : 150.0
+
+connectors :
