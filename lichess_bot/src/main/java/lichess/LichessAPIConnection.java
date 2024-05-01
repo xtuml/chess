@@ -1,6 +1,7 @@
 package lichess;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -30,6 +31,7 @@ import types.lichess.DeclineReason;
 import types.lichess.Game;
 import types.lichess.GameEvent;
 import types.lichess.GameState;
+import types.lichess.OpponentGone;
 import types.lichess.Room;
 import types.lichess.User;
 import types.lichess.UserTitle;
@@ -41,14 +43,14 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	private final String accessToken;
 	private final HttpClient client;
 	private final Gson gson;
-	private PrintStream logger;
+	private PrintStream out;
+	private PrintStream err;
 	private LichessAPISubscriber peer;
 	private User user;
 
-	public LichessAPIConnection(PrintStream logger, LichessAPISubscriber peer, Properties props) {
-		this.logger = logger;
+	public LichessAPIConnection(PrintStream out, PrintStream err, LichessAPISubscriber peer, Properties props) {
 		this.peer = peer;
-
+		
 		// set up gson serialization
 		final var builder = new GsonBuilder();
 		builder.registerTypeAdapterFactory(new LichessTypeAdapterFactory());
@@ -57,6 +59,19 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		// load configuration
 		this.baseUrl = props.getProperty("api_base_url");
 		this.accessToken = props.getProperty("access_token");
+		
+		// set up debug logging
+		final var nullOutputStream = new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+			}
+		};
+		this.out = new PrintStream(nullOutputStream);
+		this.err = new PrintStream(nullOutputStream);
+		if (Boolean.parseBoolean(props.getProperty("enable_debug_logging", "false"))) {
+			this.out = out;
+			this.err = err;
+		}
 
 		// create the HTTP client
 		client = HttpClient.newBuilder().followRedirects(Redirect.NORMAL).connectTimeout(Duration.ofSeconds(20))
@@ -115,7 +130,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	@Override
-	public User getUser() {
+	public User account() {
 		return Optional.ofNullable(user).orElse(new User());
 	}
 
@@ -137,8 +152,13 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				params);
 	}
 
+	@Override
+	public boolean claimVictory(String gameId) {
+		return postRequest(String.format("%s/api/bot/game/%s/claim-victory", baseUrl, gameId));
+	}
+
 	private boolean upgradeAccount() {
-		logger.println("Upgrading to bot account...");
+		out.println("Upgrading to bot account...");
 		final var url = String.format("%s/api/account", baseUrl);
 		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
 				.header("Content-Type", "application/json")
@@ -151,11 +171,11 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				if (!UserTitle.BOT.equals(user.getTitle())) {
 					final var result = postRequest(String.format("%s/api/bot/account/upgrade", baseUrl));
 					if (result) {
-						logger.printf("Congrats, %s! you are now a bot.\n", user.getUsername());
+						out.printf("Congrats, %s! you are now a bot.\n", user.getUsername());
 					}
 					return result;
 				} else {
-					logger.printf("User '%s' is already a bot.\n", user.getUsername());
+					out.printf("User '%s' is already a bot.\n", user.getUsername());
 					return true;
 				}
 			case 401:
@@ -172,7 +192,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	private void handleBotEvents() {
-		logger.println("Waiting for incoming events...");
+		out.println("Waiting for incoming events...");
 		final var url = String.format("%s/api/stream/event", baseUrl);
 		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
 				.header("Content-Type", "application/x-ndjson")
@@ -182,7 +202,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 			case 200:
 				response.body().forEach(line -> {
 					if (!line.isEmpty()) {
-						logger.println(line);
+						out.println(line);
 						final var event = gson.fromJson(line, BotEvent.class);
 						switch (event.getType()) {
 						case GAMESTART:
@@ -200,7 +220,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 							peer.challengeCanceled(this, event.getChallenge());
 							break;
 						default:
-							// TODO ignore
+							err.printf("Unrecognized event type: %s", event.getType());
 							break;
 						}
 					}
@@ -218,7 +238,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	private void handleGameEvents(String gameId) {
-		logger.printf("Handling events for game: %s\n", gameId);
+		out.printf("Handling events for game: %s\n", gameId);
 		final var url = String.format("%s/api/bot/game/stream/%s", baseUrl, gameId);
 		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
 				.header("Content-Type", "application/x-ndjson")
@@ -228,7 +248,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 			case 200:
 				response.body().forEach(line -> {
 					if (!line.isEmpty()) {
-						logger.println(line);
+						out.println(line);
 						final var event = gson.fromJson(line, GameEvent.class);
 						switch (event.getType()) {
 						case GAMEFULL:
@@ -242,10 +262,11 @@ public class LichessAPIConnection implements LichessAPIProvider {
 							peer.chatLine(this, gameId, chatLine.getUsername(), chatLine.getText(), chatLine.getRoom());
 							break;
 						case OPPONENTGONE:
-							// TODO figure this out
+							final var opponentGone = gson.fromJson(line, OpponentGone.class);
+							peer.opponentGone(this, gameId, opponentGone.getGone(), opponentGone.getClaimWinSeconds());
 							break;
 						default:
-							// TODO ignore
+							err.printf("Unrecognized event type: %s", event.getType());
 							break;
 						}
 					}
@@ -259,7 +280,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
 			}
 		});
-		logger.printf("Game over: %s\n", gameId);
+		out.printf("Game over: %s\n", gameId);
 	}
 
 	private boolean postRequest(String url) {

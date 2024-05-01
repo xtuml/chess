@@ -24,8 +24,10 @@ public interface LichessAPIProvider {
 
 	boolean declineChallenge(String challengeId, DeclineReason reason);
 	
-	User getUser();
+	User account();
 
 	boolean createChallenge(String user, boolean rated, int clock_limit, int clock_increment, Color color, Variant variant, String fen);
+	
+	boolean claimVictory(String gameId);
 
 }

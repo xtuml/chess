@@ -12,6 +12,8 @@ within lichess_bot::components::Engine::games is
 
 		game_state: GameState;
 
+		claim_victory_timer: timer;
+
 		preferred identifier is (id);
 
 		@dialect("oal");

@@ -2,6 +2,8 @@
 
 within pgn::components is
 
+	//! This component parses games from files in PGN format and returns a list of
+	//! PGNGame objects representing the parsed games.
 	@realized;
 	component PGNParser is
 		provided port parser implements PGNParsing is

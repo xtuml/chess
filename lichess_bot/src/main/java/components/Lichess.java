@@ -31,7 +31,7 @@ public class Lichess implements ILichessAPIToProvider {
 	@Override
 	public void connect(ComponentInstance_c senderReceiver, Properties properties) {
 		if (lichess == null) {
-			lichess = new LichessAPIConnection(CorePlugin.out, new LichessAPIHandler(), properties);
+			lichess = new LichessAPIConnection(CorePlugin.out, CorePlugin.err, new LichessAPIHandler(), properties);
 			lichess.initialize();
 		}
 	}
@@ -77,14 +77,19 @@ public class Lichess implements ILichessAPIToProvider {
 	}
 	
 	@Override
-	public User getUser(ComponentInstance_c senderReceiver) {
-		return lichess.getUser();
+	public User account(ComponentInstance_c senderReceiver) {
+		return lichess.account();
 	}
 
 	@Override
 	public boolean createChallenge(ComponentInstance_c senderReceiver, String user, Boolean rated, int clock_limit,
 			int clock_increment, Color color, Variant variant, String fen) {
 		return lichess.createChallenge(user, rated, clock_limit, clock_increment, color, variant, fen);
+	}
+
+	@Override
+	public boolean claimVictory(ComponentInstance_c senderReceiver, String gameId) {
+		return lichess.claimVictory(gameId);
 	}
 
 	private class LichessAPIHandler implements LichessAPISubscriber {
@@ -125,8 +130,8 @@ public class Lichess implements ILichessAPIToProvider {
 		}
 
 		@Override
-		public void opponentGone(LichessAPIProvider provider, String gameId) {
-			engine.opponentGone(null, gameId);
+		public void opponentGone(LichessAPIProvider provider, String gameId, boolean gone, int claimWinInSeconds) {
+			engine.opponentGone(null, gameId, gone, claimWinInSeconds);
 		}
 
 		@Override

@@ -7,12 +7,12 @@ shapes :
   shape : Engine
     render : component "lichess_bot::components::Engine"
     bounds : x : 444.0 y : 84.0 width : 200.0 height : 150.0
-  shape : LichessAPI
-    render : interface "lichess_bot::components::LichessAPI"
-    bounds : x : 694.0 y : 84.0 width : 200.0 height : 150.0
   shape : Instrumentation
     render : interface "lichess_bot::components::Instrumentation"
     bounds : x : 914.0 y : 84.0 width : 200.0 height : 150.0
+  shape : LichessAPI
+    render : interface "lichess_bot::components::LichessAPI"
+    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :
   connector : Lichess____API____LichessAPI

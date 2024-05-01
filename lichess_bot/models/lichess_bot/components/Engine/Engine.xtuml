@@ -17,7 +17,13 @@ within lichess_bot::components is
 			message acceptChallenge(challenge_id: in string) return boolean to provider;
 
 			@dialect("oal");
+			message account() return User to provider;
+
+			@dialect("oal");
 			message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
+
+			@dialect("oal");
+			message claimVictory(game_id: in string) return boolean to provider;
 
 			@dialect("oal");
 			message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return boolean to provider;
@@ -27,9 +33,6 @@ within lichess_bot::components is
 
 			@dialect("oal");
 			message draw(game_id: in string, accept: in boolean) return boolean to provider;
-
-			@dialect("oal");
-			message getUser() return User to provider;
 
 			@dialect("oal");
 			message move(game_id: in string, move: in string) return boolean to provider;
@@ -105,11 +108,6 @@ within lichess_bot::components is
 				@noparse
 				LOG::LogInfo(message:"Chat line: " + param.game_id + ", " + param.username + ": " + param.text);
 				
-				// TODO make the maia1 bot play faster
-				if (param.username == "maia1" and param.text == "Hi levifish, I'm currently taking my time like a human. If you type 'go' or 'fast' in the chat I'll play faster. gl hf") then
-					r = chess::chat(game_id:param.game_id, room:Room::PLAYER, text:"go");
-				end if;
-				
 				select any game from instances of Game where selected.id == param.game_id;
 				if not empty game then
 				
@@ -161,7 +159,7 @@ within lichess_bot::components is
 				end if;
 				
 				// set color for the game
-				bot = chess::getUser();
+				bot = chess::account();
 				if g.white.name == bot.username then
 					game.color = Color::WHITE;
 				else
@@ -201,9 +199,23 @@ within lichess_bot::components is
 			end message;
 
 			@dialect("oal");
-			message opponentGone(game_id: in string) from provider is
+			message opponentGone(game_id: in string, gone: in boolean, claim_win_in_seconds: in integer) from provider is
 				@noparse
 				LOG::LogInfo(message:"Opponent gone: " + param.game_id);
+				
+				select any game from instances of Game where selected.id == param.game_id;
+				if not empty game then
+					
+					// cancel the timer if it exists
+					r = TIM::timer_cancel(timer_inst_ref: game.claim_victory_timer);
+				
+					// if the opponent is gone, claim victory after the specified delay
+					if param.gone then
+						create event instance e of Game5:'claim victory' to game;
+						game.claim_victory_timer = TIM::timer_start(event_inst: e, microseconds: param.claim_win_in_seconds * 1000000);
+					end if;
+					
+				end if;
 				@endnoparse
 			end message;
 

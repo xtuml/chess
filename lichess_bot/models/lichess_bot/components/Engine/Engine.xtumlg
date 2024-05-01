@@ -3,45 +3,45 @@ render : "lichess_bot::components::Engine"
 shapes :
   shape : lichess_bot____components____Engine container
     render : component_container "lichess_bot::components::Engine"
-    bounds : x : -12.0 y : -12.0 width : 5376.0 height : 3912.0
+    bounds : x : -4560.0 y : -3504.0 width : 733.0 height : 336.0
   shape : games
     render : package "lichess_bot::components::Engine::games"
-    bounds : x : 220.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : -4308.0 y : -3420.0 width : 200.0 height : 150.0
   shape : functions
     render : package "lichess_bot::components::Engine::functions"
-    bounds : x : 440.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : -4088.0 y : -3420.0 width : 200.0 height : 150.0
   shape : bot
     render : package "lichess_bot::components::Engine::bot"
-    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : -4528.0 y : -3420.0 width : 200.0 height : 150.0
 
 connectors :
   connector : chess____LichessAPI
     render : required_interface "lichess_bot::components::Engine::chess::LichessAPI"
     polyline :
       segment :
-        start : x : -12.0 y : 3480.0
-        end :   x : -87.0 y : 3480.0
+        start : x : -4560.0 y : -3360.0
+        end :   x : -4657.0 y : -3360.0
     anchors :
       start :
-        point : x : -12.0 y : 3480.0
+        point : x : -4560.0 y : -3360.0
         shape : lichess_bot____components____Engine
       end :
-        point : x : -87.0 y : 3480.0
+        point : x : -4657.0 y : -3360.0
     texts :
       text :
-        bounds : x : -78.0 y : 3442.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : -4637.0 y : -3398.0 width : 0.0 height : 0.0 where : middle
   connector : inst____Instrumentation
     render : provided_interface "lichess_bot::components::Engine::inst::Instrumentation"
     polyline :
       segment :
-        start : x : 2544.0 y : 3900.0
-        end :   x : 2541.0 y : 3972.0
+        start : x : -4188.0 y : -3168.0
+        end :   x : -4188.0 y : -3047.0
     anchors :
       start :
-        point : x : 2544.0 y : 3900.0
+        point : x : -4188.0 y : -3168.0
         shape : lichess_bot____components____Engine
       end :
-        point : x : 2541.0 y : 3972.0
+        point : x : -4188.0 y : -3047.0
     texts :
       text :
-        bounds : x : 2435.0 y : 3930.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : -4319.0 y : -3120.0 width : 0.0 height : 0.0 where : middle

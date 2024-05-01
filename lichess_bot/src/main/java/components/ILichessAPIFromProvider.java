@@ -25,7 +25,7 @@ public interface ILichessAPIFromProvider {
 
 	void chatLine(ComponentInstance_c senderReceiver, String gameId, String username, String text, Room room);
 	
-	void opponentGone(ComponentInstance_c senderReceiver, String gameId);
+	void opponentGone(ComponentInstance_c senderReceiver, String gameId, boolean gone, int claimWinInSeconds);
 
 	void error(ComponentInstance_c senderReceiver, APIException error);
 

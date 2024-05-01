@@ -23,8 +23,8 @@ public interface LichessAPISubscriber {
 
 	void chatLine(LichessAPIProvider provider, String gameId, String username, String text, Room room);
 	
-	void opponentGone(LichessAPIProvider provider, String gameId);
+	void opponentGone(LichessAPIProvider provider, String gameId, boolean gone, int claimWinInSeconds);
 	
 	void error(LichessAPIProvider provider, APIException error);
-	
+
 }

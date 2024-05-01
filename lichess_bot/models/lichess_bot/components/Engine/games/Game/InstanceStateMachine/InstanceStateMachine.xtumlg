@@ -16,6 +16,9 @@ shapes :
   shape : playingmove
     render : state "lichess_bot::components::Engine::games::Game::Instance State Machine::playing move"
     bounds : x : 4836.0 y : 3240.0 width : 193.0 height : 145.0
+  shape : claimingvictory
+    render : state "lichess_bot::components::Engine::games::Game::Instance State Machine::claiming victory"
+    bounds : x : 4788.0 y : 3576.0 width : 194.0 height : 120.0
 
 connectors :
   connector : ourturn____Game3__playmove
@@ -171,13 +174,91 @@ connectors :
     render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::created::Game1: waiting on move"
     polyline :
       segment :
-        start : x : 4296.0 y : 3200.0
+        start : x : 4246.0 y : 3276.0
+        end :   x : 4246.0 y : 3480.0
+      segment :
+        start : x : 4246.0 y : 3480.0
         end :   x : 4476.0 y : 3480.0
     anchors :
       start :
-        point : x : 4296.0 y : 3200.0
+        point : x : 4246.0 y : 3276.0
         shape : created
       end :
-        point : x : 4476.0 y : 3480.0
+        point : x : 4246.0 y : 3480.0
         shape : theirturn
     texts :
+      text :
+        bounds : x : 4252.0 y : 3446.0 width : 0.0 height : 0.0 where : middle
+  connector : theirturn____Game5__claimvictory
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::their turn::Game5: claim victory"
+    polyline :
+      segment :
+        start : x : 4583.0 y : 3541.0
+        end :   x : 4583.0 y : 3647.0
+      segment :
+        start : x : 4583.0 y : 3647.0
+        end :   x : 4788.0 y : 3647.0
+    anchors :
+      start :
+        point : x : 4583.0 y : 3541.0
+        shape : theirturn
+      end :
+        point : x : 4583.0 y : 3647.0
+        shape : claimingvictory
+    texts :
+      text :
+        bounds : x : 4545.0 y : 3655.0 width : 0.0 height : 0.0 where : middle
+  connector : ourturn____Game5__claimvictory
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::our turn::Game5: claim victory"
+    polyline :
+      segment :
+        start : x : 4703.0 y : 3252.0
+        end :   x : 4703.0 y : 3608.0
+      segment :
+        start : x : 4703.0 y : 3608.0
+        end :   x : 4788.0 y : 3608.0
+    anchors :
+      start :
+        point : x : 4703.0 y : 3252.0
+        shape : ourturn
+      end :
+        point : x : 4703.0 y : 3608.0
+        shape : claimingvictory
+    texts :
+      text :
+        bounds : x : 4629.0 y : 3613.0 width : 0.0 height : 0.0 where : middle
+  connector : playingmove____Game5__claimvictory
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::playing move::Game5: claim victory"
+    polyline :
+      segment :
+        start : x : 4943.0 y : 3385.0
+        end :   x : 4943.0 y : 3576.0
+    anchors :
+      start :
+        point : x : 4943.0 y : 3385.0
+        shape : playingmove
+      end :
+        point : x : 4943.0 y : 3576.0
+        shape : claimingvictory
+    texts :
+      text :
+        bounds : x : 4947.0 y : 3454.0 width : 0.0 height : 0.0 where : middle
+  connector : claimingvictory____Game2__gameover
+    render : transition "lichess_bot::components::Engine::games::Game::Instance State Machine::claiming victory::Game2: game over"
+    polyline :
+      segment :
+        start : x : 4982.0 y : 3635.0
+        end :   x : 5270.0 y : 3635.0
+      segment :
+        start : x : 5270.0 y : 3635.0
+        end :   x : 5270.0 y : 3204.0
+    anchors :
+      start :
+        point : x : 4982.0 y : 3635.0
+        shape : claimingvictory
+      end :
+        point : x : 5270.0 y : 3635.0
+        shape : gameover
+    texts :
+      text :
+        bounds : x : 5115.0 y : 3604.0 width : 0.0 height : 0.0 where : middle

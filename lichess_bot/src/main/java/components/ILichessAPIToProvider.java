@@ -30,8 +30,10 @@ public interface ILichessAPIToProvider {
 
 	void connect(ComponentInstance_c senderReceiver, Properties properties);
 	
-	User getUser(ComponentInstance_c senderReceiver);
+	User account(ComponentInstance_c senderReceiver);
 	
 	boolean createChallenge(ComponentInstance_c senderReceiver, String user, Boolean rated, int clock_limit, int clock_increment, Color color, Variant variant, String fen);
+
+	boolean claimVictory(ComponentInstance_c senderReceiver, String gameId);
 
 }

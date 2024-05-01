@@ -38,7 +38,7 @@ public abstract class AbstractLichessAPISubscriber implements LichessAPISubscrib
 	}
 
 	@Override
-	public void opponentGone(LichessAPIProvider provider, String gameId) {
+	public void opponentGone(LichessAPIProvider provider, String gameId, boolean gone, int claimWinInSeconds) {
 	}
 
 	@Override

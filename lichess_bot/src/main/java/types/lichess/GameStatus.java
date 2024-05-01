@@ -2,7 +2,6 @@ package types.lichess;
 
 import java.util.stream.Stream;
 
-// TODO gson serialize/deserialize
 public enum GameStatus {
 
 	CREATED(10),

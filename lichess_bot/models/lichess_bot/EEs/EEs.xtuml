@@ -21,11 +21,13 @@ within lichess_bot is
 		@key_letters("ChessLib");
 		@realized;
 		external ChessLib is
-			//! Takes as input a string representing a move in LAN and returns the destination file as a string /[a-h]/
+			//! Takes as input a string representing a move in LAN and returns
+			//! the destination file as a string /[a-h]/
 			@dialect("oal");
 			bridge destFile(move: in string) return string;
 
-			//! Takes as input a string representing a move in LAN and returns the destination rank as an integer 1-8
+			//! Takes as input a string representing a move in LAN and returns
+			//! the destination rank as an integer 1-8
 			@dialect("oal");
 			bridge destRank(move: in string) return integer;
 
@@ -34,19 +36,26 @@ within lichess_bot is
 			@dialect("oal");
 			bridge legalMoves(fen: in string) return sequence of string;
 
-			//! Takes as input a list of moves from the initial starting position representing the current position
-			//! Returns a FEN string representing the position
+			//! Takes as input a FEN string and a list of moves represenging the
+			//! current position. The position is determined by applying the
+			//! list of moves in order to the position indicated by the FEN
+			//! string. The exact string "startpos" is taken to be the standard
+			//! starting position. Returns a FEN string representing the
+			//! position
 			@dialect("oal");
 			bridge movesToFEN(initialFen: in string, moves: in sequence of string) return string;
 
-			//! Takes as input a string representing a move in LAN and returns the source file as a string /[a-h]/
+			//! Takes as input a string representing a move in LAN and returns
+			//! the source file as a string /[a-h]/
 			@dialect("oal");
 			bridge sourceFile(move: in string) return string;
 
-			//! Takes as input a string representing a move in LAN and returns the source rank as an integer 1-8
+			//! Takes as input a string representing a move in LAN and returns
+			//! the source rank as an integer 1-8
 			@dialect("oal");
 			bridge sourceRank(move: in string) return integer;
 
+			//! Returns a FEN string representing the starting position.
 			@dialect("oal");
 			bridge startpos() return string;
 
