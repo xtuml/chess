@@ -19,19 +19,31 @@ is required to run the project.
 
 To get started, you must create an account on lichess.org. In accordance with
 Lichess terms of service, an account must _not_ have played any games before
-being upgraded. Note that you will not be able to use a bot account to play
-normally on the site after it has been upgraded. We recommend that you create
-two accounts -- one for the bot and one to play as a human player.
+being upgraded (to have bot playing ability). Note that you will not be able
+to use a bot account to play normally on the site after it has been upgraded.
+We recommend that you create two accounts -- one for the bot and one to play
+as a human player.
 
 1. Create a Lichess account for your bot [here](https://lichess.org/signup).
 2. Once logged in, follow [this
    link](https://lichess.org/account/oauth/token/create?scopes[]=bot:play) to
-   generate an API token for your bot. Save the token in a secure location. Do not
-   commit to the repository.
+   generate an API token for your bot. Save the token in a secure location.
+   Do not commit it to the repository.
 
 Your account will be automatically upgraded to a bot account the first time you
 launch the application.
 
+### Fork and clone the repository
+
+1. If you intend to contribute code or documentation to the project,
+   [fork](doc/img/fork.png "fork") the
+   [github.com/xtuml/chess](https://github.com/xtuml/chess) repository.
+2. [Clone](doc/img/clone.png "clone") (your fork of) the
+   [github.com/xtuml/chess](https://github.com/xtuml/chess) repository.
+3. In your local clone, navigate to `lichess_bot/src/main/resources/`
+   and copy `lichess_bot.properties.template` to `lichess_bot.properties`.
+4. Edit `lichess_bot.properties` and replace the text "<YOUR_LICHESS_ACCESS_TOKEN>"
+   with the text of your lichess API token generated earlier.
 
 ## Running the application
 
@@ -41,8 +53,9 @@ launch the application.
    "xtUML eXecute Application" heading.
 4. Click "Debug" to launch the application.
 5. Log in to your human account on lichess.com.
-6. Use the search bar to navigate to the user page for your bot. Challenge your
-   bot to a match.
+6. Use the [search bar](doc/img/search_opponent.png "search opponent") to navigate
+   to the user page for your bot.
+7. Challenge your bot to a match (by clicking on the [crossed swords](doc/img/challenge.png "challenge")).
 
 
 ## Adding bot intelligence
