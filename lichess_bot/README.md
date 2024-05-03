@@ -80,7 +80,7 @@ the start position. It returns an array of legal moves.
 
 ### Move representation
 
-Each move is are represented by a 4 character string in [Long Algebraic
+Each move is represented by a 4 character string in [Long Algebraic
 Notation](https://en.wikipedia.org/wiki/Algebraic_notation_(chess)#Long_algebraic_notation).
 In standard chess vocabulary, a _move_ represents a move by white and a
 corresponding response by black. In the model, however, each move by black _or_
@@ -115,10 +115,15 @@ can be found [here](https://www.fide.com/FIDE/handbook/LawsOfChess.pdf).
 
 ## Issues
 
-If you are having an issue with BridgePoint, Verifier, or the project itself,
+If you are having an issue with BridgePoint or Verifier,
 please check the [issue tracker](https://support.onefact.net) to see if the
 behavior matches an existing issue. [This custom
 query](https://support.onefact.net/projects/bridgepoint/issues?query_id=169)
 has been created to track issues specifically relating to this modeling
 challenge. If you don't find the issue you are looking for, please raise a new
-issue [here](https://support.onefact.net/projects/bridgepoint/issues/new)
+issue [here](https://support.onefact.net/projects/bridgepoint/issues/new).
+
+If you have an issue (bug, new feature, etc) with the xtuml/chess project itself,
+raise an issue in the [repository tracker](https://github.com/xtuml/chess/issues).
+Of course pull requests with fixes and improvements are welcome!
+
