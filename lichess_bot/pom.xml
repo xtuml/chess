@@ -45,9 +45,6 @@
             <goals>
               <goal>core</goal>
             </goals>
-            <configuration>
-              <input>${project.basedir}/gen/code_generation/${project.name}.sql</input>
-            </configuration>
           </execution>
         </executions>
       </plugin>
