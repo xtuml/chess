@@ -1,8 +1,0 @@
-PGN.interp
-PGN.tokens
-PGNBaseVisitor.java
-PGNLexer.interp
-PGNLexer.java
-PGNLexer.tokens
-PGNParser.java
-PGNVisitor.java

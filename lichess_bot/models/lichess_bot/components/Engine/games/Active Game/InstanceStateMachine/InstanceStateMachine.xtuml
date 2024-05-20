@@ -1,0 +1,113 @@
+// BP 7.1.6 content: InstanceStateMachine syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::games::'Active Game' is
+
+	@state_num(1);
+	@dialect("oal");
+	state created;
+
+	@state_num(3);
+	@dialect("oal");
+	state 'game over';
+
+	@state_num(4);
+	@dialect("oal");
+	state 'our turn';
+
+	@state_num(5);
+	@dialect("oal");
+	state 'their turn';
+
+	@state_num(6);
+	@dialect("oal");
+	state 'playing move';
+
+	@state_num(7);
+	@dialect("oal");
+	state 'claiming victory';
+
+	@event_num(1);
+	event 'waiting on move';
+
+	@event_num(2);
+	event 'game over'(status: in GameStatus);
+
+	@event_num(3);
+	event 'play move'(move: in string);
+
+	@event_num(4);
+	event 'ready to play';
+
+	@event_num(5);
+	event 'claim victory';
+
+	state model is
+
+		|                    | 'waiting on move'  | 'game over'        | 'play move'        | 'ready to play'    | 'claim victory'    |
+		| ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+		| created            | 'their turn'       | cannot_happen      | cannot_happen      | 'our turn'         | ignore             |
+		| 'game over'        | ignore             | cannot_happen      | ignore             | ignore             | ignore             |
+		| 'our turn'         | ignore             | 'game over'        | 'playing move'     | 'our turn'         | 'claiming victory' |
+		| 'their turn'       | ignore             | 'game over'        | ignore             | 'our turn'         | 'claiming victory' |
+		| 'playing move'     | 'their turn'       | 'game over'        | cannot_happen      | ignore             | 'claiming victory' |
+		| 'claiming victory' | ignore             | 'game over'        | ignore             | ignore             | ignore             |
+
+	end state model;
+
+	state 'game over'(status: in GameStatus) is
+		@noparse
+		LOG::LogInfo(message:"Game: " + self.id + ": Game over!");
+		r = TIM::timer_cancel(timer_inst_ref: self.claim_victory_timer);
+		self.dispose();
+		@endnoparse
+	end state;
+
+	state 'our turn' is
+		@noparse
+		// handle takeback proposals
+		if (self.color == Color::WHITE and self.game_state.btakeback) or
+			(self.color == Color::BLACK and self.game_state.wtakeback) then
+			self.handle_takeback_proposal();
+		end if;
+		
+		// handle draw offers
+		if (self.color == Color::WHITE and self.game_state.bdraw) or
+			(self.color == Color::BLACK and self.game_state.wdraw) then
+			self.handle_draw_offer();
+		end if;
+		
+		// select a random legal move
+		legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: "startpos", moves: self.game_state.moves));
+		i = 0;  // coerce integer
+		i = TIM::current_clock() % legal_moves.length;
+		move = legal_moves[i];
+		
+		// play the move
+		create event instance e of ActiveGame3:'play move'(move: move) to self;
+		t = TIM::timer_start(event_inst:e, microseconds: 0);
+		@endnoparse
+	end state;
+
+	state 'playing move'(move: in string) is
+		@noparse
+		move = param.move;
+		
+		// play the move
+		success = chess::move(game_id: self.id, move: move);
+		if success then
+			generate ActiveGame1:'waiting on move' to self;
+		else
+		  LOG::LogFailure(message: "Failed to make move.");
+		  create event instance e of ActiveGame4:'ready to play' to self;
+		  t = TIM::timer_start(event_inst: e, microseconds: 100000);  // short delay to slow down endless loop possibility
+		end if;
+		@endnoparse
+	end state;
+
+	state 'claiming victory' is
+		@noparse
+		r = chess::claimVictory(game_id: self.id);
+		@endnoparse
+	end state;
+
+end;

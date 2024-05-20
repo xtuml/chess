@@ -1,8 +1,8 @@
 render : "lichess_bot::components::Engine::games"
 
 shapes :
-  shape : Game
-    render : class "lichess_bot::components::Engine::games::Game"
-    bounds : x : 4788.0 y : 3144.0 width : 241.0 height : 169.0
+  shape : ActiveGame
+    render : class "lichess_bot::components::Engine::games::Active Game"
+    bounds : x : 4668.0 y : 3109.0 width : 241.0 height : 203.0
 
 connectors :

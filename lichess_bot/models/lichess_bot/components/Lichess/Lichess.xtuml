@@ -52,6 +52,9 @@ within lichess_bot::components is
 			message connect(properties: in Properties) to provider;
 
 			@dialect("oal");
+			message connected() from provider;
+
+			@dialect("oal");
 			message error(error: in APIException) from provider;
 
 			@dialect("oal");

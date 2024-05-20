@@ -4,9 +4,11 @@ within lichess_bot::components is
 
 	component Engine is
 		
+		package EEs is lichess_bot::EEs;
 		package bot;
 		package functions;
 		package games;
+		package types is lichess_bot::types;
 		
 		required port chess implements LichessAPI is
 
@@ -60,7 +62,7 @@ within lichess_bot::components is
 					// only accept the challenge if not at the max number of active games
 					// default to one game at a time
 					max_games = PROP::getInteger(properties: bot.config, name: "max_games", default_value: 1);
-					select many games from instances of Game where (selected.game_state.status == GameStatus::CREATED or selected.game_state.status == GameStatus::STARTED);
+					select many games from instances of ActiveGame where (selected.game_state.status == GameStatus::CREATED or selected.game_state.status == GameStatus::STARTED);
 					if cardinality games >= max_games then
 							accept_challenge = false;
 							reason = DeclineReason::LATER;
@@ -108,7 +110,7 @@ within lichess_bot::components is
 				@noparse
 				LOG::LogInfo(message:"Chat line: " + param.game_id + ", " + param.username + ": " + param.text);
 				
-				select any game from instances of Game where selected.id == param.game_id;
+				select any game from instances of ActiveGame where selected.id == param.game_id;
 				if not empty game then
 				
 					// handle takeback proposals
@@ -129,6 +131,14 @@ within lichess_bot::components is
 
 			@dialect("oal");
 			message connect(properties: in Properties) to provider;
+
+			@dialect("oal");
+			message connected() from provider is
+				@noparse
+				select any bot from instances of Bot;
+				bot.user = chess::account();
+				@endnoparse
+			end message;
 
 			@dialect("oal");
 			message error(error: in APIException) from provider is
@@ -152,10 +162,9 @@ within lichess_bot::components is
 				g = param.game;
 				
 				// find/create the game
-				select any game from instances of Game where selected.id == g.id;
+				select any game from instances of ActiveGame where selected.id == g.id;
 				if empty game then
-					create object instance game of Game;
-					game.id = g.id;
+					game = ActiveGame::new_game(id: g.id);
 				end if;
 				
 				// set color for the game
@@ -179,10 +188,9 @@ within lichess_bot::components is
 				g = param.game_event;
 				
 				// find/create a game
-				select any game from instances of Game where selected.id == g.id;
+				select any game from instances of ActiveGame where selected.id == g.id;
 				if empty game then
-					create object instance game of Game;
-					game.id = g.id;
+					game = ActiveGame::new_game(id: g.id);
 				end if;
 				@endnoparse
 			end message;
@@ -191,7 +199,7 @@ within lichess_bot::components is
 			message gameState(game_id: in string, game_state: in GameState) from provider is
 				@noparse
 				LOG::LogInfo(message:"Game state: " + param.game_id);
-				select any game from instances of Game where selected.id == param.game_id;
+				select any game from instances of ActiveGame where selected.id == param.game_id;
 				if not empty game then
 					game.update_game_state(game_state: param.game_state);
 				end if;
@@ -203,7 +211,7 @@ within lichess_bot::components is
 				@noparse
 				LOG::LogInfo(message:"Opponent gone: " + param.game_id);
 				
-				select any game from instances of Game where selected.id == param.game_id;
+				select any game from instances of ActiveGame where selected.id == param.game_id;
 				if not empty game then
 					
 					// cancel the timer if it exists
@@ -211,7 +219,7 @@ within lichess_bot::components is
 				
 					// if the opponent is gone, claim victory after the specified delay
 					if param.gone then
-						create event instance e of Game5:'claim victory' to game;
+						create event instance e of ActiveGame5:'claim victory' to game;
 						game.claim_victory_timer = TIM::timer_start(event_inst: e, microseconds: param.claim_win_in_seconds * 1000000);
 					end if;
 					
