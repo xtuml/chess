@@ -61,7 +61,7 @@ within lichess_bot::components is
 				
 					// only accept the challenge if not at the max number of active games
 					// default to one game at a time
-					max_games = PROP::getInteger(properties: bot.config, name: "max_games", default_value: 1);
+					max_games = Bot::getInteger(name: "max_games", default_value: 1);
 					select many games from instances of ActiveGame where (selected.game_state.status == GameStatus::CREATED or selected.game_state.status == GameStatus::STARTED);
 					if cardinality games >= max_games then
 							accept_challenge = false;
@@ -90,7 +90,7 @@ within lichess_bot::components is
 				else
 					
 					LOG::LogInfo(message: "Watch outgoing challenge at: " + c.url );
-					if PROP::getBoolean(properties: bot.config, name: "auto_open_challenge_url", default_value: false) then
+					if Bot::getBoolean(name: "auto_open_challenge_url", default_value: false) then
 						ARCH::openURL(url:c.url);
 					end if;
 				
@@ -184,6 +184,7 @@ within lichess_bot::components is
 			message gameStart(game_event: in GameEventInfo) from provider is
 				@noparse
 				LOG::LogInfo(message:"Game start: " + param.game_event.id);
+				r = chess::chat(game_id:param.game_event.id, text: "version: " + Bot::getString(name: "version", default_value: "unknown"), room:Room::PLAYER);
 				r = chess::chat(game_id:param.game_event.id, text:"Good luck!", room:Room::PLAYER);
 				g = param.game_event;
 				

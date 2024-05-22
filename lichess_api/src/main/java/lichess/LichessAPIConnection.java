@@ -85,6 +85,8 @@ public class LichessAPIConnection implements LichessAPIProvider {
 
 		// wait for incoming events
 		handleBotEvents();
+		
+		peer.connected(this);
 	}
 
 	@Override
