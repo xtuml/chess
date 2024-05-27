@@ -7,6 +7,9 @@ Lichess public API as well as management of challenges and games and a utility
 for listing legal moves. The project is set up to run in BridgePoint Model
 Verifier.
 
+To watch a video walkthrough of the basic setup, click on the video link at the
+[bottom of this page](#basic-setup-walkthrough)
+
 
 ## Prerequisites
 
@@ -45,38 +48,84 @@ Install [Apache Maven](https://maven.apache.org/index.html) either through your
 operating system package manager or by downloading the latest release
 [here](https://maven.apache.org/users/index.html)
 
+#### Download the Ciera runtime library
+
+This project contains Java classes required to run the application when code is
+generated with Ciera. It also contains shared xtUML elements which are
+dependencies for the xtUML project itself.
+
+Run the following command in the terminal.
+```
+mvn dependency:get -DgroupId=io.ciera -DartifactId=runtime -Dversion=2.7.2
+```
+
 
 ## Running the Application
 
-### Configuration
-
-1. Copy `lichess_bot/src/main/resources/lichess_bot.properties.template` to
-   `lichess_bot/src/main/resources/lichess_bot.properties`
-2. Edit this file and replace `<YOUR_LICHESS_ACCESS_TOKEN>` with your API token
-   that you generated earlier.
-
 ### With xtUML Verifier
 
-1. Open BridgePoint on a fresh workspace. Import all the projects from the root
-   of the repository.
-2. Build the workspace by either clicking "Build All" in the "Project" menu, or by enabling "Build Automatically".
-3. Switch to the xtUML Debugging perspective.
-4. Select "Run" > "Debug Configurations..." and click on "LichessBot" under the
+1. Open BridgePoint on a fresh workspace.
+
+2. Import the runtime library. Select "File" > "Import..." then "General" >
+   "Existing Projects into Workspace". Tick "Select archive file" and type the
+   following path in the text entry:
+   `<PATH_TO_MAVEN_REPO>/io/ciera/runtime/2.7.2/runtime-2.7.2.jar`. Make sure the
+   "runtime" project is selected and click "Finish" to import.
+
+   _NOTE: In a normal maven installation, the maven repository is located in a
+   directory called `.m2/repository` in your home directory._
+
+3. Import all the projects from the root of the chess repository.
+
+4. Copy `lichess_bot/src/main/resources/lichess_bot.properties.template` to
+   `lichess_bot/src/main/resources/lichess_bot.properties`
+
+5. Edit this file and replace `<YOUR_LICHESS_ACCESS_TOKEN>` with your API token
+   that you generated earlier.
+
+
+
+6. Switch to the Java perspective. Build the workspace by either clicking
+   "Build All" in the "Project" menu, or by enabling "Build Automatically".
+
+   _NOTE: It is normal at this point to see some Java errors. These will be
+   cleared up later after building with Ciera, however if Verifier fails to
+   launch, you may need to refresh the Maven projects._
+
+   - Select all projects marked with a little "M" glyph.
+   - Right click then "Maven" > "Update Project..."
+   - Untick "Update project configuration from pom.xml"
+   - Click OK
+   - If it worked, you will see a "Maven Dependencies" item listed as a child
+     of each Maven project
+
+7. Select "Run" > "Debug Configurations..." and click on "LichessBot" under the
    "xtUML eXecute Application" heading.
-5. Click "Debug" to launch the application.
-6. Log in to your human account on lichess.com.
-7. Use the [search bar](doc/img/search_opponent.png "search opponent") to navigate
+
+8. Click "Debug" to launch the application.
+
+9. Log in to your human account on lichess.org.
+
+10. Use the [search bar](doc/img/search_opponent.png "search opponent") to navigate
    to the user page for your bot.
-8. Challenge your bot to a match (by clicking on the [crossed swords](doc/img/challenge.png "challenge")).
+
+11. Challenge your bot to a match (by clicking on the [crossed swords](doc/img/challenge.png "challenge")).
 
 ### With Ciera
 
 1. Open a terminal and navigate to the root of the repository.
-2. Run the command `mvn install`
-3. Return to BridgePoint and open the Java perspective.
-4. Select "Run" > "Run Configurations..." and click on "LichessBotJava" under the
+
+2. Assure the `BPHOME` environment variable is set to point to your BridgePoint
+   installation folder. This should refer to the same folder containing the
+   `bridgepoint.ini` file.
+3. Run the command `mvn install`
+
+4. Return to BridgePoint and open the Java perspective.
+
+5. Select "Run" > "Run Configurations..." and click on "LichessBotJava" under the
    "Java Application" heading.
-5. Click "Run" to launch the application.
+
+6. Click "Run" to launch the application.
 
 
 ## Adding bot intelligence
@@ -153,3 +202,10 @@ If you have an issue (bug, new feature, etc) with the xtuml/chess project itself
 raise an issue in the [repository tracker](https://github.com/xtuml/chess/issues).
 Of course pull requests with fixes and improvements are welcome!
 
+
+## Basic Setup Walkthrough
+
+If you would like to see a walkthrough of setting up the application and
+running it for the first time, click below.
+
+[![chess bot setup walkthrough](https://img.youtube.com/vi/MNzOppnPcWE/0.jpg)](https://www.youtube.com/watch?v=MNzOppnPcWE)
