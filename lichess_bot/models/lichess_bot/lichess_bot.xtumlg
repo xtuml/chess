@@ -1,17 +1,17 @@
 render : "lichess_bot"
 
 shapes :
-  shape : types
-    render : package "lichess_bot::types"
+  shape : EEs
+    render : package "lichess_bot::EEs"
     bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
   shape : components
     render : package "lichess_bot::components"
     bounds : x : 220.0 y : 0.0 width : 200.0 height : 150.0
   shape : system
     render : package "lichess_bot::system"
-    bounds : x : 880.0 y : 0.0 width : 200.0 height : 150.0
-  shape : EEs
-    render : package "lichess_bot::EEs"
-    bounds : x : 1100.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : 440.0 y : 0.0 width : 200.0 height : 150.0
+  shape : types
+    render : package "lichess_bot::types"
+    bounds : x : 660.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :

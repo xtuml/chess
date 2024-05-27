@@ -74,8 +74,8 @@ within lichess_bot::components is
 							reason = DeclineReason::CASUAL;
 					end if;
 				
-					// only accept standard games starting from the standard start position
-					if c.variant != Variant::STANDARD or not (c.initialFen == "" or c.initialFen == "startpos") then
+					// only accept standard games or from position games
+					if not (c.variant == Variant::STANDARD or c.variant == Variant::FROMPOSITION) then
 							accept_challenge = false;
 							reason = DeclineReason::STANDARD;
 					end if;
@@ -168,11 +168,19 @@ within lichess_bot::components is
 				end if;
 				
 				// set color for the game
-				bot = chess::account();
-				if g.white.name == bot.username then
+				select any bot from instances of Bot;
+				if g.white.name == bot.user.username then
 					game.color = Color::WHITE;
 				else
 					game.color = Color::BLACK;
+				end if;
+				
+				// set the initial FEN
+				game.initial_fen = g.initialFen;
+				if STRING::indexof(haystack: game.initial_fen, needle:" w ") != -1 then
+					game.start_color = Color::WHITE;
+				else
+					game.start_color = Color::BLACK;
 				end if;
 				
 				// update the game state

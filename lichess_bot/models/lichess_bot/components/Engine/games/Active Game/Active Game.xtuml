@@ -14,13 +14,17 @@ within lichess_bot::components::Engine::games is
 
 		claim_victory_timer: timer;
 
+		initial_fen: string;
+
+		start_color: Color;
+
 		preferred identifier is (id);
 
 		@dialect("oal");
 		@operation_num(1);
 		operation is_our_turn() return boolean is
 			@noparse
-			return self.color == Color::WHITE and self.game_state.moves.length % 2 == 0 or self.color == Color::BLACK and self.game_state.moves.length % 2 == 1;
+			return self.color == self.start_color and self.game_state.moves.length % 2 == 0 or self.color != self.start_color and self.game_state.moves.length % 2 == 1;
 			@endnoparse
 		end operation;
 
