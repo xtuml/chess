@@ -22,6 +22,9 @@ shapes :
   shape : board
     render : package "lichess_bot::components::Engine::board"
     bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+  shape : ^sequence
+    render : package "lichess_bot::components::Engine::sequence"
+    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :
   connector : chess____LichessAPI

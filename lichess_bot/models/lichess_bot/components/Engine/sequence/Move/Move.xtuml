@@ -1,0 +1,76 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::'sequence' is
+
+  @key_letters("Move");
+  @class_num(1);
+  class Move is
+
+    move: string;
+
+    @dialect("oal");
+    @operation_num(1);
+    class operation initialize() is
+      @noparse
+      // 4 Knights
+      create object instance pk4 of Move;
+      pk4.move = "e2e4";
+      create object instance PK4 of Move;
+      PK4.move = "e7e5";
+      relate pk4 to PK4 across R100.'may be responded to with';
+      
+      create object instance ktkb3 of Move;
+      ktkb3.move = "g1f3";
+      relate PK4 to ktkb3 across R100.'may be responded to with';
+      create object instance KtQB3 of Move;
+      KtQB3.move = "b8c6";
+      relate ktkb3 to KtQB3 across R100.'may be responded to with';
+      
+      create object instance ktb5 of Move;
+      ktb5.move = "b1c3";
+      relate KtQB3 to ktb5 across R100.'may be responded to with';
+      create object instance KtB5 of Move;
+      KtB5.move = "g8f6";
+      relate ktb5 to KtB5 across R100.'may be responded to with';
+      
+      create object instance bkt5 of Move;
+      bkt5.move = "f1b5";
+      relate KtB5 to bkt5 across R100.'may be responded to with';
+      create object instance BKt5 of Move;
+      BKt5.move = "f8b5";
+      relate bkt5 to BKt5 across R100.'may be responded to with';
+      
+      create object instance wOO of Move;
+      wOO.move = "e1g1";
+      relate BKt5 to wOO across R100.'may be responded to with';
+      
+      // add Scotch
+      create object instance pq4 of Move;
+      pq4.move = "d2e4";
+      relate KtQB3 to pq4 across R100.'may be responded to with';
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(2);
+    class operation respond(move: in string) return string is
+      @noparse
+      played = param.move;
+      reply= "";
+      select many moves from instances of Move
+       where ( selected.move == played);
+      if (not_empty moves)
+        for each move in moves
+          select any response related by move->Move[R100.'may be responded to with'];
+          if (not_empty response)
+            reply = response.move;
+          end if;
+        end for;
+      end if;
+      return reply;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

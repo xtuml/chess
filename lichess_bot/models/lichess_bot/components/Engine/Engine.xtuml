@@ -9,6 +9,7 @@ within lichess_bot::components is
     package bot;
     package functions;
     package games;
+    package 'sequence';
     package types is lichess_bot::types;
     
     required port chess implements LichessAPI is

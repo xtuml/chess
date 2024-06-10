@@ -92,15 +92,40 @@ within lichess_bot::components::Engine::games::'Active Game' is
     
     legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: self.game_state.moves));
     
+    n = moves.length;
+    next_moves[n] = "";
+    j = 0;
+    while j < n
+      next_moves[j] = moves[j];
+      j = j + 1;
+    end while;
+    
     // a simplistic attempt to choose a move based on high-value target.
     best = 0;
     n = legal_moves.length - 1;
-    while (i < n)
+    i = 0;
+    while (i < n)  // for each legal move...
       possible = legal_moves[i];
-      value = Piece::evaluate_move( move:possible );
+      value = Piece::evaluate_move(move:possible);
       if (value > best)
-        best = value;
-        ourmove = possible;
+        make = TRUE;  // tentatively...
+        dest = STRING::substr(s:possible, begin:2, end:4);  // where this possible move would end up, if made
+        next_moves[j] = possible;  // let's see what could be played in response to this possible move
+        response_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: next_moves));
+        l = response_moves.length;
+        k = 0;
+        while (k < l)
+          danger = STRING::substr(s:response_moves[k], begin:2, end:4);
+          if (dest == danger)
+            make = FALSE;
+            break;
+          end if;
+          k = k + 1;
+        end while;
+        if (make)
+          best = value;
+          ourmove = possible;
+        end if;
       end if;
       i = i + 1;
     end while;
