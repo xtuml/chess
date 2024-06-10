@@ -1,0 +1,355 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::board is
+
+  //! One of the chessmen
+  @key_letters("Piece");
+  @class_num(2);
+  class Piece is
+
+    Name: string;
+
+    Color: Color;
+
+    //! A ranking of pieces used for move evaluation (from Golombek: The Game of Chess).
+    Value: integer;
+
+    //! Create and place the pieces on the board.
+    @dialect("oal");
+    @operation_num(1);
+    class operation initialize() is
+      @noparse
+      // Create Black
+      
+      create object instance p of Piece;
+      p.Name = "R";
+      p.Color = Color::BLACK;
+      p.Value = 5;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "h1");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "Kt";
+      p.Color = Color::BLACK;
+      p.Value = 3;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "g1");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "B";
+      p.Color = Color::BLACK;
+      p.Value = 3;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "f1");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "K";
+      p.Color = Color::BLACK;
+      p.Value = 0;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "e1");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "Q";
+      p.Color = Color::BLACK;
+      p.Value = 9;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "d1");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "B";
+      p.Color = Color::BLACK;
+      p.Value = 3;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "c1");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "Kt";
+      p.Color = Color::BLACK;
+      p.Value = 3;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "b1");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "R";
+      p.Color = Color::BLACK;
+      p.Value = 5;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "a1");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::BLACK;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "h2");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::BLACK;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "g2");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::BLACK;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "f2");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::BLACK;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "e2");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::BLACK;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "d2");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::BLACK;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "c2");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::BLACK;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "b2");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::BLACK;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "a2");
+      relate p to sq across R1.'occupies';
+      
+      // Create White
+      
+      create object instance p of Piece;
+      p.Name = "R";
+      p.Color = Color::WHITE;
+      p.Value = 5;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "h8");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "Kt";
+      p.Color = Color::WHITE;
+      p.Value = 3;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "g8");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "B";
+      p.Color = Color::WHITE;
+      p.Value = 3;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "f8");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "K";
+      p.Color = Color::WHITE;
+      p.Value = 0;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "e8");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "Q";
+      p.Color = Color::WHITE;
+      p.Value = 9;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "d8");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "B";
+      p.Color = Color::WHITE;
+      p.Value = 3;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "c8");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "Kt";
+      p.Color = Color::WHITE;
+      p.Value = 3;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "b8");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "R";
+      p.Color = Color::WHITE;
+      p.Value = 5;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "a8");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::WHITE;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "h7");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::WHITE;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "g7");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::WHITE;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "f7");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::WHITE;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "e7");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::WHITE;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "d7");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::WHITE;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "c7");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::WHITE;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "b7");
+      relate p to sq across R1.'occupies';
+      
+      create object instance p of Piece;
+      p.Name = "P";
+      p.Color = Color::WHITE;
+      p.Value = 1;
+      select any sq from instances of Square
+       where (selected.lichess_desig == "a7");
+      relate p to sq across R1.'occupies';
+      @endnoparse
+    end operation;
+
+    //! Record all piece movements to maintain ground truth - needed for evaluation of moves.
+    @dialect("oal");
+    @operation_num(2);
+    class operation record_move(move: in string, 'from': in string) is
+      @noparse
+      move = param.move;
+      from = param.from;
+      startpos = STRING::substr(s:move, begin:0, end:2);
+      newpos = STRING::substr(s:move, begin:2, end:4);
+      LOG::LogInfo( message:"recording move from " + from + move );
+      select any square1 from instances of Square
+       where (selected.lichess_desig == startpos);
+      select any square2 from instances of Square
+       where (selected.lichess_desig == newpos);
+      if (not_empty square1)
+        select one piece related by square1->Piece[R1.'is occupied by'];
+        if (not_empty piece)
+          unrelate piece from square1 across R1.'occupies';
+          select one taken related by square2->Piece[R1.'is occupied by'];
+          if (not_empty taken)
+            unrelate taken from square2 across R1.'occupies';
+            LOG::LogInfo( message:"Capturing piece " + taken.Name + " on " + square2.lichess_desig );
+            delete object instance taken;
+          end if;
+          relate piece to square2 across R1.'occupies';
+          // Castling? - the only time a King can move 2 squares along Rank 1 or 8.
+          // lichess does not report the Rook's part in this; record it here to maintain ground truth.
+          if (piece.Name == "K")
+      	    if (move == "e1g1")
+      	      Piece::record_move( move:"h1f1", from:from + " O-O" );
+      	    end if;
+      	    if (move == "e8g8")
+      	      Piece::record_move( move:"h8f8", from:from + " O-O" );
+      	    end if;
+      	    // Queen side?
+      	    if (move == "e1c1")
+      	      Piece::record_move( move:"a1d1", from:from + " O-O" );
+      	    end if;
+      	    if (move == "e8c8")
+      	      Piece::record_move( move:"a8d8", from:from + " O-O" );
+      	    end if;
+          end if;
+        else
+          LOG::LogFailure( message:"Oops - no piece found on " + startpos );
+        end if;
+      else
+        LOG::LogFailure( message:"Oops - no matching square for " + startpos );
+      end if;
+      @endnoparse
+    end operation;
+
+    //! Attempt to rate a move based on some evaluation criteria.
+    @dialect("oal");
+    @operation_num(3);
+    class operation evaluate_move(move: in string) return integer is
+      @noparse
+      possible = param.move;
+      value = 0;
+      dest = STRING::substr(s:possible, begin:2, end:4);
+      select any square2 from instances of Square
+       where (selected.lichess_desig == dest);
+      select one piece related by square2->Piece[R1.'is occupied by'];
+      if (not_empty piece)
+        value = piece.Value;
+      end if;
+      return value;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

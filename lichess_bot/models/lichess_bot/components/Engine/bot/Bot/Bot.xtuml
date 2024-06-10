@@ -2,41 +2,41 @@
 
 within lichess_bot::components::Engine::bot is
 
-	@key_letters("Bot");
-	@class_num(1);
-	class Bot is
+  @key_letters("Bot");
+  @class_num(1);
+  class Bot is
 
-		user: User;
+    user: User;
 
-		config: Properties;
+    config: Properties;
 
-		@dialect("oal");
-		@operation_num(1);
-		class operation getInteger(name: in string, default_value: in integer) return integer is
-			@noparse
-			select any bot from instances of Bot;
-			return PROP::getInteger(properties: bot.config, name: param.name, default_value: param.default_value);
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(1);
+    class operation getInteger(name: in string, default_value: in integer) return integer is
+      @noparse
+      select any bot from instances of Bot;
+      return PROP::getInteger(properties: bot.config, name: param.name, default_value: param.default_value);
+      @endnoparse
+    end operation;
 
-		@dialect("oal");
-		@operation_num(2);
-		class operation getBoolean(name: in string, default_value: in boolean) return boolean is
-			@noparse
-			select any bot from instances of Bot;
-			return PROP::getBoolean(properties: bot.config, name: param.name, default_value: param.default_value);
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(2);
+    class operation getBoolean(name: in string, default_value: in boolean) return boolean is
+      @noparse
+      select any bot from instances of Bot;
+      return PROP::getBoolean(properties: bot.config, name: param.name, default_value: param.default_value);
+      @endnoparse
+    end operation;
 
-		@dialect("oal");
-		@operation_num(1);
-		class operation getString(name: in string, default_value: in string) return string is
-			@noparse
-			select any bot from instances of Bot;
-			return PROP::getString(properties: bot.config, name: param.name, default_value: param.default_value);
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(1);
+    class operation getString(name: in string, default_value: in string) return string is
+      @noparse
+      select any bot from instances of Bot;
+      return PROP::getString(properties: bot.config, name: param.name, default_value: param.default_value);
+      @endnoparse
+    end operation;
 
-	end class;
+  end class;
 
 end;

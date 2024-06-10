@@ -2,101 +2,101 @@
 
 within lichess_bot::components::Engine::games is
 
-	@key_letters("ActiveGame");
-	@class_num(2);
-	class 'Active Game' is
+  @key_letters("ActiveGame");
+  @class_num(2);
+  class 'Active Game' is
 
-		id: string;
+    id: string;
 
-		color: Color;
+    color: Color;
 
-		game_state: GameState;
+    game_state: GameState;
 
-		claim_victory_timer: timer;
+    claim_victory_timer: timer;
 
-		initial_fen: string;
+    initial_fen: string;
 
-		start_color: Color;
+    start_color: Color;
 
-		preferred identifier is (id);
+    preferred identifier is (id);
 
-		@dialect("oal");
-		@operation_num(1);
-		operation is_our_turn() return boolean is
-			@noparse
-			return self.color == self.start_color and self.game_state.moves.length % 2 == 0 or self.color != self.start_color and self.game_state.moves.length % 2 == 1;
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(1);
+    operation is_our_turn() return boolean is
+      @noparse
+      return self.color == self.start_color and self.game_state.moves.length % 2 == 0 or self.color != self.start_color and self.game_state.moves.length % 2 == 1;
+      @endnoparse
+    end operation;
 
-		@dialect("oal");
-		@operation_num(2);
-		operation resign() is
-			@noparse
-			if self.game_state.moves.length > 1 then
-				r = chess::resign(game_id:self.id);
-			else
-				r = chess::abort(game_id:self.id);
-			end if;
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(2);
+    operation resign() is
+      @noparse
+      if self.game_state.moves.length > 1 then
+      	r = chess::resign(game_id:self.id);
+      else
+      	r = chess::abort(game_id:self.id);
+      end if;
+      @endnoparse
+    end operation;
 
-		@dialect("oal");
-		@operation_num(3);
-		operation handle_draw_offer() is
-			@noparse
-			r = chess::draw(game_id:self.id, accept:false);
-			r = chess::chat(game_id:self.id, text:"Never give up, never surrender!", room:Room::PLAYER);
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(3);
+    operation handle_draw_offer() is
+      @noparse
+      r = chess::draw(game_id:self.id, accept:false);
+      r = chess::chat(game_id:self.id, text:"Never give up, never surrender!", room:Room::PLAYER);
+      @endnoparse
+    end operation;
 
-		@dialect("oal");
-		@operation_num(3);
-		operation handle_takeback_proposal() is
-			@noparse
-			r = chess::takeback(game_id:self.id, accept:false);
-			r = chess::chat(game_id:self.id, text:"No takebacks!", room:Room::PLAYER);
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(3);
+    operation handle_takeback_proposal() is
+      @noparse
+      r = chess::takeback(game_id:self.id, accept:false);
+      r = chess::chat(game_id:self.id, text:"No takebacks!", room:Room::PLAYER);
+      @endnoparse
+    end operation;
 
-		@dialect("oal");
-		@operation_num(4);
-		operation update_game_state(game_state: in GameState) is
-			@noparse
-			self.game_state = param.game_state;
-			
-			// check if the game is over
-			if not (self.game_state.status == GameStatus::CREATED or self.game_state.status == GameStatus::STARTED) then
-					generate ActiveGame2:'game over'(status: self.game_state.status) to self;
-			else
-				if self.is_our_turn() then
-					generate ActiveGame4:'ready to play' to self;
-				else
-					generate ActiveGame1:'waiting on move' to self;
-				end if;
-			end if;
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(4);
+    operation update_game_state(game_state: in GameState) is
+      @noparse
+      self.game_state = param.game_state;
+      
+      // check if the game is over
+      if not (self.game_state.status == GameStatus::CREATED or self.game_state.status == GameStatus::STARTED) then
+      		generate ActiveGame2:'game over'(status: self.game_state.status) to self;
+      else
+      	if self.is_our_turn() then
+      		generate ActiveGame4:'ready to play' to self;
+      	else
+      		generate ActiveGame1:'waiting on move' to self;
+      	end if;
+      end if;
+      @endnoparse
+    end operation;
 
-		@dialect("oal");
-		@operation_num(5);
-		class operation new_game(id: in string) return instance of 'Active Game' is
-			@noparse
-			// create the game
-			create object instance game of ActiveGame;
-			game.id = param.id;
-			
-			return game;
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(5);
+    class operation new_game(id: in string) return instance of 'Active Game' is
+      @noparse
+      // create the game
+      create object instance game of ActiveGame;
+      game.id = param.id;
+      
+      return game;
+      @endnoparse
+    end operation;
 
-		@dialect("oal");
-		@operation_num(6);
-		operation dispose() is
-			@noparse
-			delete object instance self;
-			@endnoparse
-		end operation;
+    @dialect("oal");
+    @operation_num(6);
+    operation dispose() is
+      @noparse
+      delete object instance self;
+      @endnoparse
+    end operation;
 
-	end class;
+  end class;
 
 end;

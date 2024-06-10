@@ -1,0 +1,15 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine is
+
+  //! Maintains a representation of the chessboard and piece placement and movement.
+  package board is
+    class Piece;
+    class Square;
+    //! A piece not yet removed from the board must occupy a square.
+    relationship R1 is Piece unconditionally occupies one Square,
+                       Square conditionally 'is occupied by' one Piece;
+
+  end package;
+
+end;

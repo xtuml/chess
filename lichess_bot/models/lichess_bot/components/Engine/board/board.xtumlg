@@ -1,0 +1,31 @@
+render : "lichess_bot::components::Engine::board"
+
+shapes :
+  shape : Square
+    render : class "lichess_bot::components::Engine::board::Square"
+    bounds : x : 4080.0 y : 3036.0 width : 200.0 height : 150.0
+  shape : Piece
+    render : class "lichess_bot::components::Engine::board::Piece"
+    bounds : x : 4524.0 y : 3036.0 width : 200.0 height : 150.0
+
+connectors :
+  connector : R1
+    render : association "lichess_bot::components::Engine::board::R1"
+    polyline :
+      segment :
+        start : x : 4280.0 y : 3131.0
+        end :   x : 4524.0 y : 3131.0
+    anchors :
+      start :
+        point : x : 4280.0 y : 3131.0
+        shape : Square
+      end :
+        point : x : 4524.0 y : 3131.0
+        shape : Piece
+    texts :
+      text :
+        bounds : x : 4295.0 y : 3145.0 width : 0.0 height : 0.0 where : start
+      text :
+        bounds : x : 4395.0 y : 3089.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 4422.0 y : 3146.0 width : 0.0 height : 0.0 where : end

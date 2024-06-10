@@ -2,6 +2,6 @@
 
 within lichess_bot::components::Engine is
 
-	package EEs is lichess_bot::EEs;
+  package EEs is lichess_bot::EEs;
 
 end;
