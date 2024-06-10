@@ -25,7 +25,7 @@ became clear to me that he had a natural aptitude for the game. By March of
 2024, he had beaten me many times (he knows the exact number), and he had even
 beaten his grandpa!
 
-![ezra_chess](ezra_chess.jpg)
+![ezra_chess](img/ezra_chess.jpg)
 
 With all this in mind, I was struck with the idea to host a chess modeling
 challenge as a part of the conference this year. This would achieve a few key
