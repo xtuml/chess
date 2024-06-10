@@ -176,11 +176,16 @@ within lichess_bot::components is
 				end if;
 				
 				// set the initial FEN
-				game.initial_fen = g.initialFen;
-				if STRING::indexof(haystack: game.initial_fen, needle:" w ") != -1 then
+				if g.initialFen == "startpos" then
+					game.initial_fen = ChessLib::startpos();
 					game.start_color = Color::WHITE;
 				else
-					game.start_color = Color::BLACK;
+					game.initial_fen = g.initialFen;
+					if STRING:: indexof(haystack: game.initial_fen, needle:" w ") != -1 then
+						game.start_color = Color::WHITE;
+					else
+						game.start_color = Color::BLACK;
+					end if;
 				end if;
 				
 				// update the game state
