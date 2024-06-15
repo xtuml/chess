@@ -16,6 +16,7 @@ within lichess_bot::components::Engine is
       
       Square::initialize();
       Piece::initialize();
+      Play::initialize();
       
       // connect to the Lichess API and start listening for events
       send chess::connect(properties: bot.config);

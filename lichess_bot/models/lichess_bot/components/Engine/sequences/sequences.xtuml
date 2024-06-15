@@ -1,0 +1,12 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine is
+
+  package sequences is
+    class Play;
+    relationship R100 is Play conditionally 'may be responded to with' many Play,
+                         Play conditionally 'responds to' one Play;
+
+  end package;
+
+end;

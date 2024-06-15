@@ -4,6 +4,7 @@ within lichess_bot::components::Engine is
 
   //! Maintains a representation of the chessboard and piece placement and movement.
   package board is
+    class Move;
     class Piece;
     class Square;
     //! A piece not yet removed from the board must occupy a square.

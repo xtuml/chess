@@ -76,6 +76,9 @@ within lichess_bot::components::Engine::games::'Active Game' is
     	self.handle_draw_offer();
     end if;
     
+    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: self.game_state.moves));
+    
+    // init variables
     moves = self.game_state.moves;
     i = moves.length;
     ourmove = "";
@@ -88,9 +91,8 @@ within lichess_bot::components::Engine::games::'Active Game' is
     if (i > 0)
       move = moves[i-1];  // most recent from opponent
       Piece::record_move( move:move, from:" Player " );
+      ourmove = Play::respond( move:move, legals: legal_moves );
     end if;
-    
-    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: self.game_state.moves));
     
     n = moves.length;
     next_moves[n] = "";
@@ -105,30 +107,18 @@ within lichess_bot::components::Engine::games::'Active Game' is
     n = legal_moves.length - 1;
     i = 0;
     while (i < n)  // for each legal move...
-      possible = legal_moves[i];
-      value = Piece::evaluate_move(move:possible);
-      if (value > best)
-        make = TRUE;  // tentatively...
-        dest = STRING::substr(s:possible, begin:2, end:4);  // where this possible move would end up, if made
-        next_moves[j] = possible;  // let's see what could be played in response to this possible move
-        response_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: next_moves));
-        l = response_moves.length;
-        k = 0;
-        while (k < l)
-          danger = STRING::substr(s:response_moves[k], begin:2, end:4);
-          if (dest == danger)
-            make = FALSE;
-            break;
-          end if;
-          k = k + 1;
-        end while;
-        if (make)
-          best = value;
-          ourmove = possible;
-        end if;
-      end if;
+      create object instance m of Move;
+      m.Notation = legal_moves[i];
+      m.evaluate(fen:self.initial_fen, moves:self.game_state.moves);
       i = i + 1;
     end while;
+    select many possible_moves from instances of Move;
+    for each possible in possible_moves
+      if (possible.Value > best)
+        ourmove = possible.Notation;
+      end if;
+      delete object instance possible;
+    end for; 
     
     if (ourmove == "")
       // select a random legal move

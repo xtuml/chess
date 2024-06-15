@@ -1,0 +1,90 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::board is
+
+  @key_letters("Move");
+  @class_num(3);
+  class Move is
+
+    Notation: string;
+
+    Value: integer;
+
+    @dialect("oal");
+    @operation_num(1);
+    class operation from_square(move: in string) return instance of Square is
+      @noparse
+      str = param.move;
+      move_from = STRING::substr(s:str, begin:0, end:2);
+      select any square from instances of Square
+       where (selected.lichess_desig == move_from);
+      return square;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(1);
+    class operation to_square(move: in string) return instance of Square is
+      @noparse
+      str = param.move;
+      move_from = STRING::substr(s:str, begin:2, end:4);
+      select any square from instances of Square
+       where (selected.lichess_desig == move_from);
+      return square;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(2);
+    operation evaluate(fen: in string, moves: in sequence of string) is
+      @noparse
+      fen = param.fen;
+      moves = param.moves;
+      
+      src = Move::from_square( move:self.Notation );
+      moved_piece = src.occupant();
+      dest = Move::to_square( move:self.Notation );
+      taken = dest.occupant();
+      value = 0;
+      if (not_empty taken)
+        value = taken.Value;
+      end if;
+      
+      bestvalue = 0;
+      select any bestmove from instances of Move where false;
+      
+      n = moves.length;
+      next_moves[n] = "";
+      j = 0;
+      while j < n
+        next_moves[j] = moves[j];
+        j = j + 1;
+      end while;
+      next_moves[j] = self.Notation;
+      
+      response_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: fen, moves: next_moves));
+      l = response_moves.length;
+      k = 0;
+      while (k < l)
+        response = response_moves[k];
+        opponent_dest = Move::to_square( move:response );
+        
+        if (opponent_dest == dest)  // lose moved_piece?
+          opponent_src = Move::from_square( move:response );
+          opponent = opponent_src.occupant();
+          opval = opponent.Value;
+          value = moved_piece.Value - opval;
+          if (value > bestvalue)
+            bestvalue = value;
+            bestmove = self;
+          end if;
+        end if;
+        k = k + 1;
+      end while;
+      self.Value = value;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

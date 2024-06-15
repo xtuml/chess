@@ -339,10 +339,8 @@ within lichess_bot::components::Engine::board is
       @noparse
       possible = param.move;
       value = 0;
-      dest = STRING::substr(s:possible, begin:2, end:4);
-      select any square2 from instances of Square
-       where (selected.lichess_desig == dest);
-      select one piece related by square2->Piece[R1.'is occupied by'];
+      dest = Move::to_square(move:possible);
+      piece = dest.occupant();
       if (not_empty piece)
         value = piece.Value;
       end if;

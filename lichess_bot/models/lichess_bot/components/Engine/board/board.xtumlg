@@ -7,6 +7,9 @@ shapes :
   shape : Piece
     render : class "lichess_bot::components::Engine::board::Piece"
     bounds : x : 4524.0 y : 3036.0 width : 200.0 height : 150.0
+  shape : Move
+    render : class "lichess_bot::components::Engine::board::Move"
+    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :
   connector : R1

@@ -3,6 +3,6 @@ render : "lichess_bot::components::Engine::games"
 shapes :
   shape : ActiveGame
     render : class "lichess_bot::components::Engine::games::Active Game"
-    bounds : x : 4668.0 y : 3109.0 width : 241.0 height : 203.0
+    bounds : x : 4668.0 y : 3072.0 width : 241.0 height : 301.0
 
 connectors :
