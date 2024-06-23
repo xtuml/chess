@@ -46,13 +46,14 @@ within lichess_bot::components::Engine::board is
       dest = Move::to_square( move:self.Notation );
       taken = dest.occupant();
       value = 0;
-      if (not_empty taken)
+      if (not_empty taken)  // captured opponent piece
         value = taken.Value;
       end if;
       
       bestvalue = 0;
       select any bestmove from instances of Move where false;
       
+      // prepare to examine opponent lookahead legal moves
       n = moves.length;
       next_moves[n] = "";
       j = 0;
@@ -61,22 +62,18 @@ within lichess_bot::components::Engine::board is
         j = j + 1;
       end while;
       next_moves[j] = self.Notation;
-      
       response_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: fen, moves: next_moves));
+      // now considering opponent's possible responses to this move
       l = response_moves.length;
       k = 0;
       while (k < l)
         response = response_moves[k];
         opponent_dest = Move::to_square( move:response );
         
-        if (opponent_dest == dest)  // lose moved_piece?
-          opponent_src = Move::from_square( move:response );
-          opponent = opponent_src.occupant();
-          opval = opponent.Value;
-          value = moved_piece.Value - opval;
-          if (value > bestvalue)
-            bestvalue = value;
-            bestmove = self;
+        if (opponent_dest == dest)  // losing the moved_piece in a possible opponent response?
+          value = value - moved_piece.Value;
+          if (value < 0)
+            break;  // this move presents a loss vulnerability - stop considering it
           end if;
         end if;
         k = k + 1;
