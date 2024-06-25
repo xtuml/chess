@@ -10,6 +10,9 @@ Verifier.
 To watch a video walkthrough of the basic setup, click on the video link at the
 [bottom of this page](#basic-setup-walkthrough)
 
+Read the announcement of the [2024 Chess Modeling Challenge](doc/announcement.md).
+The results of this challenge will be highlighted at
+[Shlaer-Mellor Day 2024](https://xtuml.github.io/xday/smdays2024.html)
 
 ## Prerequisites
 
