@@ -30,7 +30,7 @@ within lichess_bot::components::Engine is
     function resign_all() is
       @noparse
       select many games from instances of ActiveGame;
-      for each game in games loop
+      for each game in games 
       	game.resign();
       end for;
       @endnoparse

@@ -13,6 +13,7 @@ within lichess_bot::components::Engine::sequences is
     @operation_num(1);
     class operation initialize() is
       @noparse
+      /*
       // 4 Knights
       create object instance pk4 of Play;
       pk4.move = "e2e4";
@@ -52,6 +53,7 @@ within lichess_bot::components::Engine::sequences is
       create object instance pq4 of Play;
       pq4.move = "d2e4";
       relate KtQB3 to pq4 across R100.'may be responded to with';
+      */
       @endnoparse
     end operation;
 
@@ -59,6 +61,7 @@ within lichess_bot::components::Engine::sequences is
     @operation_num(2);
     class operation respond(move: in string, legals: in sequence (1) of string) return string is
       @noparse
+      /*
       played = param.move;
       reply= "";
       legals = param.legals;
@@ -82,6 +85,8 @@ within lichess_bot::components::Engine::sequences is
         end for;
       end if;
       return reply;
+      */
+      return "";
       @endnoparse
     end operation;
 
