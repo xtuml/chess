@@ -332,22 +332,6 @@ within lichess_bot::components::Engine::board is
       @endnoparse
     end operation;
 
-    //! Attempt to rate a move based on some evaluation criteria.
-    @dialect("oal");
-    @operation_num(3);
-    class operation evaluate_move(move: in string) return integer is
-      @noparse
-      possible = param.move;
-      value = 0;
-      dest = Move::to_square(move:possible);
-      piece = dest.occupant();
-      if (not_empty piece)
-        value = piece.Value;
-      end if;
-      return value;
-      @endnoparse
-    end operation;
-
   end class;
 
 end;

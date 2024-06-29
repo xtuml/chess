@@ -44,9 +44,20 @@ within lichess_bot::components::Engine::board is
       fen = param.fen;
       moves = param.moves;
       
-      src = Move::from_square( move:self.Notation );
+      //src = Move::from_square( move:self.Notation );
+      str = self.Notation;
+      
+      move_from = STRING::substr(s:str, begin:0, end:2);
+      select any src from instances of Square
+       where (selected.lichess_desig == move_from);
       moved_piece = src.occupant();
-      dest = Move::to_square( move:self.Notation );
+      
+      move_to = STRING::substr(s:str, begin:2, end:4);
+      select any dest from instances of Square
+       where (selected.lichess_desig == move_to);
+      //dest = Move::to_square( move:self.Notation );
+      
+      
       taken = dest.occupant();
       value = 0;
       if (not_empty taken)  // captured opponent piece
@@ -71,7 +82,10 @@ within lichess_bot::components::Engine::board is
       k = 0;
       while (k < l)
         response = response_moves[k];
-        opponent_dest = Move::to_square( move:response );
+      //  opponent_dest = Move::to_square( move:response );
+        move_to = STRING::substr(s:response, begin:2, end:4);
+        select any opponent_dest from instances of Square
+         where (selected.lichess_desig == move_to);
         
         if (opponent_dest == dest)  // losing the moved_piece in a possible opponent response?
           self.Is_safe = false;
