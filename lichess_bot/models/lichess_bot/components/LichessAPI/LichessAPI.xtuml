@@ -2,34 +2,34 @@
 
 within lichess_bot::components is
 
-	//! This interface is based on the Lichess public API. More information on
-	//! individual messages can be found at https://lichess.org/api
-	interface LichessAPI is
-		
-		message move(game_id: in string, move: in string) return boolean to provider;
-		message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
-		message abort(game_id: in string) return boolean to provider;
-		message resign(game_id: in string) return boolean to provider;
-		message draw(game_id: in string, accept: in boolean) return boolean to provider;
-		message takeback(game_id: in string, accept: in boolean) return boolean to provider;
-		message acceptChallenge(challenge_id: in string) return boolean to provider;
-		message declineChallenge(challenge_id: in string, reason: in DeclineReason) return boolean to provider;
-		message account() return User to provider;
-		message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return boolean to provider;
-		message claimVictory(game_id: in string) return boolean to provider;
-		
-		message connect(properties: in Properties) to provider;
-		message connected() from provider;
-		message gameStart(game_event: in GameEventInfo) from provider;
-		message gameFinish(game_event: in GameEventInfo) from provider;
-		message challenge(challenge: in Challenge) from provider;
-		message challengeCanceled(challenge: in Challenge) from provider;
-		message gameFull(game: in Game) from provider;
-		message gameState(game_id: in string, game_state: in GameState) from provider;
-		message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
-		message opponentGone(game_id: in string, gone: in boolean, claim_win_in_seconds: in integer) from provider;
-		message error(error: in APIException) from provider;
-		
-	end interface;
+  //! This interface is based on the Lichess public API. More information on
+  //! individual messages can be found at https://lichess.org/api
+  interface LichessAPI is
+    
+    message move(game_id: in string, move: in string) return boolean to provider;
+    message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
+    message abort(game_id: in string) return boolean to provider;
+    message resign(game_id: in string) return boolean to provider;
+    message draw(game_id: in string, accept: in boolean) return boolean to provider;
+    message takeback(game_id: in string, accept: in boolean) return boolean to provider;
+    message acceptChallenge(challenge_id: in string) return boolean to provider;
+    message declineChallenge(challenge_id: in string, reason: in DeclineReason) return boolean to provider;
+    message account() return User to provider;
+    message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return boolean to provider;
+    message claimVictory(game_id: in string) return boolean to provider;
+    
+    message connect(properties: in Properties) to provider;
+    message connected() from provider;
+    message gameStart(game_event: in GameEventInfo) from provider;
+    message gameFinish(game_event: in GameEventInfo) from provider;
+    message challenge(challenge: in Challenge) from provider;
+    message challengeCanceled(challenge: in Challenge) from provider;
+    message gameFull(game: in Game) from provider;
+    message gameState(game_id: in string, game_state: in GameState) from provider;
+    message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
+    message opponentGone(game_id: in string, gone: in boolean, claim_win_in_seconds: in integer) from provider;
+    message error(error: in APIException) from provider;
+    
+  end interface;
 
 end;

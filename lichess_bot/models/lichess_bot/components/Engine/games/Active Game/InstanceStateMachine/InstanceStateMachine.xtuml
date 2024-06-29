@@ -78,10 +78,10 @@ within lichess_bot::components::Engine::games::'Active Game' is
     
     legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: self.game_state.moves));
     
-    // init variables
+    ourmove = "";  // until we choose..
+    
     moves = self.game_state.moves;
     i = moves.length;
-    ourmove = "";
       
     if (self.color == Color::WHITE)
       if (i == 0)  // first move? - open with King pawn.. or, TBD, pick an opening strategy
@@ -91,24 +91,19 @@ within lichess_bot::components::Engine::games::'Active Game' is
     if (i > 0)
       move = moves[i-1];  // most recent from opponent
       Piece::record_move( move:move, from:" Player " );
-      ourmove = Play::respond( move:move, legals: legal_moves );
+    //  ourmove = Play::respond( move:move, legals: legal_moves );
     end if;
     
-    n = moves.length;
-    next_moves[n] = "";
-    j = 0;
-    while j < n
-      next_moves[j] = moves[j];
-      j = j + 1;
-    end while;
     
     // a simplistic attempt to choose a move based on high-value target.
     best = 0;
     n = legal_moves.length - 1;
     i = 0;
-    while (i < n)  // for each legal move...
+    while (i < n)  // for each legal move we could play...
       create object instance m of Move;
       m.Notation = legal_moves[i];
+      m.Is_safe = true; // tentatively
+      LOG::LogInfo(message: "Evaluating bot move " + legal_moves[i]); 
       m.evaluate(fen:self.initial_fen, moves:self.game_state.moves);
       i = i + 1;
     end while;
@@ -116,15 +111,24 @@ within lichess_bot::components::Engine::games::'Active Game' is
     for each possible in possible_moves
       if (possible.Value > best)
         ourmove = possible.Notation;
+        best = possible.Value;
       end if;
       delete object instance possible;
     end for; 
     
     if (ourmove == "")
-      // select a random legal move
-      i = 0;  // coerce integer
-      i = TIM::current_clock() % legal_moves.length;
-      ourmove = legal_moves[i];
+      select any move from instances of Move
+       where ( selected.Is_safe == true);
+      if (not_empty move)
+        ourmove = move.Notation;
+        LOG::LogInfo(message: "No good move found; playing safe " + ourmove); 
+      else
+    	  // select a random legal move
+    	  i = 0;  // coerce integer
+    	  i = TIM::current_clock() % legal_moves.length;
+    	  ourmove = legal_moves[i];
+    	  LOG::LogInfo(message: "Picking random move! " + ourmove); 
+      end if;
     end if;
     
     // play the move
