@@ -13,6 +13,8 @@ within lichess_bot::components::Engine::board is
     //! result of this move does not expose piece to capture.
     Is_safe: boolean;
 
+    Eval_depth: integer;
+
     @dialect("oal");
     @operation_num(1);
     class operation from_square(move: in string) return instance of Square is
@@ -39,7 +41,7 @@ within lichess_bot::components::Engine::board is
 
     @dialect("oal");
     @operation_num(3);
-    operation evaluate(fen: in string, moves: in sequence of string) is
+    operation evaluate_move(fen: in string, moves: in sequence of string) is
       @noparse
       fen = param.fen;
       moves = param.moves;
@@ -51,47 +53,67 @@ within lichess_bot::components::Engine::board is
       taken = dest.occupant();
       
       value = 0;
-      if (not_empty taken)  // captured opponent piece
+      if (not_empty taken)  // possible capture of opponent piece
         value = taken.Value;
         LOG::LogInfo(message: "Could take " + taken.Name + " with move " + self.Notation ); 
       end if;
       self.Value = value;
       
-      // prepare to examine opponent lookahead legal moves
+      // prepare to examine responding lookahead legal moves
       n = moves.length;
-      next_moves[n] = "";
+      next_moves[n] = "";  // allocate
       j = 0;
       while j < n
         next_moves[j] = moves[j];
         j = j + 1;
       end while;
-      next_moves[j] = self.Notation;
-      f = ChessLib::movesToFEN( initialFen: fen, moves: next_moves );
-      response_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: fen, moves: next_moves));
-      // now considering opponent's possible responses to this move
+      next_moves[j] = self.Notation;  // hypothesize this move...
+      nextfen = ChessLib::movesToFEN( initialFen: fen, moves: next_moves );
+      response_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: nextfen, moves: next_moves));
+      // ...and consider opponent's possible responses
       l = response_moves.length;
-      k = 0;
-      while (k < l)
-        response = response_moves[k];
-        opponent_dest = Move::to_square( move:response );
-      /*
-        move_to = STRING::substr(s:response, begin:2, end:4);
-        select any opponent_dest from instances of Square
-         where (selected.lichess_desig == move_to);
-      */  
-        if (opponent_dest == dest)  // losing the moved_piece in a possible opponent response?
-          self.Is_safe = false;
-          value = value - moved_piece.Value;
-          if (value < self.Value)
-            self.Value = value;
-          end if;
-          if (value < 0)
-            LOG::LogInfo(message: self.Notation + " is vulnerable to response " + response);
-            break;  // this move presents a loss vulnerability - stop considering it
-          end if;
-        end if;
-        k = k + 1;
+      i = 0;
+      while (i < l)
+        create object instance m of Move;
+        m.Eval_depth = self.Eval_depth + 1;
+        m.Notation = response_moves[i];
+        LOG::LogInfo(message: "Evaluating response move " + response_moves[i]); 
+        m.evaluate_response(fen:nextfen, moves:moves);
+        i = i + 1;
       end while;
+      
+      worst = 0;
+      select many responses from instances of Move
+       where (selected.Eval_depth == self.Eval_depth + 1);
+      for each response in responses
+        if (response.Value > worst)
+          worst = response.Value;
+          self.Is_safe = false;
+        end if;
+        delete object instance response;
+      end for;
+      
+      self.Value = value - worst;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(4);
+    operation evaluate_response(fen: in string, moves: in sequence of string) is
+      @noparse
+      fen = param.fen;
+      moves = param.moves;
+      
+      //src = Move::from_square( move:self.Notation );
+      dest = Move::to_square( move:self.Notation );
+      
+      //moved_piece = src.occupant();
+      taken = dest.occupant();
+      
+      if (not_empty taken)  // possible capture of opponent piece
+        self.Value = taken.Value;
+        LOG::LogInfo(message: "Could take " + taken.Name + " with response " + self.Notation ); 
+      end if;
       @endnoparse
     end operation;
 

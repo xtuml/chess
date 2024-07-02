@@ -10,6 +10,10 @@ within lichess_bot::components::Engine::board is
     //! A 2-character string which matches the numbered rank and alpha (a to h) files used by lichess.
     lichess_desig: string;
 
+    rank: integer;
+
+    file: integer;
+
     //! Create the chessboard, designating each of the 64 squares to match lichess.
     @dialect("oal");
     @operation_num(1);
@@ -38,6 +42,8 @@ within lichess_bot::components::Engine::board is
         f = 0;
         while (f < 8)
           create object instance sq of Square;
+          sq.rank = r + 1;
+          sq.file = f + 1;
           sq.lichess_desig = files[f] + ranks[r];
           f = f + 1;
         end while;

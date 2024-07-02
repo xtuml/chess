@@ -76,11 +76,11 @@ within lichess_bot::components::Engine::games::'Active Game' is
     	self.handle_draw_offer();
     end if;
     
-    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: self.game_state.moves));
+    moves = self.game_state.moves;
+    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: moves));
     
     ourmove = "";  // until we choose..
     
-    moves = self.game_state.moves;
     i = moves.length;
       
     if (self.color == Color::WHITE)
@@ -90,7 +90,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end if;
     if (i > 0)
       move = moves[i-1];  // most recent from opponent
-      Piece::record_move( move:move, from:" Player " );
+      ::record_move( move:move, from:" Player " );
     //  ourmove = Play::respond( move:move, legals: legal_moves );
     end if;
     
@@ -101,13 +101,15 @@ within lichess_bot::components::Engine::games::'Active Game' is
     i = 0;
     while (i < n)  // for each legal move we could play...
       create object instance m of Move;
+      m.Eval_depth = 1;
       m.Notation = legal_moves[i];
       m.Is_safe = true; // tentatively
       LOG::LogInfo(message: "Evaluating bot move " + legal_moves[i]); 
-      m.evaluate(fen:self.initial_fen, moves:self.game_state.moves);
+      m.evaluate_move(fen:self.initial_fen, moves:moves);
       i = i + 1;
     end while;
-    select many possible_moves from instances of Move;
+    select many possible_moves from instances of Move
+     where (selected.Eval_depth == 1);
     for each possible in possible_moves
       if (possible.Value > best)
         ourmove = possible.Notation;
@@ -133,7 +135,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     
     // play the move
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
-    Piece::record_move( move:ourmove, from:" BOT: " );  // record for ground truth
+    ::record_move( move:ourmove, from:" BOT: " );  // record for ground truth
     
     t = TIM::timer_start(event_inst:e, microseconds: 0);
     @endnoparse
