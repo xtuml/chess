@@ -97,7 +97,7 @@ public class LichessAPIAdapter extends LichessAPI {
 	public boolean createChallenge(final String p_user, final boolean p_rated, final int p_clock_limit,
 			final int p_clock_increment, final Color p_color, final Variant p_variant, final String p_fen)
 			throws XtumlException {
-		return false;
+		return lichess.createChallenge(p_user, p_rated, p_clock_limit, p_clock_increment, EnumAdapter.adapt(p_color, lichess.types.Color.class), EnumAdapter.adapt(p_variant, lichess.types.Variant.class), p_fen);
 	}
 
 	private class LichessAPIHandler implements LichessAPISubscriber {
