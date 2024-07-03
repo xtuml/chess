@@ -9,7 +9,7 @@ shapes :
     bounds : x : 2244.0 y : 1872.0 width : 200.0 height : 150.0
   shape : Move
     render : class "lichess_bot::components::Engine::board::Move"
-    bounds : x : 2500.0 y : 1872.0 width : 200.0 height : 150.0
+    bounds : x : 1488.0 y : 1920.0 width : 200.0 height : 204.0
 
 connectors :
   connector : R1
