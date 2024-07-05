@@ -131,6 +131,41 @@ mvn dependency:get -DgroupId=io.ciera -DartifactId=runtime -Dversion=2.7.2
 6. Click "Run" to launch the application.
 
 
+### Bot versus Bot
+
+The chess model normally awaits a challenge.  But the chess model is happy
+to challenge a human or another bot.  Following are steps to cause your
+running chess model to challenge another lichess person/bot.
+
+1. If running with Ciera, add an invocation to 'send_challenge' at the end
+   of the 'chess::connected' port message handler.
+2. Replace the username in 'send_challenge' with the user you want to
+   challenge. At the moment, it is 'maia1', but it can be a human user or
+   another bot.  Keep in mind that not all bots accept all challenges
+   depending on the properties of the challenge (time control, rated/unrated,
+   bot/human, etc).
+3. Build (if running in ciera) and launch the application.
+4. If running in Verifier, navigate in the session explorer to the
+   'send_challenge' function and execute it.
+5. If you watch the console output, you will see a message that gives a
+   URL to watch.  You can paste that into a browser, and it will take you to
+   the in-progress game.  This is automatic when running in Verifier.
+6. Another way to watch is to go to
+
+   ```
+   https://lichess.org/@/<your-bot-username>/tv
+   ```
+
+   If you have an in-progress
+   game, it will show up there, or if you navigate to this URL beforehand, it
+   will automatically show the game when your bot starts playing.
+
+For development, it is convenient to have two bot accounts in addition to
+your human account, so that you can run your bot (in one account) against
+the teacher (random move) bot (in another account).  Or, you can run your
+bot model against other bot models.
+
+
 ## Adding bot intelligence
 
 The template project provides the minimum amount of intelligence to play a
