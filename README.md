@@ -151,7 +151,12 @@ running chess model to challenge another lichess person/bot.
    URL to watch.  You can paste that into a browser, and it will take you to
    the in-progress game.  This is automatic when running in Verifier.
 6. Another way to watch is to go to
-   "https://lichess.org/@/<your-bot-username>/tv".  If you have an in-progress
+
+   ```
+   https://lichess.org/@/<your-bot-username>/tv
+   ```
+
+   If you have an in-progress
    game, it will show up there, or if you navigate to this URL beforehand, it
    will automatically show the game when your bot starts playing.
 
