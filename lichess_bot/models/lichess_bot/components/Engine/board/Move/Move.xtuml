@@ -54,8 +54,9 @@ within lichess_bot::components::Engine::board is
       
       value = 0;
       if (not_empty taken)  // possible capture of opponent piece
-        value = taken.Value;
-        LOG::LogInfo(message: "Could take " + taken.Name + " with move " + self.Notation ); 
+        select one spec related by taken->PieceSpecification[R4.'is specified by'];
+        value = spec.Value;
+        LOG::LogInfo(message: "Could take " + spec.Name + " with move " + self.Notation ); 
       end if;
       self.Value = value;
       
@@ -107,8 +108,9 @@ within lichess_bot::components::Engine::board is
       taken = dest.occupant();
       
       if (not_empty taken)
-        self.Value = taken.Value;
-        LOG::LogInfo(message: "Could lose " + taken.Name + " to response " + self.Notation ); 
+        select one spec related by taken->PieceSpecification[R4.'is specified by'];
+        self.Value = spec.Value;
+        LOG::LogInfo(message: "Could lose " + spec.Name + " to response " + self.Notation ); 
       end if;
       @endnoparse
     end operation;

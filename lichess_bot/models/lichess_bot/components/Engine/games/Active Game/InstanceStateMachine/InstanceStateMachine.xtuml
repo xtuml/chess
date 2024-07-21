@@ -90,7 +90,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end if;
     if (i > 0)
       move = moves[i-1];  // most recent from opponent
-      ::record_move( move:move, from:" Player " );
+    //  ::record_move( move:move, from:" Player " );     @@TBD
     //  ourmove = Play::respond( move:move, legals: legal_moves );
     end if;
     
@@ -135,7 +135,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     
     // play the move
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
-    ::record_move( move:ourmove, from:" BOT: " );  // record for ground truth
+    //::record_move( move:ourmove, from:" BOT: " );  // record for ground truth  @@TBD
     
     t = TIM::timer_start(event_inst:e, microseconds: 0);
     @endnoparse

@@ -1,0 +1,42 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::board is
+
+  //! A characterization of a playing piece.
+  @key_letters("PieceSpecification");
+  @class_num(4);
+  class PieceSpecification is
+
+    Name: string;
+
+    //! A ranking of pieces used for move evaluation (from Golombek: The Game of Chess).
+    Value: integer;
+
+    @dialect("oal");
+    @operation_num(1);
+    class operation initialize() is
+      @noparse
+      create object instance rook of PieceSpecification;
+      rook.Name = "Rook";
+      rook.Value = 5;
+      create object instance knight of PieceSpecification;
+      knight.Name = "Knight";
+      knight.Value = 3;
+      create object instance bishop of PieceSpecification;
+      bishop.Name = "Bishop";
+      bishop.Value = 3;
+      create object instance king of PieceSpecification;
+      king.Name = "King";
+      king.Value = -999;
+      create object instance queen of PieceSpecification;
+      queen.Name = "Queen";
+      queen.Value = 9;
+      create object instance pawn of PieceSpecification;
+      pawn.Name = "Pawn";
+      pawn.Value = 1;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

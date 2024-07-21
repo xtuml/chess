@@ -27,29 +27,40 @@ within lichess_bot::components::Engine is
 
     @dialect("oal");
     @function_num(4);
-    function record_move(move: in string, 'from': in string) is
+    function record_move(move: in instance of Move, 'from': in string) is
       @noparse
       move = param.move;
       from = param.from;
-      LOG::LogInfo( message:"recording move from " + from + move );
-      start = Move::from_square( move:move );
-      dest = Move::to_square( move:move );
-      piece = start.occupant();
-      unrelate piece from start across R1.'occupies';
+      LOG::LogInfo( message:"recording move from " + from + move.Notation );
+      
+      select one piece related by move->Piece[R5.'is reachable by'];
+      select one start related by piece->OccupiedSquare[R2.'occupies'];
+      //start = Move::from_square( move:move );
+      //dest = Move::to_square( move:move );
+      select any ocsq from instances of OccupiedSquare where false;  // decl
+      unrelate piece from start across R2.'occupies';
+      select one dest related by move->Square[R5.'can legally move to'];
       taken = dest.occupant();
       if (not_empty taken)
-        unrelate taken from dest across R1.'occupies';
-        LOG::LogInfo( message:"Capturing piece " + taken.Name + " on " + dest.lichess_desig );
+        select one ocsq related by dest->OccupiedSquare[R1];
+        unrelate taken from ocsq across R2.'occupies';
+        select one spec related by taken->PieceSpecification[R4.'is specified by'];
+        LOG::LogInfo( message:"Capturing piece " + spec.Name + " on " + dest.lichess_desig );
         delete object instance taken;
+      else
+        create object instance ocsq of OccupiedSquare;
+        relate ocsq to dest across R1;
       end if;
-      relate piece to dest across R1.'occupies';
+      relate piece to ocsq across R2.'occupies';
       // Castling? - the only time a King can move 2 squares along Rank 1 or 8.
       // lichess does not report the Rook's part in this; record it here to maintain ground truth.
-      if (piece.Name == "K")
-        if (move == "e1g1")
+      select one spec related by piece->PieceSpecification[R4.'is specified by'];
+      if (spec.Name == "King")
+      /*
+        if (move.Notation == "e1g1")
           ::record_move( move:"h1f1", from:from + " O-O" );
         end if;
-        if (move == "e8g8")
+        if (move. == "e8g8")
           ::record_move( move:"h8f8", from:from + " O-O" );
         end if;
         // Queen side?
@@ -59,6 +70,7 @@ within lichess_bot::components::Engine is
         if (move == "e8c8")
           ::record_move( move:"a8d8", from:from + " O-O" );
         end if;
+      */
       end if;
       @endnoparse
     end function;

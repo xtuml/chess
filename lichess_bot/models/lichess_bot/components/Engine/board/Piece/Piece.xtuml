@@ -7,277 +7,294 @@ within lichess_bot::components::Engine::board is
   @class_num(2);
   class Piece is
 
-    Name: string;
-
     Color: Color;
-
-    //! A ranking of pieces used for move evaluation (from Golombek: The Game of Chess).
-    Value: integer;
 
     //! Create and place the pieces on the board.
     @dialect("oal");
     @operation_num(1);
     class operation initialize() is
       @noparse
-      // Create Black
+      // Create and place Black pieces
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Rook");
       create object instance p of Piece;
-      p.Name = "R";
-      p.Color = Color::BLACK;
-      p.Value = 5;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "h1");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Knight");
       create object instance p of Piece;
-      p.Name = "Kt";
-      p.Color = Color::BLACK;
-      p.Value = 3;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "g1");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Bishop");
       create object instance p of Piece;
-      p.Name = "B";
-      p.Color = Color::BLACK;
-      p.Value = 3;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "f1");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "King");
       create object instance p of Piece;
-      p.Name = "K";
-      p.Color = Color::BLACK;
-      p.Value = 0;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "e1");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Queen");
       create object instance p of Piece;
-      p.Name = "Q";
-      p.Color = Color::BLACK;
-      p.Value = 9;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "d1");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Bishop");
       create object instance p of Piece;
-      p.Name = "B";
-      p.Color = Color::BLACK;
-      p.Value = 3;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "c1");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Knight");
       create object instance p of Piece;
-      p.Name = "Kt";
-      p.Color = Color::BLACK;
-      p.Value = 3;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "b1");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Rook");
       create object instance p of Piece;
-      p.Name = "R";
-      p.Color = Color::BLACK;
-      p.Value = 5;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "a1");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Pawn");
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::BLACK;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "h2");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::BLACK;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "g2");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::BLACK;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "f2");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::BLACK;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "e2");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::BLACK;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "d2");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::BLACK;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "c2");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::BLACK;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "b2");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::BLACK;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "a2");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
-      // Create White
+      // Create and place White pieces
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Rook");
       create object instance p of Piece;
-      p.Name = "R";
-      p.Color = Color::WHITE;
-      p.Value = 5;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "h8");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Knight");
       create object instance p of Piece;
-      p.Name = "Kt";
-      p.Color = Color::WHITE;
-      p.Value = 3;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "g8");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Bishop");
       create object instance p of Piece;
-      p.Name = "B";
-      p.Color = Color::WHITE;
-      p.Value = 3;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "f8");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "King");
       create object instance p of Piece;
-      p.Name = "K";
-      p.Color = Color::WHITE;
-      p.Value = 0;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "e8");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Queen");
       create object instance p of Piece;
-      p.Name = "Q";
-      p.Color = Color::WHITE;
-      p.Value = 9;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "d8");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Bishop");
       create object instance p of Piece;
-      p.Name = "B";
-      p.Color = Color::WHITE;
-      p.Value = 3;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "c8");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Knight");
       create object instance p of Piece;
-      p.Name = "Kt";
-      p.Color = Color::WHITE;
-      p.Value = 3;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "b8");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Rook");
       create object instance p of Piece;
-      p.Name = "R";
-      p.Color = Color::WHITE;
-      p.Value = 5;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "a8");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       
+      select any spec from instances of PieceSpecification
+       where ( selected.Name == "Pawn");
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::WHITE;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "h7");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::WHITE;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "g7");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::WHITE;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "f7");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::WHITE;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "e7");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::WHITE;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "d7");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::WHITE;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "c7");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::WHITE;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "b7");
-      relate p to sq across R1.'occupies';
-      
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       create object instance p of Piece;
-      p.Name = "P";
-      p.Color = Color::WHITE;
-      p.Value = 1;
+      relate p to spec across R4.'is specified by';
       select any sq from instances of Square
        where (selected.lichess_desig == "a7");
-      relate p to sq across R1.'occupies';
+      create object instance osq of OccupiedSquare;
+      relate osq to sq across R1;
+      relate p to osq across R2.'occupies';
       @endnoparse
     end operation;
 

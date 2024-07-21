@@ -198,7 +198,7 @@ within lichess_bot::components is
         end if;
         i = 0;
         while (l > 0)
-          ::record_move( move:moves[i], from:"Restart" );
+        //  ::record_move( move:moves[i], from:"Restart" );  @@TBD
           i = i + 1;
           l = l - 1;
         end while;

@@ -56,8 +56,8 @@ within lichess_bot::components::Engine::board is
     @operation_num(2);
     operation occupant() return instance of Piece is
       @noparse
-      select one mypiece related by self->Piece[R1.'is occupied by'];
-      return mypiece;
+      select one piece related by self->OccupiedSquare[R1]->Piece[R2.'is occupied by'];
+      return piece;
       @endnoparse
     end operation;
 
