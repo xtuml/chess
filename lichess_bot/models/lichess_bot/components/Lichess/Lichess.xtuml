@@ -2,78 +2,78 @@
 
 within lichess_bot::components is
 
-	@realized;
-	component Lichess is
-		provided port API implements LichessAPI is
+  @realized;
+  component Lichess is
+    provided port API implements LichessAPI is
 
-			@dialect("oal");
-			message abort(game_id: in string) return boolean to provider;
+      @dialect("oal");
+      message abort(game_id: in string) return boolean to provider;
 
-			@dialect("oal");
-			message acceptChallenge(challenge_id: in string) return boolean to provider;
+      @dialect("oal");
+      message acceptChallenge(challenge_id: in string) return boolean to provider;
 
-			@dialect("oal");
-			message account() return User to provider;
+      @dialect("oal");
+      message account() return User to provider;
 
-			@dialect("oal");
-			message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
+      @dialect("oal");
+      message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
 
-			@dialect("oal");
-			message claimVictory(game_id: in string) return boolean to provider;
+      @dialect("oal");
+      message claimVictory(game_id: in string) return boolean to provider;
 
-			@dialect("oal");
-			message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return boolean to provider;
+      @dialect("oal");
+      message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return boolean to provider;
 
-			@dialect("oal");
-			message declineChallenge(challenge_id: in string, reason: in DeclineReason) return boolean to provider;
+      @dialect("oal");
+      message declineChallenge(challenge_id: in string, reason: in DeclineReason) return boolean to provider;
 
-			@dialect("oal");
-			message draw(game_id: in string, accept: in boolean) return boolean to provider;
+      @dialect("oal");
+      message draw(game_id: in string, accept: in boolean) return boolean to provider;
 
-			@dialect("oal");
-			message move(game_id: in string, move: in string) return boolean to provider;
+      @dialect("oal");
+      message move(game_id: in string, move: in string) return boolean to provider;
 
-			@dialect("oal");
-			message resign(game_id: in string) return boolean to provider;
+      @dialect("oal");
+      message resign(game_id: in string) return boolean to provider;
 
-			@dialect("oal");
-			message takeback(game_id: in string, accept: in boolean) return boolean to provider;
+      @dialect("oal");
+      message takeback(game_id: in string, accept: in boolean) return boolean to provider;
 
-			@dialect("oal");
-			message challenge(challenge: in Challenge) from provider;
+      @dialect("oal");
+      message challenge(challenge: in Challenge) from provider;
 
-			@dialect("oal");
-			message challengeCanceled(challenge: in Challenge) from provider;
+      @dialect("oal");
+      message challengeCanceled(challenge: in Challenge) from provider;
 
-			@dialect("oal");
-			message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
+      @dialect("oal");
+      message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
 
-			@dialect("oal");
-			message connect(properties: in Properties) to provider;
+      @dialect("oal");
+      message connect(properties: in Properties) to provider;
 
-			@dialect("oal");
-			message connected() from provider;
+      @dialect("oal");
+      message connected() from provider;
 
-			@dialect("oal");
-			message error(error: in APIException) from provider;
+      @dialect("oal");
+      message error(error: in APIException) from provider;
 
-			@dialect("oal");
-			message gameFinish(game_event: in GameEventInfo) from provider;
+      @dialect("oal");
+      message gameFinish(game_event: in GameEventInfo) from provider;
 
-			@dialect("oal");
-			message gameFull(game: in Game) from provider;
+      @dialect("oal");
+      message gameFull(game: in Game) from provider;
 
-			@dialect("oal");
-			message gameStart(game_event: in GameEventInfo) from provider;
+      @dialect("oal");
+      message gameStart(game_event: in GameEventInfo) from provider;
 
-			@dialect("oal");
-			message gameState(game_id: in string, game_state: in GameState) from provider;
+      @dialect("oal");
+      message gameState(game_id: in string, game_state: in GameState) from provider;
 
-			@dialect("oal");
-			message opponentGone(game_id: in string, gone: in boolean, claim_win_in_seconds: in integer) from provider;
+      @dialect("oal");
+      message opponentGone(game_id: in string, gone: in boolean, claim_win_in_seconds: in integer) from provider;
 
-		end port;
+    end port;
 
-	end component;
+  end component;
 
 end;

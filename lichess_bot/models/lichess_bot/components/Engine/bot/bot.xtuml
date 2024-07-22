@@ -2,8 +2,8 @@
 
 within lichess_bot::components::Engine is
 
-	package bot is
-		class Bot;
-	end package;
+  package bot is
+    class Bot;
+  end package;
 
 end;

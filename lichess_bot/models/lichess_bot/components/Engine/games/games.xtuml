@@ -2,8 +2,8 @@
 
 within lichess_bot::components::Engine is
 
-	package games is
-		class 'Active Game';
-	end package;
+  package games is
+    class 'Active Game';
+  end package;
 
 end;

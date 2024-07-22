@@ -2,10 +2,10 @@
 
 within lichess_bot is
 
-	package types is
-		type Properties is 'inst_ref<Mapping>';
+  package types is
+    type Properties is 'inst_ref<Mapping>';
 
-		package lichess;
-	end package;
+    package lichess;
+  end package;
 
 end;
