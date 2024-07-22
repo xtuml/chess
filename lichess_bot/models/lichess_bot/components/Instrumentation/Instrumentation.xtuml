@@ -2,11 +2,11 @@
 
 within lichess_bot::components is
 
-	interface Instrumentation is
-		
-		@message_num(1);
-		message init() to provider;
-		
-	end interface;
+  interface Instrumentation is
+    
+    @message_num(1);
+    message init() to provider;
+    
+  end interface;
 
 end;

@@ -2,10 +2,10 @@
 
 within lichess_bot is
 
-	package system is
-		component Engine is lichess_bot::components::Engine;
-		component Lichess is lichess_bot::components::Lichess;
-		satisfaction is Engine::chess -(o- Lichess::API;
-	end package;
+  package system is
+    component Engine is lichess_bot::components::Engine;
+    component Lichess is lichess_bot::components::Lichess;
+    satisfaction is Engine::chess -(o- Lichess::API;
+  end package;
 
 end;

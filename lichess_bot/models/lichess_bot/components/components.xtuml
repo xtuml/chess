@@ -2,11 +2,11 @@
 
 within lichess_bot is
 
-	package components is
-		interface Instrumentation;
-		interface LichessAPI;
-		component Engine;
-		component Lichess;
-	end package;
+  package components is
+    interface Instrumentation;
+    interface LichessAPI;
+    component Engine;
+    component Lichess;
+  end package;
 
 end;

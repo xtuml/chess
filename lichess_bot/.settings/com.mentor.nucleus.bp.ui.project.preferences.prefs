@@ -1,6 +1,9 @@
 bp.project.class_references=false
+bridgepoint_prefs_enable_error_for_empty_synchronous_message=false
+bridgepoint_prefs_enable_error_for_empty_synchronous_message_realized=false
 com.mentor.nucleus.bp.ui.project.emitRTOData=true
 com.mentor.nucleus.bp.ui.project.references=true
 eclipse.preferences.version=1
 persistence-mode=text
-tab-policy=match
+tab-depth=2
+tab-policy=spaces
