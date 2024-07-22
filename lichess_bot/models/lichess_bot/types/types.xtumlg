@@ -5,7 +5,7 @@ shapes :
     render : user_data_type "lichess_bot::types::Properties"
     bounds : x : 4180.0 y : 0.0 width : 200.0 height : 150.0
   shape : lichess
-    render : package "lichess_bot::types::lichess"
+    render : package "lichess"
     bounds : x : 4400.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :

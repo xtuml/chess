@@ -38,15 +38,15 @@ within lichess_bot::types is
     end structure;
 
     type ChallengeDirection is enum (
-      IN,
+      IN, 
       OUT
     );
 
     type ChallengeStatus is enum (
-      CREATED,
-      OFFLINE,
-      CANCELED,
-      DECLINED,
+      CREATED, 
+      OFFLINE, 
+      CANCELED, 
+      DECLINED, 
       ACCEPTED
     );
 
@@ -57,22 +57,22 @@ within lichess_bot::types is
     end structure;
 
     type Color is enum (
-      WHITE,
-      BLACK,
+      WHITE, 
+      BLACK, 
       RANDOM
     );
 
     type DeclineReason is enum (
-      GENERIC,
-      LATER,
-      TOOFAST,
-      TOOSLOW,
-      TIMECONTROL,
-      RATED,
-      CASUAL,
-      STANDARD,
-      VARIANT,
-      NOBOT,
+      GENERIC, 
+      LATER, 
+      TOOFAST, 
+      TOOSLOW, 
+      TIMECONTROL, 
+      RATED, 
+      CASUAL, 
+      STANDARD, 
+      VARIANT, 
+      NOBOT, 
       ONLYBOT
     );
 
@@ -98,26 +98,26 @@ within lichess_bot::types is
     end structure;
 
     type GameSource is enum (
-      LOBBY,
-      FRIEND,
-      AI,
-      API,
-      TOURNAMENT,
-      POSITION,
-      IMPORT,
-      IMPORTLIVE,
-      SIMUL,
-      RELAY,
-      POOL,
+      LOBBY, 
+      FRIEND, 
+      AI, 
+      API, 
+      TOURNAMENT, 
+      POSITION, 
+      IMPORT, 
+      IMPORTLIVE, 
+      SIMUL, 
+      RELAY, 
+      POOL, 
       SWISS
     );
 
     type GameSpeed is enum (
-      ULTRABULLET,
-      BULLET,
-      BLITZ,
-      RAPID,
-      CLASSICAL,
+      ULTRABULLET, 
+      BULLET, 
+      BLITZ, 
+      RAPID, 
+      CLASSICAL, 
       CORRESPONDENCE
     );
 
@@ -136,18 +136,18 @@ within lichess_bot::types is
     end structure;
 
     type GameStatus is enum (
-      CREATED,
-      STARTED,
-      ABORTED,
-      MATE,
-      RESIGN,
-      STALEMATE,
-      TIMEOUT,
-      DRAW,
-      OUTOFTIME,
-      CHEAT,
-      NOSTART,
-      UNKNOWNFINISH,
+      CREATED, 
+      STARTED, 
+      ABORTED, 
+      MATE, 
+      RESIGN, 
+      STALEMATE, 
+      TIMEOUT, 
+      DRAW, 
+      OUTOFTIME, 
+      CHEAT, 
+      NOSTART, 
+      UNKNOWNFINISH, 
       VARIANTEND
     );
 
@@ -162,7 +162,7 @@ within lichess_bot::types is
     end structure;
 
     type Room is enum (
-      PLAYER,
+      PLAYER, 
       SPECTATOR
     );
 
@@ -181,30 +181,30 @@ within lichess_bot::types is
     end structure;
 
     type UserTitle is enum (
-      GM,
-      WGM,
-      IM,
-      WIM,
-      FM,
-      WFM,
-      NM,
-      CM,
-      WCM,
-      WNM,
-      LM,
+      GM, 
+      WGM, 
+      IM, 
+      WIM, 
+      FM, 
+      WFM, 
+      NM, 
+      CM, 
+      WCM, 
+      WNM, 
+      LM, 
       BOT
     );
 
     type Variant is enum (
-      STANDARD,
-      CHESS960,
-      CRAZYHOUSE,
-      ANTICHESS,
-      ATOMIC,
-      HORDE,
-      KINGOFTHEHILL,
-      RACINGKINGS,
-      THREECHECK,
+      STANDARD, 
+      CHESS960, 
+      CRAZYHOUSE, 
+      ANTICHESS, 
+      ATOMIC, 
+      HORDE, 
+      KINGOFTHEHILL, 
+      RACINGKINGS, 
+      THREECHECK, 
       FROMPOSITION
     );
 
