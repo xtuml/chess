@@ -37,7 +37,7 @@ within lichess_bot::components::Engine is
     function send_challenge() is
       @noparse
       r = chess::createChallenge(
-        user: "maia1",
+        user: "cortlandstarrett_b2",
         rated: false,
         clock_limit: 900,
         clock_increment: 5,
