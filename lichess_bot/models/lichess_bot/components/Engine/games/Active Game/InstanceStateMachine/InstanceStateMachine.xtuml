@@ -69,19 +69,19 @@ within lichess_bot::components::Engine::games::'Active Game' is
       (self.color == Color::BLACK and self.game_state.wtakeback) then
       self.handle_takeback_proposal();
     end if;
-
+    
     // handle draw offers
     if (self.color == Color::WHITE and self.game_state.bdraw) or
       (self.color == Color::BLACK and self.game_state.wdraw) then
       self.handle_draw_offer();
     end if;
-
+    
     // select a random legal move
     legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: self.game_state.moves));
     i = 0;  // coerce integer
     i = TIM::current_clock() % legal_moves.length;
     move = legal_moves[i];
-
+    
     // play the move
     create event instance e of ActiveGame3:'play move'(move: move) to self;
     t = TIM::timer_start(event_inst:e, microseconds: 0);
@@ -91,7 +91,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
   state 'playing move'(move: in string) is
     @noparse
     move = param.move;
-
+    
     // play the move
     success = chess::move(game_id: self.id, move: move);
     if success then
