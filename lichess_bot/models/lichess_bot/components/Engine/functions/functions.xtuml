@@ -27,25 +27,23 @@ within lichess_bot::components::Engine is
 
     @dialect("oal");
     @function_num(4);
-    function record_move(move: in instance of Move, 'from': in string) is
+    function record_move('from': in instance of OccupiedSquare, 'to': in instance of Square, recorder: in string) is
       @noparse
-      move = param.move;
-      from = param.from;
-      LOG::LogInfo( message:"recording move from " + from + move.Notation );
+      start = param.from;
+      dest = param.to;
+      recorder = param.recorder;
       
-      select one piece related by move->Piece[R5.'is reachable by'];
-      select one start related by piece->OccupiedSquare[R2.'occupies'];
-      //start = Move::from_square( move:move );
-      //dest = Move::to_square( move:move );
+      select one square related by start->Square[R1];
+      str = ::movestr( from:square, to:dest ); // debug
+      LOG::LogInfo( message:"recording move from " + recorder + str );
+      select one piece related by start->Piece[R2.'is occupied by'];
       select any ocsq from instances of OccupiedSquare where false;  // decl
       unrelate piece from start across R2.'occupies';
-      select one dest related by move->Square[R5.'can legally move to'];
       taken = dest.occupant();
       if (not_empty taken)
         select one ocsq related by dest->OccupiedSquare[R1];
         unrelate taken from ocsq across R2.'occupies';
         select one spec related by taken->PieceSpecification[R4.'is specified by'];
-        LOG::LogInfo( message:"Capturing piece " + spec.Name + " on " + dest.lichess_desig );
         delete object instance taken;
       else
         create object instance ocsq of OccupiedSquare;

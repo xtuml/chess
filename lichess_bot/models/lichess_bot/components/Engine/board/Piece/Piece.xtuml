@@ -7,8 +7,6 @@ within lichess_bot::components::Engine::board is
   @class_num(2);
   class Piece is
 
-    Color: Color;
-
     //! Create and place the pieces on the board.
     @dialect("oal");
     @operation_num(1);

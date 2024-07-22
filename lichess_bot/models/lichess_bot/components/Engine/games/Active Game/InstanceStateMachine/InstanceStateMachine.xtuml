@@ -80,6 +80,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: moves));
     
     ourmove = "";  // until we choose..
+    select any move from instances of Move where false;
     
     i = moves.length;
       
@@ -88,10 +89,16 @@ within lichess_bot::components::Engine::games::'Active Game' is
         ourmove = "e2e4";
       end if;
     end if;
+    select any opfrom from instances of OccupiedSquare where false;
+    select any opto from instances of Square where false;
     if (i > 0)
-      move = moves[i-1];  // most recent from opponent
-    //  ::record_move( move:move, from:" Player " );     @@TBD
+      movestr = moves[i-1];  // most recent from opponent
+      opfrom = ::from_square( movestr:movestr );
+      opto = ::to_square( movestr:movestr );
+      ::record_move( from:opfrom, to:opto, recorder:"player" );
     //  ourmove = Play::respond( move:move, legals: legal_moves );
+      select one sq related by opfrom->Square[R1];
+      relate sq to opto across R8.'vacated by last move';
     end if;
     
     
@@ -101,15 +108,12 @@ within lichess_bot::components::Engine::games::'Active Game' is
     i = 0;
     while (i < n)  // for each legal move we could play...
       create object instance m of Move;
-      m.Eval_depth = 1;
       m.Notation = legal_moves[i];
-      m.Is_safe = true; // tentatively
       LOG::LogInfo(message: "Evaluating bot move " + legal_moves[i]); 
       m.evaluate_move(fen:self.initial_fen, moves:moves);
       i = i + 1;
     end while;
-    select many possible_moves from instances of Move
-     where (selected.Eval_depth == 1);
+    select many possible_moves from instances of Move;
     for each possible in possible_moves
       if (possible.Value > best)
         ourmove = possible.Notation;
@@ -119,8 +123,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end for; 
     
     if (ourmove == "")
-      select any move from instances of Move
-       where ( selected.Is_safe == true);
+      select any move from instances of Move;
       if (not_empty move)
         ourmove = move.Notation;
         LOG::LogInfo(message: "No good move found; playing safe " + ourmove); 
@@ -133,9 +136,18 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     end if;
     
+    if (not_empty opfrom)
+      select one sq related by opfrom->Square[R1];
+      unrelate sq from opto across R8.'vacated by last move';
+    end if;
+    
+    from = ::from_square( movestr:ourmove );
+    to = ::to_square( movestr:ourmove );
+    ::record_move( from:from, to:to, recorder:" BOT: " );  // record for ground truth
+    
     // play the move
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
-    //::record_move( move:ourmove, from:" BOT: " );  // record for ground truth  @@TBD
+    
     
     t = TIM::timer_start(event_inst:e, microseconds: 0);
     @endnoparse

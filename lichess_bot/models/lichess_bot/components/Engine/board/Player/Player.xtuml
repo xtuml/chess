@@ -1,0 +1,13 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::board is
+
+  @key_letters("Player");
+  @class_num(7);
+  class Player is
+
+    Color: Color;
+
+  end class;
+
+end;

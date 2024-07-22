@@ -10,20 +10,12 @@ within lichess_bot::components::Engine::board is
 
     Value: integer;
 
-    //! result of this move does not expose piece to capture.
-    Is_safe: boolean;
-
-    Eval_depth: integer;
-
     @dialect("oal");
     @operation_num(1);
-    class operation from_square(move: in string) return instance of Square is
+    operation from_square() return instance of Square is
       @noparse
-      str = param.move;
-      move_from = STRING::substr(s:str, begin:0, end:2);
-      select any square from instances of Square
-       where (selected.lichess_desig == move_from);
-      return square;
+      select one ocsq related by self->Piece[R5.'is reachable by']->OccupiedSquare[R2.'occupies'];
+      return ocsq;
       @endnoparse
     end operation;
 
@@ -46,10 +38,10 @@ within lichess_bot::components::Engine::board is
       fen = param.fen;
       moves = param.moves;
       
-      src = Move::from_square( move:self.Notation );
-      dest = Move::to_square( move:self.Notation );
+      src = ::from_square( movestr:self.Notation );
+      dest = ::to_square( movestr:self.Notation );
       
-      moved_piece = src.occupant();
+      select one moved_piece related by src->Piece[R2.'is occupied by'];
       taken = dest.occupant();
       
       value = 0;
@@ -75,7 +67,6 @@ within lichess_bot::components::Engine::board is
       i = 0;
       while (i < l)
         create object instance m of Move;
-        m.Eval_depth = self.Eval_depth + 1;
         m.Notation = response_moves[i];
         LOG::LogInfo(message: "Evaluating response move " + response_moves[i]); 
         m.evaluate_response(fen:fen, moves:next_moves);
@@ -83,12 +74,10 @@ within lichess_bot::components::Engine::board is
       end while;
       
       worst = 0;
-      select many responses from instances of Move
-       where (selected.Eval_depth == self.Eval_depth + 1);
+      select many responses from instances of Move;
       for each response in responses
         if (response.Value > worst)
           worst = response.Value;
-          self.Is_safe = false;
         end if;
         delete object instance response;
       end for;

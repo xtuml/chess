@@ -3,7 +3,7 @@ render : "lichess_bot::components::Engine"
 shapes :
   shape : lichess_bot____components____Engine container
     render : component_container "lichess_bot::components::Engine"
-    bounds : x : -4560.0 y : -3504.0 width : 4992.0 height : 3666.0
+    bounds : x : -4560.0 y : -3504.0 width : 5212.0 height : 3666.0
   shape : games
     render : package "lichess_bot::components::Engine::games"
     bounds : x : -4308.0 y : -3420.0 width : 200.0 height : 150.0
@@ -25,6 +25,9 @@ shapes :
   shape : types
     render : package "lichess_bot::components::Engine::types"
     bounds : x : 220.0 y : 0.0 width : 200.0 height : 150.0
+  shape : lichess
+    render : package "lichess_bot::components::Engine::lichess"
+    bounds : x : 440.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :
   connector : chess____LichessAPI
