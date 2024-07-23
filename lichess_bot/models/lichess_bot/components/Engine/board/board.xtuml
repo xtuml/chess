@@ -13,7 +13,6 @@ within lichess_bot::components::Engine is
     class Square;
     relationship R1 is Square is_a (OccupiedSquare, OpenSquare);
 
-    //! A piece not yet removed from the board must occupy a square.
     relationship R2 is OccupiedSquare conditionally 'is occupied by' one Piece,
                        Piece conditionally occupies one OccupiedSquare;
 
