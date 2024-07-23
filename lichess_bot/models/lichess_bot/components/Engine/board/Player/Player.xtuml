@@ -8,6 +8,18 @@ within lichess_bot::components::Engine::board is
 
     Color: Color;
 
+    @dialect("oal");
+    @operation_num(1);
+    class operation initialize() is
+      @noparse
+      create object instance p1 of Player;
+      p1.Color = Color::BLACK;
+      create object instance p2 of Player;
+      p2.Color = Color::WHITE;
+      relate p1 to p2 across R8.'opposes';
+      @endnoparse
+    end operation;
+
   end class;
 
 end;

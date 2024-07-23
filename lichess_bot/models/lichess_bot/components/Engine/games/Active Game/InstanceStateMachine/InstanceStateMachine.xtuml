@@ -76,43 +76,99 @@ within lichess_bot::components::Engine::games::'Active Game' is
     	self.handle_draw_offer();
     end if;
     
-    moves = self.game_state.moves;
-    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: moves));
+    select one opponent related by self->Player[R22.'is acting for']->Player[R8.'opposes'];
+    played_moves = self.game_state.moves;
+    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: played_moves));
     
     ourmove = "";  // until we choose..
     select any move from instances of Move where false;
     
-    i = moves.length;
+    i = played_moves.length;
       
     if (self.color == Color::WHITE)
       if (i == 0)  // first move? - open with King pawn.. or, TBD, pick an opening strategy
         ourmove = "e2e4";
       end if;
     end if;
+    
     select any opfrom from instances of OccupiedSquare where false;
     select any opto from instances of Square where false;
     if (i > 0)
-      movestr = moves[i-1];  // most recent from opponent
+      movestr = played_moves[i-1];  // most recent from opponent
       opfrom = ::from_square( movestr:movestr );
       opto = ::to_square( movestr:movestr );
       ::record_move( from:opfrom, to:opto, recorder:"player" );
-    //  ourmove = Play::respond( move:move, legals: legal_moves );
-      select one sq related by opfrom->Square[R1];
-      relate sq to opto across R8.'vacated by last move';
     end if;
     
+    // start: a simplistic attempt to choose a move based on high-value target.
     
-    // a simplistic attempt to choose a move based on high-value target.
-    best = 0;
     n = legal_moves.length - 1;
+    
+    // clean any move instances that are no longer legal
+    select many potentialmoves related by self->Player[R22.'is acting for']->Move[R6.'considers'];
+    for each potentialmove in potentialmoves
+      select one start related by potentialmove->Piece[R5.'is reachable by']
+                                                ->OccupiedSquare[R2.'occupies']
+                                                ->Square[R1];
+      select one finish related by potentialmove->Square[R5.'can legally move to'];
+      movestr = ::movestr( from:start, to:finish );
+    	i = 0;
+    	while (i < n)  // for each legal move we could play...
+    	  if (movestr == legal_moves[i])
+    	    break;
+    	  end if;
+    	  i = i + 1;
+    	end while;
+    	if (i == n)
+    	  potentialmove.dispose();
+    	end if;
+    end for;
+    
+    // ensure that a move instance exists for each legal move
     i = 0;
     while (i < n)  // for each legal move we could play...
-      create object instance m of Move;
-      m.Notation = legal_moves[i];
-      LOG::LogInfo(message: "Evaluating bot move " + legal_moves[i]); 
-      m.evaluate_move(fen:self.initial_fen, moves:moves);
+      movestr = legal_moves[i];
+      from = ::from_square( movestr:movestr );
+      to = ::to_square( movestr:movestr );
+      select one piece related by from->Piece[R2.'is occupied by'];
+      select many dests related by piece->Square[R5.'can legally move to'];
+      found = false;
+      for each dest in dests
+        if (dest == to)
+          found = true;
+          break;
+        end if;
+      end for;
+      if (not found)
+        create object instance m of Move;
+        m.Notation = movestr;  // for debug
+        relate piece to to across R5 using m;
+      end if; 
       i = i + 1;
     end while;
+    
+    // sanity check
+    select many moves from instances of Move;
+    if (cardinality moves != n)
+      LOG::LogInfo(message: "Oops - non matched moves");
+    end if;
+    
+    // now we have bona-fide set of legal Move instances
+    // let's pick the 'interesting' ones - those that have a value target
+    
+    select many potentialtargets related by self->Player[R22.'is acting for']
+                                                 ->Player[R8.'opposes']
+                                                  ->Piece[R7.'owns']
+                                                   ->OccupiedSquare[R2.'occupies'];
+    select many reachables related by self->Player[R22.'is acting for']
+                                           ->Move[R6.'considers']
+                                            ->Square[R5.'can legally move to']
+                                             ->OccupiedSquare[R1];
+    targets = potentialtargets & reachables;
+    
+    // now, targets is a set of squares occupied by opponent pieces
+     
+    best = 0;
     select many possible_moves from instances of Move;
     for each possible in possible_moves
       if (possible.Value > best)
@@ -134,11 +190,6 @@ within lichess_bot::components::Engine::games::'Active Game' is
     	  ourmove = legal_moves[i];
     	  LOG::LogInfo(message: "Picking random move! " + ourmove); 
       end if;
-    end if;
-    
-    if (not_empty opfrom)
-      select one sq related by opfrom->Square[R1];
-      unrelate sq from opto across R8.'vacated by last move';
     end if;
     
     from = ::from_square( movestr:ourmove );

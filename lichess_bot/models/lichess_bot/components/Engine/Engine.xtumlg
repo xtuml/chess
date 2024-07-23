@@ -25,8 +25,8 @@ shapes :
   shape : types
     render : package "lichess_bot::components::Engine::types"
     bounds : x : 220.0 y : 0.0 width : 200.0 height : 150.0
-  shape : lichess
-    render : package "lichess_bot::components::Engine::lichess"
+  shape : lichess_xlate
+    render : package "lichess_bot::components::Engine::lichess_xlate"
     bounds : x : 440.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :

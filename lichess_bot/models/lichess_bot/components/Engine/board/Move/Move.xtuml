@@ -12,7 +12,7 @@ within lichess_bot::components::Engine::board is
 
     @dialect("oal");
     @operation_num(1);
-    operation from_square() return instance of Square is
+    operation from_square() return instance of OccupiedSquare is
       @noparse
       select one ocsq related by self->Piece[R5.'is reachable by']->OccupiedSquare[R2.'occupies'];
       return ocsq;
@@ -101,6 +101,20 @@ within lichess_bot::components::Engine::board is
         self.Value = spec.Value;
         LOG::LogInfo(message: "Could lose " + spec.Name + " to response " + self.Notation ); 
       end if;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(5);
+    operation dispose() is
+      @noparse
+      // dispose of this move
+        select one player related by self->Player[R6.'is considered by'];
+        unrelate self from player across R6.'is considered by';
+        select one square related by self->Square[R5.'can legally move to'];
+        select one piece related by self->Piece[R5.'is reachable by'];
+        unrelate  piece from square across R5.'can legally move to' using self;
+        delete object instance self;
       @endnoparse
     end operation;
 

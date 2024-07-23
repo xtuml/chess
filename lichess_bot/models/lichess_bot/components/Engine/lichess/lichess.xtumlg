@@ -1,5 +1,0 @@
-render : "lichess_bot::components::Engine::lichess"
-
-shapes :
-
-connectors :

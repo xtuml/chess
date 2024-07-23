@@ -30,8 +30,8 @@ within lichess_bot::components::Engine is
     relationship R7 is Piece unconditionally 'belongs to' one Player,
                        Player unconditionally owns many Piece;
 
-    relationship R8 is Square unconditionally 'occupied by last move' one Square,
-                       Square unconditionally 'vacated by last move' one Square;
+    relationship R8 is Player unconditionally opposes one Player,
+                       Player unconditionally relates to one Player;
 
   end package;
 

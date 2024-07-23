@@ -13,11 +13,14 @@ within lichess_bot::components::Engine::board is
     class operation initialize() is
       @noparse
       // Create and place Black pieces
+      select any player from instances of Player
+       where ( selected.Color == Color::BLACK);
       
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Rook");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "h1");
       create object instance osq of OccupiedSquare;
@@ -28,6 +31,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Knight");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "g1");
       create object instance osq of OccupiedSquare;
@@ -38,6 +42,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Bishop");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "f1");
       create object instance osq of OccupiedSquare;
@@ -48,6 +53,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "King");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "e1");
       create object instance osq of OccupiedSquare;
@@ -58,6 +64,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Queen");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "d1");
       create object instance osq of OccupiedSquare;
@@ -68,6 +75,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Bishop");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "c1");
       create object instance osq of OccupiedSquare;
@@ -78,6 +86,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Knight");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "b1");
       create object instance osq of OccupiedSquare;
@@ -88,6 +97,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Rook");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "a1");
       create object instance osq of OccupiedSquare;
@@ -98,6 +108,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Pawn");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "h2");
       create object instance osq of OccupiedSquare;
@@ -105,6 +116,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "g2");
       create object instance osq of OccupiedSquare;
@@ -112,6 +124,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "f2");
       create object instance osq of OccupiedSquare;
@@ -119,6 +132,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "e2");
       create object instance osq of OccupiedSquare;
@@ -126,6 +140,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "d2");
       create object instance osq of OccupiedSquare;
@@ -133,6 +148,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "c2");
       create object instance osq of OccupiedSquare;
@@ -140,6 +156,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "b2");
       create object instance osq of OccupiedSquare;
@@ -147,6 +164,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "a2");
       create object instance osq of OccupiedSquare;
@@ -154,11 +172,14 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       
       // Create and place White pieces
+      select any player from instances of Player
+       where ( selected.Color == Color::WHITE);
       
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Rook");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "h8");
       create object instance osq of OccupiedSquare;
@@ -169,6 +190,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Knight");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "g8");
       create object instance osq of OccupiedSquare;
@@ -179,6 +201,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Bishop");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "f8");
       create object instance osq of OccupiedSquare;
@@ -189,6 +212,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "King");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "e8");
       create object instance osq of OccupiedSquare;
@@ -199,6 +223,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Queen");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "d8");
       create object instance osq of OccupiedSquare;
@@ -209,6 +234,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Bishop");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "c8");
       create object instance osq of OccupiedSquare;
@@ -219,6 +245,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Knight");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "b8");
       create object instance osq of OccupiedSquare;
@@ -229,6 +256,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Rook");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "a8");
       create object instance osq of OccupiedSquare;
@@ -239,6 +267,7 @@ within lichess_bot::components::Engine::board is
        where ( selected.Name == "Pawn");
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "h7");
       create object instance osq of OccupiedSquare;
@@ -246,6 +275,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "g7");
       create object instance osq of OccupiedSquare;
@@ -253,6 +283,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "f7");
       create object instance osq of OccupiedSquare;
@@ -260,6 +291,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "e7");
       create object instance osq of OccupiedSquare;
@@ -267,6 +299,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "d7");
       create object instance osq of OccupiedSquare;
@@ -274,6 +307,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "c7");
       create object instance osq of OccupiedSquare;
@@ -281,6 +315,7 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "b7");
       create object instance osq of OccupiedSquare;
@@ -288,11 +323,24 @@ within lichess_bot::components::Engine::board is
       relate p to osq across R2.'occupies';
       create object instance p of Piece;
       relate p to spec across R4.'is specified by';
+      relate p to player across R7.'belongs to';
       select any sq from instances of Square
        where (selected.lichess_desig == "a7");
       create object instance osq of OccupiedSquare;
       relate osq to sq across R1;
       relate p to osq across R2.'occupies';
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(2);
+    operation clean_moves() is
+      @noparse
+      // Dispose of all moves associated with this piece
+      select many moves related by self->Move[R5];
+      for each move in moves
+        move.dispose();
+      end for;
       @endnoparse
     end operation;
 

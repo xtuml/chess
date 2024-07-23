@@ -16,6 +16,7 @@ within lichess_bot::components::Engine is
       
       Square::initialize();
       Piece::initialize();
+      Player::initialize();
       //Play::initialize();
       
       // connect to the Lichess API and start listening for events
@@ -43,7 +44,7 @@ within lichess_bot::components::Engine is
       if (not_empty taken)
         select one ocsq related by dest->OccupiedSquare[R1];
         unrelate taken from ocsq across R2.'occupies';
-        select one spec related by taken->PieceSpecification[R4.'is specified by'];
+        taken.clean_moves();
         delete object instance taken;
       else
         create object instance ocsq of OccupiedSquare;

@@ -2,7 +2,7 @@
 
 within lichess_bot::components::Engine is
 
-  package lichess is
+  package lichess_xlate is
     @dialect("oal");
     @function_num(1);
     function from_square(movestr: in string) return instance of OccupiedSquare is

@@ -25,7 +25,7 @@ shapes :
 
 connectors :
   connector : R1
-    render : association "lichess_bot::components::Engine::board::R1"
+    render : supertype "lichess_bot::components::Engine::board::R1"
     polyline :
       segment :
         start : x : 2688.0 y : 1934.0
@@ -45,7 +45,7 @@ connectors :
       text :
         bounds : x : 2521.0 y : 1943.0 width : 70.0 height : 44.0 where : end
   connector : R2
-    render : supertype "lichess_bot::components::Engine::board::R2"
+    render : association "lichess_bot::components::Engine::board::R2"
     polyline :
       segment :
         start : x : 2928.0 y : 2184.0
@@ -73,7 +73,7 @@ connectors :
         point : x : 3012.0 y : 2022.0
         shape : OpenSquare
       end :
-        point : x : 2928.0 y : 2075.0
+        point : x : 3012.0 y : 2075.0
         connector : R2
     texts :
   connector : R1____OccupiedSquare
@@ -90,7 +90,7 @@ connectors :
         point : x : 2796.0 y : 2022.0
         shape : OccupiedSquare
       end :
-        point : x : 2928.0 y : 2075.0
+        point : x : 2796.0 y : 2075.0
         connector : R2
     texts :
   connector : R4
@@ -127,7 +127,7 @@ connectors :
         point : x : 2448.0 y : 1992.0
         shape : Piece
       end :
-        point : x : 2820.0 y : 2262.0
+        point : x : 2447.0 y : 2262.0
         shape : Square
     texts :
       text :
@@ -164,7 +164,7 @@ connectors :
         point : x : 2052.0 y : 2184.0
         shape : Player
       end :
-        point : x : 2172.0 y : 2291.0
+        point : x : 2051.0 y : 2291.0
         shape : Move
     texts :
       text :
@@ -187,7 +187,7 @@ connectors :
         point : x : 2352.0 y : 1992.0
         shape : Piece
       end :
-        point : x : 2156.0 y : 2087.0
+        point : x : 2351.0 y : 2087.0
         shape : Player
     texts :
       text :
@@ -200,28 +200,26 @@ connectors :
     render : association "lichess_bot::components::Engine::board::R8"
     polyline :
       segment :
-        start : x : 2987.0 y : 2184.0
-        end :   x : 2987.0 y : 2123.0
+        start : x : 2003.0 y : 2184.0
+        end :   x : 2003.0 y : 2231.0
       segment :
-        start : x : 2987.0 y : 2123.0
-        end :   x : 3131.0 y : 2123.0
+        start : x : 2003.0 y : 2231.0
+        end :   x : 1871.0 y : 2231.0
       segment :
-        start : x : 3131.0 y : 2123.0
-        end :   x : 3131.0 y : 2265.0
+        start : x : 1871.0 y : 2231.0
+        end :   x : 1871.0 y : 2100.0
       segment :
-        start : x : 3131.0 y : 2265.0
-        end :   x : 3020.0 y : 2265.0
+        start : x : 1871.0 y : 2100.0
+        end :   x : 1956.0 y : 2100.0
     anchors :
       start :
-        point : x : 2987.0 y : 2184.0
-        shape : Square
+        point : x : 2003.0 y : 2184.0
+        shape : Player
       end :
-        point : x : 3020.0 y : 2265.0
-        shape : Square
+        point : x : 2003.0 y : 2231.0
+        shape : Player
     texts :
       text :
-        bounds : x : 3005.0 y : 2132.0 width : 98.0 height : 44.0 where : start
+        bounds : x : 1890.0 y : 2194.0 width : 0.0 height : 0.0 where : middle
       text :
-        bounds : x : 3093.0 y : 2225.0 width : 0.0 height : 0.0 where : middle
-      text :
-        bounds : x : 3029.0 y : 2276.0 width : 90.0 height : 44.0 where : end
+        bounds : x : 1875.0 y : 2060.0 width : 0.0 height : 0.0 where : end

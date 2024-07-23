@@ -4,6 +4,10 @@ within lichess_bot::components::Engine is
 
   package games is
     class 'Active Game';
+    class Player is lichess_bot::components::Engine::board::Player;
+    relationship R22 is 'Active Game' unconditionally 'is acting for' one Player,
+                        Player unconditionally 'delegates to' one 'Active Game';
+
   end package;
 
 end;

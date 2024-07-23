@@ -4,5 +4,28 @@ shapes :
   shape : ActiveGame
     render : class "lichess_bot::components::Engine::games::Active Game"
     bounds : x : 4668.0 y : 3072.0 width : 241.0 height : 301.0
+  shape : Player
+    render : imported_class "lichess_bot::components::Engine::games::Player"
+    bounds : x : 5136.0 y : 3096.0 width : 200.0 height : 150.0
 
 connectors :
+  connector : R22
+    render : association "lichess_bot::components::Engine::games::R22"
+    polyline :
+      segment :
+        start : x : 4909.0 y : 3191.0
+        end :   x : 5136.0 y : 3191.0
+    anchors :
+      start :
+        point : x : 4909.0 y : 3191.0
+        shape : ActiveGame
+      end :
+        point : x : 5136.0 y : 3191.0
+        shape : Player
+    texts :
+      text :
+        bounds : x : 4919.0 y : 3201.0 width : 0.0 height : 0.0 where : start
+      text :
+        bounds : x : 5016.0 y : 3149.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 5064.0 y : 3199.0 width : 0.0 height : 0.0 where : end
