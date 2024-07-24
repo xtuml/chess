@@ -12,9 +12,9 @@ within lichess_bot::components::Engine::board is
     @operation_num(1);
     class operation initialize() is
       @noparse
-      // Create and place Black pieces
+      // Create and place white pieces
       select any player from instances of Player
-       where ( selected.Color == Color::BLACK);
+       where ( selected.Color == Color::WHITE);
       
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Rook");
@@ -171,9 +171,9 @@ within lichess_bot::components::Engine::board is
       relate osq to sq across R1;
       relate p to osq across R2.'occupies';
       
-      // Create and place White pieces
+      // Create and place black pieces
       select any player from instances of Player
-       where ( selected.Color == Color::WHITE);
+       where ( selected.Color == Color::BLACK);
       
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Rook");

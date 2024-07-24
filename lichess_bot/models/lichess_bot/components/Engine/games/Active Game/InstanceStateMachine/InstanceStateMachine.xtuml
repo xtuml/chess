@@ -161,7 +161,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end if;
     
     // now we have bona-fide set of legal Move instances
-    // let's pick the 'interesting' ones - those that have a value target
+    // let's pick the 'interesting' ones - those that have a target of value
     
     select many potentialtargets related by self->Player[R22.'is acting for']
                                                  ->Player[R8.'opposes']
@@ -173,17 +173,24 @@ within lichess_bot::components::Engine::games::'Active Game' is
                                              ->OccupiedSquare[R1];
     targets = potentialtargets & reachables;
     
-    // now, targets is a set of squares occupied by opponent pieces
+    // now, targets is the set of reachable squares occupied by opponent pieces
      
     best = 0;
-    select many possible_moves from instances of Move;
-    for each possible in possible_moves
-      if (possible.Value > best)
-        ourmove = possible.Notation;
-        best = possible.Value;
+    select any chosen from instances of OccupiedSquare where false;  // decl
+    for each target in targets
+      select one spec related by target->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
+      if (spec.Value > best)
+        best = spec.Value;
+        chosen = target;
       end if;
-      delete object instance possible;
-    end for; 
+    end for;
+    
+    if (not_empty chosen)  // we have a target square with a high-value piece - pick any piece (for now) that can attack
+      select one to related by chosen->Square[R1];
+      select any move related by to->Move[R5];
+      select one from related by move->Piece[R5.'is reachable by']->OccupiedSquare[R2.'occupies']->Square[R1];
+      ourmove = ::movestr( from:from, to:to );
+    end if;
     
     if (ourmove == "")
       select any move from instances of Move;
@@ -204,9 +211,8 @@ within lichess_bot::components::Engine::games::'Active Game' is
     ::record_move( from:from, to:to, recorder:" BOT: " );  // record for ground truth
     
     // play the move
+    LOG::LogInfo(message: "BOT playing  " + ourmove); 
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
-    
-    
     t = TIM::timer_start(event_inst:e, microseconds: 0);
     @endnoparse
   end state;
