@@ -46,6 +46,9 @@ within lichess_bot::components::Engine::board is
           sq.file = f + 1;
           sq.lichess_desig = files[f] + ranks[r];
           f = f + 1;
+          // at initialization, all squares are empty
+          create object instance opsq of OpenSquare;
+          relate opsq to sq across R1;
         end while;
         r = r + 1;
       end while;
@@ -58,6 +61,31 @@ within lichess_bot::components::Engine::board is
       @noparse
       select one piece related by self->OccupiedSquare[R1]->Piece[R2.'is occupied by'];
       return piece;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(3);
+    operation occupy(piece: in instance of Piece) is
+      @noparse
+      // place a piece on a square on the board.
+      // note: this can be used to place a piece immediately after a capture.
+      piece = param.piece;
+      select any ocsq from instances of OccupiedSquare where false;
+      select one opsq related by self->OpenSquare[R1];
+      if (not empty opsq)
+        unrelate opsq from self across R1;
+        delete object instance opsq;
+        create object instance ocsq of OccupiedSquare;
+        relate self to ocsq across R1;
+      else
+        select one ocsq related by self->OccupiedSquare[R1];
+        select one occupant related by ocsq->Piece[R2.'is occupied by'];
+        if (not_empty occupant)
+          LOG::LogFailure( message:"Oops - square is already occupied " + self.lichess_desig );
+        end if;
+      end if;
+      relate piece to ocsq across R2.'occupies';
       @endnoparse
     end operation;
 
