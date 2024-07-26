@@ -7,5 +7,23 @@ shapes :
   shape : Properties
     render : ee "lichess_bot::EEs::Properties"
     bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Architecture
+    render : ee "lichess_bot::EEs::Architecture"
+    bounds : x : 440.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Logging
+    render : ee "lichess_bot::EEs::Logging"
+    bounds : x : 660.0 y : 0.0 width : 200.0 height : 150.0
+  shape : math
+    render : ee "lichess_bot::EEs::math"
+    bounds : x : 880.0 y : 0.0 width : 200.0 height : 150.0
+  shape : StateSave
+    render : ee "lichess_bot::EEs::State Save"
+    bounds : x : 1100.0 y : 0.0 width : 200.0 height : 150.0
+  shape : string
+    render : ee "lichess_bot::EEs::string"
+    bounds : x : 1320.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Time
+    render : ee "lichess_bot::EEs::Time"
+    bounds : x : 1540.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :

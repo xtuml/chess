@@ -77,10 +77,11 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end if;
     
     // select a random legal move
-    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: self.game_state.moves));
+    //legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: self.game_state.moves));
     i = 0;  // coerce integer
-    i = TIM::current_clock() % legal_moves.length;
-    move = legal_moves[i];
+    //i = TIM::current_clock() % legal_moves.length;
+    //move = legal_moves[i];
+    move = "";
     
     // play the move
     create event instance e of ActiveGame3:'play move'(move: move) to self;

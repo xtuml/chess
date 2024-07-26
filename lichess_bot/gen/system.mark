@@ -1,0 +1,5 @@
+.invoke MarkSystemConfigurationPackage( "system" )
+.invoke TagDynamicMemoryAllocationOn( 10 )
+.invoke TagMaximumStringLength( 1024 )
+.//.invoke TagInstanceLoading()
+.invoke EnableTasking( "POSIX", "", 2 )
