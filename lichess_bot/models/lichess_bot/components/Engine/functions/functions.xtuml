@@ -36,7 +36,8 @@ within lichess_bot::components::Engine is
       dest = param.to;
       recorder = param.recorder;
       
-      str = ::movestr( from:start, to:dest ); // debug
+      select one sq related by start->Square[R1];
+      str = ::movestr( from:sq, to:dest ); // debug
       LOG::LogInfo( message:"recording move from " + recorder + str );
       select one piece related by start->Piece[R2.'is occupied by'];
       select any ocsq from instances of OccupiedSquare where false;  // decl
@@ -51,7 +52,7 @@ within lichess_bot::components::Engine is
         select one ocsq related by dest->OccupiedSquare[R1];
         unrelate taken from ocsq across R2.'occupies';
         taken.clean_moves();
-        delete object instance taken;
+        //delete object instance taken;
       else
         select one opsq related by dest->OpenSquare[R1];
         unrelate opsq from dest across R1;

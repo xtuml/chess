@@ -79,44 +79,63 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end if;
     
     played_moves = self.game_state.moves;
-    i = played_moves.length;
-    if (i > 0)
-      // record the last move - the opponent's - to update our board ground truth
-      movestr = played_moves[i-1];  // most recent from opponent
-      opfrom = ::from_square( movestr:movestr );
-      opto = ::to_square( movestr:movestr );
-      ::record_move( from:opfrom, to:opto, recorder:"player" );
-    end if;
-    
-    // start: a simplistic attempt to choose a move based on high-value target.
-    select any chosen_move from instances of Move where false;  // decl
-    
     legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: played_moves));
     n = legal_moves.length - 1;
     
     select one myplayer related by self->Player[R22.'is acting for'];
     select one opponent related by myplayer->Player[R8.'opposes'];
     
-    // clean any move instances that are no longer legal since our last move
+    select any opponent_fromsq from instances of OccupiedSquare where false;  // decl
+    select any opponent_tosquare from instances of Square where false;  // decl
+    i = played_moves.length;
+    if (i > 0)
+      movestr = played_moves[i-1];  // most recent from opponent
+      opponent_fromsq = ::from_square( movestr:movestr );
+      opponent_tosquare = ::to_square( movestr:movestr );
+      select one moved_from related by opponent_fromsq->Square[R1]; // this was potentially a target
+      select many moves related by moved_from->Move[R5];  // these moves are no longer interesting as targets
+      for each move in moves
+        move.dispose();
+      end for;
+      select many pieces related by opponent_tosquare->Piece[R5.'is reachable by'];
+      // any move(s) that may pass through that square are now invalid
+      for each piece in pieces
+        piece.clean_moves();
+      end for;
+    end if;
+    
+    // clean any move instances that are no longer legal since our last move - is this needed?
     select many potentialmoves related by myplayer->Move[R6.'considers'];
     for each potentialmove in potentialmoves
       select one start related by potentialmove->Piece[R5.'is reachable by']
                                                 ->OccupiedSquare[R2.'occupies'];
       select one finish related by potentialmove->Square[R5.'can legally move to'];
-      movestr = ::movestr( from:start, to:finish );
-    	i = 0;
-    	matched = false;
-    	while (i < n)  // for each legal move we could play...
-    	  if (movestr == legal_moves[i])
-    	    matched = true;
-    	    break;
-    	  end if;
-    	  i = i + 1;
-    	end while;
-    	if (not matched)
-    	  potentialmove.dispose();
-    	end if;
+      
+      //movestr = ::movestr( from:start, to:finish );
+      
+      i = 0;
+      matched = false;
+      while (i < n)  // for each legal move we could play...
+        if (potentialmove.Notation == legal_moves[i])  // falling back on Notation for now... TBD
+          matched = true;
+          break;
+        end if;
+        i = i + 1;
+      end while;
+      if (not matched)
+        potentialmove.dispose();
+      end if;
     end for;
+    
+    if (i > 0)
+      // record the last move - the opponent's - to update our board ground truth
+      // Note: this must not be done until all navigation to the played occupied square is done.
+      ::record_move( from:opponent_fromsq, to:opponent_tosquare, recorder:"player" );
+    end if;
+    
+    
+    // start: a simplistic attempt to choose a move based on high-value target.
+    select any chosen_move from instances of Move where false;  // decl
     
     // ensure that a move instance exists for each legal move; create any needed new ones
     i = 0;
@@ -171,25 +190,42 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     end for;
     
-    if (not_empty chosen)  // an occupied square with a high-value piece - pick any piece (for now) that can attack
+    if (not_empty chosen)  // we have a target occupied square with a high-value piece - pick any piece (for now) that can attack
       select any chosen_move related by chosen->Square[R1]->Move[R5];
     else
-      // if there are no targets we may be in the opening stages of the game; look for a move
+      // if no targets, may be opening stages of game; look for a move
       select many openermoves from instances of Move;
       chosen_move = ::pick_opener_move( moves:openermoves );
+      if (empty chosen_move)
+        select any chosen_move from instances of Move;
+      end if;
     end if;
+    select one piece related by chosen_move->Piece[R5.'is reachable by'];
     
     select one tosq related by chosen_move->Square[R5.'can legally move to'];
-    select one fromosq related by chosen_move->Piece[R5.'is reachable by']->OccupiedSquare[R2.'occupies'];
+    select one fromsq related by chosen_move->Piece[R5.'is reachable by']
+                                            ->OccupiedSquare[R2.'occupies']->Square[R1];
     // play the move - in lichess notation
-    ourmove = ::movestr( from:fromosq, to:tosq );
+    ourmove = ::movestr( from:fromsq, to:tosq );
     LOG::LogInfo(message: "BOT playing  " + ourmove); 
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
     t = TIM::timer_start(event_inst:e, microseconds: 0);
     
-    ::record_move( from:fromosq, to:tosq, recorder:" BOT: " );  // record for our ground truth (invalidates 'from')
-    // now dispose of this move, once played
-    chosen_move.dispose();
+    select one ocsq related by fromsq->OccupiedSquare[R1];
+    ::record_move( from:ocsq, to:tosq, recorder:" BOT: " );  // record for our ground truth (invalidates 'from')
+    // now dispose of all moves for the piece just played - it's not on the start square any more; all moves are invalid
+    select many moves related by piece->Move[R5];
+    for each move in moves
+      move.dispose();
+    end for;
+    // Any moves that would have passed through the newly occupied square are now invalid
+    // Consider a Bishop which may have had legal moves to 5 empty squares.
+    // If a Knight's Pawn advances by 2, the last of those is no longer reachable.
+    // Simply eliminate all moves that may be so compromised; they will be rebuilt as needed.
+    select many pieces related by tosq->Piece[R5.'is reachable by'];
+    for each piece in pieces
+      piece.clean_moves();
+    end for;
     @endnoparse
   end state;
 
