@@ -4,6 +4,9 @@ shapes :
   shape : Play
     render : class "lichess_bot::components::Engine::sequences::Play"
     bounds : x : 4475.0 y : 3254.0 width : 200.0 height : 150.0
+  shape : Openers
+    render : class "lichess_bot::components::Engine::sequences::Openers"
+    bounds : x : 5004.0 y : 3240.0 width : 200.0 height : 150.0
 
 connectors :
   connector : R100

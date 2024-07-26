@@ -1,0 +1,29 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::sequences is
+
+  @key_letters("Openers");
+  @class_num(2);
+  class Openers is
+
+    opening_moves: sequence of string;
+
+    @dialect("oal");
+    @operation_num(1);
+    class operation initialize() is
+      @noparse
+      create object instance o of Openers;
+      o.opening_moves[18] = "";  // dimension
+      o.opening_moves[1] = "e7e5";
+      o.opening_moves[2] = "e2e4";
+      o.opening_moves[3] = "g8f6";
+      o.opening_moves[4] = "g1f3";
+      o.opening_moves[5] = "b8c6";
+      o.opening_moves[6] = "b1c3";
+      o.opening_moves[7] = "f8d4";
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

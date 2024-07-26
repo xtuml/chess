@@ -178,6 +178,10 @@ within lichess_bot::components is
         	game.color = Color::BLACK;
         end if;
         
+        select any myplayer from instances of Player
+         where ( selected.Color == game.color );
+        relate game to myplayer across R22.'is acting for';
+        
         // set the initial FEN
         if g.initialFen == "startpos" then
         	game.initial_fen = ChessLib::startpos();

@@ -95,7 +95,7 @@ connectors :
         point : x : 2039.0 y : 2184.0
         shape : Player
       end :
-        point : x : 2172.0 y : 2291.0
+        point : x : 2039.0 y : 2291.0
         shape : Move
     texts :
       text :
@@ -118,7 +118,7 @@ connectors :
         point : x : 2352.0 y : 1992.0
         shape : Piece
       end :
-        point : x : 2303.0 y : 2088.0
+        point : x : 2351.0 y : 2087.0
         shape : Player
     texts :
       text :
@@ -147,7 +147,7 @@ connectors :
         point : x : 1956.0 y : 2184.0
         shape : Player
       end :
-        point : x : 1955.0 y : 2231.0
+        point : x : 1956.0 y : 2231.0
         shape : Player
     texts :
       text :
