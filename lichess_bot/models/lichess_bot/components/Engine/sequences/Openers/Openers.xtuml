@@ -2,10 +2,12 @@
 
 within lichess_bot::components::Engine::sequences is
 
+  //! Support for choice of opening moves.
   @key_letters("Openers");
   @class_num(2);
   class Openers is
 
+    //! An array of freequently played opening moves.
     opening_moves: sequence of string;
 
     @dialect("oal");
@@ -13,14 +15,25 @@ within lichess_bot::components::Engine::sequences is
     class operation initialize() is
       @noparse
       create object instance o of Openers;
-      o.opening_moves[18] = "";  // dimension
-      o.opening_moves[1] = "e7e5";
-      o.opening_moves[2] = "e2e4";
-      o.opening_moves[3] = "g8f6";
-      o.opening_moves[4] = "g1f3";
-      o.opening_moves[5] = "b8c6";
-      o.opening_moves[6] = "b1c3";
-      o.opening_moves[7] = "f8d4";
+      o.opening_moves[17] = "";  // dimension
+      o.opening_moves[0] = "e7e5";
+      o.opening_moves[1] = "e2e4";
+      o.opening_moves[2] = "g8f6";
+      o.opening_moves[3] = "g1f3";
+      o.opening_moves[4] = "b8c6";
+      o.opening_moves[5] = "b1c3";
+      o.opening_moves[6] = "f8b4";
+      o.opening_moves[7] = "fib5";
+      o.opening_moves[8] = "d7d5";
+      o.opening_moves[9] = "d2d4";
+      o.opening_moves[10] = "c8f5";
+      o.opening_moves[11] = "c1f4";
+      o.opening_moves[12] = "f7f5";
+      o.opening_moves[13] = "f2f4";
+      o.opening_moves[14] = "g7g5";
+      o.opening_moves[15] = "g2g4";
+      o.opening_moves[16] = "f6e4";
+      o.opening_moves[17] = "f3e5";
       @endnoparse
     end operation;
 

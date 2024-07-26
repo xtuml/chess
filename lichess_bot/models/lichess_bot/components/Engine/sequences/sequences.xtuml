@@ -35,10 +35,6 @@ within lichess_bot::components::Engine is
       @endnoparse
     end function;
 
-    @dialect("oal");
-    @function_num(1);
-    function pick_opening_move(legal_moves: in integer) return instance of Move;
-
   end package;
 
 end;

@@ -41,7 +41,7 @@ connectors :
       text :
         bounds : x : 1986.0 y : 1906.0 width : 0.0 height : 0.0 where : start
       text :
-        bounds : x : 2135.0 y : 1906.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : 2122.0 y : 1904.0 width : 0.0 height : 0.0 where : middle
       text :
         bounds : x : 2182.0 y : 1903.0 width : 0.0 height : 0.0 where : end
   connector : R5
@@ -122,9 +122,9 @@ connectors :
         shape : Player
     texts :
       text :
-        bounds : x : 2293.0 y : 2000.0 width : 0.0 height : 0.0 where : start
+        bounds : x : 2283.0 y : 1995.0 width : 0.0 height : 0.0 where : start
       text :
-        bounds : x : 2287.0 y : 2052.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : 2295.0 y : 2049.0 width : 0.0 height : 0.0 where : middle
       text :
         bounds : x : 2118.0 y : 2095.0 width : 0.0 height : 0.0 where : end
   connector : R8
@@ -175,7 +175,7 @@ connectors :
       text :
         bounds : x : 2594.0 y : 1901.0 width : 0.0 height : 0.0 where : middle
       text :
-        bounds : x : 2619.0 y : 1963.0 width : 0.0 height : 0.0 where : end
+        bounds : x : 2625.0 y : 1952.0 width : 0.0 height : 0.0 where : end
   connector : R1
     render : supertype "lichess_bot::components::Engine::board::R1"
     polyline :

@@ -27,6 +27,7 @@ within lichess_bot::components::Engine is
       @endnoparse
     end function;
 
+    //! Each move updates the positions of the pieces on the board, maintaining ground truth.
     @dialect("oal");
     @function_num(4);
     function record_move('from': in instance of OccupiedSquare, 'to': in instance of Square, recorder: in string) is

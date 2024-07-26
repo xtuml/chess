@@ -13,6 +13,8 @@ within lichess_bot::components::Engine is
     class Square;
     relationship R1 is Square is_a (OccupiedSquare, OpenSquare);
 
+    //! A piece still in play must occupy a square.
+    //! Taken pieces no longer do so and cannot play.
     relationship R2 is OccupiedSquare conditionally 'is occupied by' one Piece,
                        Piece conditionally occupies one OccupiedSquare;
 
@@ -23,12 +25,14 @@ within lichess_bot::components::Engine is
                        Square conditionally 'is reachable by' many Piece
                        using one Move;
 
+    //! At his turn, a player must choose one the allowed moves for one of his pieces.
     relationship R6 is Move unconditionally 'is considered by' one Player,
                        Player conditionally considers many Move;
 
     relationship R7 is Piece unconditionally 'belongs to' one Player,
                        Player unconditionally owns many Piece;
 
+    //! A symmetric association reflecting that two players compete against each other.
     relationship R8 is Player unconditionally opposes one Player,
                        Player unconditionally relates to one Player;
 

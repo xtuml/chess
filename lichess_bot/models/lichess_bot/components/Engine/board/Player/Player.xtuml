@@ -2,6 +2,8 @@
 
 within lichess_bot::components::Engine::board is
 
+  //! Each instance represents one of the two players competing.
+  //! One of these represents the automation of player decision-making.
   @key_letters("Player");
   @class_num(7);
   class Player is

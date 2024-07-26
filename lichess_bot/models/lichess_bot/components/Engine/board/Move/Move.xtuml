@@ -2,6 +2,7 @@
 
 within lichess_bot::components::Engine::board is
 
+  //! One possible allowed move by a piece, belonging to one of the players, from an occupied square to another square on the board.
   @key_letters("Move");
   @class_num(3);
   class Move is

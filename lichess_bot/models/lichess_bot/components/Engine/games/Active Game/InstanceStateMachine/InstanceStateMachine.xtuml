@@ -171,12 +171,12 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     end for;
     
-    if (not_empty chosen)  // we have a target occupied square with a high-value piece - pick any piece (for now) that can attack
+    if (not_empty chosen)  // an occupied square with a high-value piece - pick any piece (for now) that can attack
       select any chosen_move related by chosen->Square[R1]->Move[R5];
     else
+      // if there are no targets we may be in the opening stages of the game; look for a move
       select many openermoves from instances of Move;
       chosen_move = ::pick_opener_move( moves:openermoves );
-    //  select any chosen_move from instances of Move;  // need to improve this TBD 
     end if;
     
     select one tosq related by chosen_move->Square[R5.'can legally move to'];

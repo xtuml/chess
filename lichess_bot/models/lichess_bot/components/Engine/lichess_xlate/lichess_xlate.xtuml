@@ -2,8 +2,10 @@
 
 within lichess_bot::components::Engine is
 
+  //! For now, an attempt to centralize some of the translation between
+  //! lichess string representation of moves and the modeled strucure.
   package lichess_xlate is
-    //! The occupied square from which a piece mmay make a move.
+    //! retrieve from a lichess string the occupied square from which a piece may make a move.
     @dialect("oal");
     @function_num(1);
     function from_square(movestr: in string) return instance of OccupiedSquare is
@@ -17,6 +19,7 @@ within lichess_bot::components::Engine is
       @endnoparse
     end function;
 
+    //! Construct a lichess string representation from the modeled origin and destination instances.
     @dialect("oal");
     @function_num(3);
     function movestr('from': in instance of OccupiedSquare, 'to': in instance of Square) return string is
@@ -29,6 +32,7 @@ within lichess_bot::components::Engine is
       @endnoparse
     end function;
 
+    //! retrieve from a lichess string the square to which a piece may make a move.
     @dialect("oal");
     @function_num(2);
     function to_square(movestr: in string) return instance of Square is
