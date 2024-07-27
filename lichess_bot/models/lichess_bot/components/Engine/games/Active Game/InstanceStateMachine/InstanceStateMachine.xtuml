@@ -80,7 +80,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     
     played_moves = self.game_state.moves;
     legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: played_moves));
-    n = legal_moves.length - 1;
+    nlegals = legal_moves.length;
     
     select one myplayer related by self->Player[R22.'is acting for'];
     select one opponent related by myplayer->Player[R8.'opposes'];
@@ -90,7 +90,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     i = played_moves.length;
     if (i > 0)
       movestr = played_moves[i-1];  // most recent from opponent
-      opponent_fromsq = ::from_square( movestr:movestr );
+      opponent_fromsq = ::from_occupied( movestr:movestr );
       opponent_tosquare = ::to_square( movestr:movestr );
       select one moved_from related by opponent_fromsq->Square[R1]; // this was potentially a target
       select many moves related by moved_from->Move[R5];  // these moves are no longer interesting as targets
@@ -104,19 +104,18 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end for;
     end if;
     
-    // clean any move instances that are no longer legal since our last move - is this needed?
+    // clean any move instances that are now no longer legal
+    // (consider, for instance, check may vastly reduce legal moves)
     select many potentialmoves related by myplayer->Move[R6.'considers'];
     for each potentialmove in potentialmoves
       select one start related by potentialmove->Piece[R5.'is reachable by']
-                                                ->OccupiedSquare[R2.'occupies'];
+                                                ->OccupiedSquare[R2.'occupies']->Square[R1];
       select one finish related by potentialmove->Square[R5.'can legally move to'];
-      
-      //movestr = ::movestr( from:start, to:finish );
-      
+      movestr = ::movestr( from:start, to:finish );
       i = 0;
       matched = false;
-      while (i < n)  // for each legal move we could play...
-        if (potentialmove.Notation == legal_moves[i])  // falling back on Notation for now... TBD
+      while (i < nlegals)  // for each legal move we could play...
+        if (movestr == legal_moves[i])
           matched = true;
           break;
         end if;
@@ -127,10 +126,10 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     end for;
     
-    if (i > 0)
+    if (played_moves.length > 0)
       // record the last move - the opponent's - to update our board ground truth
       // Note: this must not be done until all navigation to the played occupied square is done.
-      ::record_move( from:opponent_fromsq, to:opponent_tosquare, recorder:"player" );
+      ::record_move( from:opponent_fromsq, to:opponent_tosquare, recorder:"player: " );
     end if;
     
     
@@ -139,9 +138,9 @@ within lichess_bot::components::Engine::games::'Active Game' is
     
     // ensure that a move instance exists for each legal move; create any needed new ones
     i = 0;
-    while (i < n)  // for each legal move we could play...
+    while (i < nlegals)  // for each legal move we could play...
       movestr = legal_moves[i];
-      fromsq = ::from_square( movestr:movestr );
+      fromsq = ::from_occupied( movestr:movestr );
       tosq = ::to_square( movestr:movestr );
       select one piece related by fromsq->Piece[R2.'is occupied by'];
       select many dests related by piece->Square[R5.'can legally move to'];
@@ -163,7 +162,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     
     // sanity check
     select many moves from instances of Move;
-    if (cardinality moves != n)
+    if (cardinality moves != nlegals)
       LOG::LogInfo(message: "Oops - non matched moves");
     end if;
     

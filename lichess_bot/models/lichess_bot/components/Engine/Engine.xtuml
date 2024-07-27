@@ -203,7 +203,7 @@ within lichess_bot::components is
         end if;
         i = 0;
         while (l > 0)
-          from = ::from_square( movestr:moves[i] );
+          from = ::from_occupied( movestr:moves[i] );
           to = ::to_square( movestr:moves[i] );
           ::record_move( from:from, to:to, recorder:"Restart" );
           i = i + 1;

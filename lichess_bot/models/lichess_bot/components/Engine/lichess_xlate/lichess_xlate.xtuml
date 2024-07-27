@@ -8,7 +8,7 @@ within lichess_bot::components::Engine is
     //! retrieve from a lichess string the occupied square from which a piece may make a move.
     @dialect("oal");
     @function_num(1);
-    function from_square(movestr: in string) return instance of OccupiedSquare is
+    function from_occupied(movestr: in string) return instance of OccupiedSquare is
       @noparse
       str = param.movestr;
       move_from = STRING::substr(s:str, begin:0, end:2);
