@@ -1,40 +1,8 @@
 render : "lichess_bot::components::Engine::sequences"
 
 shapes :
-  shape : Play
-    render : class "lichess_bot::components::Engine::sequences::Play"
-    bounds : x : 4475.0 y : 3254.0 width : 200.0 height : 150.0
   shape : Openers
     render : class "lichess_bot::components::Engine::sequences::Openers"
     bounds : x : 5004.0 y : 3240.0 width : 200.0 height : 150.0
 
 connectors :
-  connector : R100
-    render : association "lichess_bot::components::Engine::sequences::R100"
-    polyline :
-      segment :
-        start : x : 4675.0 y : 3335.0
-        end :   x : 4725.0 y : 3335.0
-      segment :
-        start : x : 4725.0 y : 3335.0
-        end :   x : 4725.0 y : 3203.0
-      segment :
-        start : x : 4725.0 y : 3203.0
-        end :   x : 4583.0 y : 3203.0
-      segment :
-        start : x : 4583.0 y : 3203.0
-        end :   x : 4583.0 y : 3253.0
-    anchors :
-      start :
-        point : x : 4675.0 y : 3335.0
-        shape : Play
-      end :
-        point : x : 4725.0 y : 3335.0
-        shape : Play
-    texts :
-      text :
-        bounds : x : 4685.0 y : 3345.0 width : 0.0 height : 0.0 where : start
-      text :
-        bounds : x : 4738.0 y : 3213.0 width : 0.0 height : 0.0 where : middle
-      text :
-        bounds : x : 4593.0 y : 3226.0 width : 0.0 height : 0.0 where : end

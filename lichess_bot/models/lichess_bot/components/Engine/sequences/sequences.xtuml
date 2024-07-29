@@ -4,10 +4,6 @@ within lichess_bot::components::Engine is
 
   package sequences is
     class Openers;
-    class Play;
-    relationship R100 is Play conditionally 'may be responded to with' many Play,
-                         Play conditionally 'responds to' one Play;
-
     @dialect("oal");
     @function_num(2);
     function pick_opener_move(moves: in set of instance of Move) return instance of Move is
@@ -16,21 +12,22 @@ within lichess_bot::components::Engine is
       select any opener from instances of Openers;
       possibles = opener.opening_moves;
       n = possibles.length;
-      picked = false;
-      for each move in moves 
-        str = move.Notation;
-        i = 0;
-        while (i < n)
-          if (move.Notation == possibles[i])
-            picked = true;
+      i = 0;
+      select any move from instances of Move where false;  // decl
+      found = false;
+      while (i < n)
+        str = possibles[i];
+        for each move in moves 
+          if (move.Notation == str)
+            found = true;
             break;
           end if;
-          i = i + 1;
-        end while;
-        if (picked)
+        end for;
+        if (found)
           break;
         end if;
-      end for;
+        i = i + 1;
+      end while;
       return move;
       @endnoparse
     end function;
