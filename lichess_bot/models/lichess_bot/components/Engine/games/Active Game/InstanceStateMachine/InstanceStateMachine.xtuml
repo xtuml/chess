@@ -79,20 +79,46 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end if;
     
     played_moves = self.game_state.moves;
-    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: played_moves));
-    nlegals = legal_moves.length;
+    
+    i = played_moves.length;
+    if (i > 0)
+      // we need an update to reflect the change from our last move:
+      // some moves invalidated; ground truth of 2 squares changed.
+      movestr = played_moves[i-2];  // our last move
+      fromsq = ::from_occupied( movestr:movestr );
+      tosquare = ::to_square( movestr:movestr );
+      select one piece related by fromsq->Piece[R2.'is occupied by'];
+    
+    	// now dispose of all moves for the piece we last played - not on the start square any more, so all moves are invalid
+    	select many moves related by piece->Move[R5];
+    	for each move in moves
+    	  move.dispose();
+    	end for;
+    	// Any moves that would have passed through the newly occupied square are now invalid
+    	// Consider a Bishop which may have had legal moves to 5 empty squares.
+    	// If a Knight's Pawn advances by 2, the last of those is no longer reachable.
+    	// Simply eliminate all moves that may be so compromised; they will be rebuilt as needed.
+    	select many pieces related by tosquare->Piece[R5.'is reachable by'];
+    	for each piece in pieces
+    	  piece.clean_moves();
+    	end for;
+    	// update ground truth of our board representation
+    	::record_move( from:fromsq, to:tosquare, recorder:" BOT: " );
+    end if;
     
     select one myplayer related by self->Player[R22.'is acting for'];
     select one opponent related by myplayer->Player[R8.'opposes'];
     
-    select any opponent_fromsq from instances of OccupiedSquare where false;  // decl
+    select any opponent_fromocsq from instances of OccupiedSquare where false;  // decl
     select any opponent_tosquare from instances of Square where false;  // decl
+    
     i = played_moves.length;
     if (i > 0)
+      // now update based on opponent's last move
       movestr = played_moves[i-1];  // most recent from opponent
-      opponent_fromsq = ::from_occupied( movestr:movestr );
+      opponent_fromocsq = ::from_occupied( movestr:movestr );
       opponent_tosquare = ::to_square( movestr:movestr );
-      select one moved_from related by opponent_fromsq->Square[R1]; // this was potentially a target
+      select one moved_from related by opponent_fromocsq->Square[R1]; // this was potentially a target
       select many moves related by moved_from->Move[R5];  // these moves are no longer interesting as targets
       for each move in moves
         move.dispose();
@@ -103,6 +129,10 @@ within lichess_bot::components::Engine::games::'Active Game' is
         piece.clean_moves();
       end for;
     end if;
+    
+    // aquire a list of legal moves to choose from
+    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: played_moves));
+    nlegals = legal_moves.length;
     
     // clean any move instances that are now no longer legal
     // (consider, for instance, check may vastly reduce legal moves)
@@ -122,6 +152,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
         i = i + 1;
       end while;
       if (not matched)
+        LOG::LogInfo(message: "Disposing non-legal move: " + movestr);
         potentialmove.dispose();
       end if;
     end for;
@@ -129,7 +160,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     if (played_moves.length > 0)
       // record the last move - the opponent's - to update our board ground truth
       // Note: this must not be done until all navigation to the played occupied square is done.
-      ::record_move( from:opponent_fromsq, to:opponent_tosquare, recorder:"player: " );
+      ::record_move( from:opponent_fromocsq, to:opponent_tosquare, recorder:"player: " );
     end if;
     
     
@@ -199,32 +230,16 @@ within lichess_bot::components::Engine::games::'Active Game' is
         select any chosen_move from instances of Move;
       end if;
     end if;
-    select one piece related by chosen_move->Piece[R5.'is reachable by'];
     
+    select one piece related by chosen_move->Piece[R5.'is reachable by'];
     select one tosq related by chosen_move->Square[R5.'can legally move to'];
     select one fromsq related by chosen_move->Piece[R5.'is reachable by']
                                             ->OccupiedSquare[R2.'occupies']->Square[R1];
     // play the move - in lichess notation
     ourmove = ::movestr( from:fromsq, to:tosq );
-    LOG::LogInfo(message: "BOT playing  " + ourmove); 
+    LOG::LogInfo(message: "BOT selected: " + ourmove); 
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
     t = TIM::timer_start(event_inst:e, microseconds: 0);
-    
-    select one ocsq related by fromsq->OccupiedSquare[R1];
-    ::record_move( from:ocsq, to:tosq, recorder:" BOT: " );  // record for our ground truth (invalidates 'from')
-    // now dispose of all moves for the piece just played - it's not on the start square any more; all moves are invalid
-    select many moves related by piece->Move[R5];
-    for each move in moves
-      move.dispose();
-    end for;
-    // Any moves that would have passed through the newly occupied square are now invalid
-    // Consider a Bishop which may have had legal moves to 5 empty squares.
-    // If a Knight's Pawn advances by 2, the last of those is no longer reachable.
-    // Simply eliminate all moves that may be so compromised; they will be rebuilt as needed.
-    select many pieces related by tosq->Piece[R5.'is reachable by'];
-    for each piece in pieces
-      piece.clean_moves();
-    end for;
     @endnoparse
   end state;
 
@@ -233,6 +248,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     move = param.move;
     
     // play the move
+    LOG::LogInfo( message:"BOT playing move: " + move );
     success = chess::move(game_id: self.id, move: move);
     if success then
     	generate ActiveGame1:'waiting on move' to self;
