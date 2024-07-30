@@ -592,16 +592,18 @@ TIM_duration_until_next_timer_pop( void * ts_in )
 {
   struct timespec * ts = ( struct timespec * ) ts_in;
 #if ESCHER_SYS_MAX_XTUML_TIMERS > 0
-  ETimer_time_t t = 0UL;
+  ETimer_time_t t = 0UL, tnow, tbg;
   #ifdef ESCHER_TASKING_POSIX
   Escher_mutex_lock( SEMAPHORE_FLAVOR_TIMER );
   #endif
   if ( 0 != animate ) {
     t = animate->expiration;
-  } else {
+  }
+  tnow = ETimer_msec_time();
+  tbg = tnow + 1000;
+  if ( ( t == 0 ) || ( t > tbg ) ) {
     /* periodically wake up in background.  */
-    ETimer_time_t tnow = ETimer_msec_time();
-    t = tnow + 1000;
+    t = tbg;
   }
   #ifdef ESCHER_TASKING_POSIX
   Escher_mutex_unlock( SEMAPHORE_FLAVOR_TIMER );
@@ -609,7 +611,6 @@ TIM_duration_until_next_timer_pop( void * ts_in )
   if ( 0 == t ) {
     ts = 0;   /* Return zero to indicate no timers ticking.  */
   } else {
-    ETimer_time_t tnow = ETimer_msec_time();
     ts->tv_sec = systyme.time;      /* Load current time.  */
     ts->tv_nsec = systyme.millitm;  /* Stay milliseconds for now.  */
     if ( t > tnow ) {

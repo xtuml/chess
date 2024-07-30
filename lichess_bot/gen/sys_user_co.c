@@ -72,6 +72,7 @@ UserPostOoaInitializationCalloutf( void )
   SYS_USER_CO_PRINTF( "UserPostOoaInitializationCallout\n" )
 }
 
+extern void lichess_api_json( int, char ** );
 /*
  * UserBackgroundProcessingCallout
  *
@@ -83,11 +84,16 @@ UserPostOoaInitializationCalloutf( void )
 void
 UserBackgroundProcessingCalloutf( void )
 {
+  static char * argv[2];
+  argv[0] = "lichess_api_json";
+  argv[1] = "001.json";
   /* Activate this invocation to periodically tick the example simple TIM.  */
   #if ESCHER_SYS_MAX_XTUML_TIMERS > 0
   TIM_tick();
   #endif
   fprintf(stderr,"background....\n");
+  lichess_api_json( 1, &argv );
+  fprintf(stderr,"BACKGROUND....\n");
   /* Insert implementation specific code here.  */
 }
 
