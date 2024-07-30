@@ -223,7 +223,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
       select any chosen_move related by chosen->Square[R1]->Move[R5];
     else
       // if no targets, may be opening stages of game; look for a move
-      if (played_moves.length < 8)  // arbitrary limit
+      if (played_moves.length < 10)  // arbitrary limit on opening move search
     	  select many openermoves from instances of Move;
     	  chosen_move = ::pick_opener_move( moves:openermoves );
       end if;
@@ -240,6 +240,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     ourmove = ::movestr( from:fromsq, to:tosq );
     LOG::LogInfo(message: "BOT selected: " + ourmove); 
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
+    // zero-timer prevents event prioritization by event-to-self acceleration.
     t = TIM::timer_start(event_inst:e, microseconds: 0);
     @endnoparse
   end state;

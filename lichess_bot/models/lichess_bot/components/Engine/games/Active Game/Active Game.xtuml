@@ -69,10 +69,8 @@ within lichess_bot::components::Engine::games is
       		generate ActiveGame2:'game over'(status: self.game_state.status) to self;
       else
       	if self.is_our_turn() then
-      	  LOG::LogInfo(message: "our turn" );
       		generate ActiveGame4:'ready to play' to self;
       	else
-          LOG::LogInfo(message: "not our turn - their turn" );
       		generate ActiveGame1:'waiting on move' to self;
       	end if;
       end if;

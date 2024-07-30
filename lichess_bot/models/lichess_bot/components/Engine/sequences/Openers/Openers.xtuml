@@ -7,15 +7,17 @@ within lichess_bot::components::Engine::sequences is
   @class_num(2);
   class Openers is
 
-    //! An array of freequently played opening moves.
-    opening_moves: sequence of string;
+    //! An array of frequently played opening moves.
+    opening_moves: sequence (18) of string;
 
     @dialect("oal");
     @operation_num(1);
     class operation initialize() is
       @noparse
       create object instance o of Openers;
-      o.opening_moves[17] = "";  // dimension
+      temp[17] = "";
+      o.opening_moves = temp;  // Ciera work-around
+      
       o.opening_moves[0] = "e7e5";
       o.opening_moves[1] = "e2e4";
       o.opening_moves[2] = "g8f6";

@@ -36,17 +36,19 @@ within lichess_bot::components::Engine is
       dest = param.to;
       recorder = param.recorder;
       
+      // these 3 lines are debug instrumentation
       select one sq related by start->Square[R1];
-      str = ::movestr( from:sq, to:dest ); // debug
+      str = ::movestr( from:sq, to:dest );
       LOG::LogInfo( message:"recording move from " + recorder + str );
+      
       select one piece related by start->Piece[R2.'is occupied by'];
       select any ocsq from instances of OccupiedSquare where false;  // decl
       unrelate piece from start across R2.'occupies';
-      select one square related by start->Square[R1];
-      unrelate start from square across R1;
+      select one originsq related by start->Square[R1];
+      unrelate start from originsq across R1;
       delete object instance start;
       create object instance opsq of OpenSquare;
-      relate opsq to square across R1;
+      relate opsq to originsq across R1;
       taken = dest.occupant();
       if (not_empty taken)
         select one ocsq related by dest->OccupiedSquare[R1];
@@ -61,25 +63,38 @@ within lichess_bot::components::Engine is
         relate ocsq to dest across R1;
       end if;
       relate piece to ocsq across R2.'occupies';
+      
       // Castling? - the only time a King can move 2 squares along Rank 1 or 8.
       // lichess does not report the Rook's part in this; record it here to maintain ground truth.
+      
       select one spec related by piece->PieceSpecification[R4.'is specified by'];
-      if (spec.Name == "King")
-      /*
-        if (move.Notation == "e1g1")
-          ::record_move( move:"h1f1", from:from + " O-O" );
+      if (spec.Name == "King" 
+        and (originsq.rank == 1 or originsq.rank == 8) 
+        and dest.rank == originsq.rank 
+        and originsq.file == 5)
+      
+        select any from from instances of OccupiedSquare where false;
+        select any tosq from instances of Square where false;
+        rank = originsq.rank;
+        
+        if (dest.file == 7)  // King side
+          select any sq from instances of Square
+           where (selected.rank == rank and selected.file == 8);
+          select one from related by sq->OccupiedSquare[R1];
+          select any tosq from instances of Square
+           where (selected.rank == rank and selected.file == 6);
+        elif (dest.file == 3)  // Queen side
+          select any sq from instances of Square
+           where (selected.rank == rank and selected.file == 1);
+          select one from related by sq->OccupiedSquare[R1];
+          select any tosq from instances of Square
+           where (selected.rank == rank and selected.file == 4);
         end if;
-        if (move. == "e8g8")
-          ::record_move( move:"h8f8", from:from + " O-O" );
+      
+        if (not_empty from and not_empty tosq)
+          ::record_move( from:from, to:tosq, recorder:" O-O " + recorder );
         end if;
-        // Queen side?
-        if (move == "e1c1")
-          ::record_move( move:"a1d1", from:from + " O-O" );
-        end if;
-        if (move == "e8c8")
-          ::record_move( move:"a8d8", from:from + " O-O" );
-        end if;
-      */
+      
       end if;
       @endnoparse
     end function;
