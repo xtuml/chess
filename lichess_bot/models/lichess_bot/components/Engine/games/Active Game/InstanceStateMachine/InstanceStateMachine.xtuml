@@ -49,7 +49,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     | 'game over'        | ignore             | cannot_happen      | ignore             | ignore             | ignore             |
     | 'our turn'         | ignore             | 'game over'        | 'playing move'     | 'our turn'         | 'claiming victory' |
     | 'their turn'       | ignore             | 'game over'        | ignore             | 'our turn'         | 'claiming victory' |
-    | 'playing move'     | 'their turn'       | 'game over'        | cannot_happen      | ignore             | 'claiming victory' |
+    | 'playing move'     | 'their turn'       | 'game over'        | cannot_happen      | 'our turn'         | 'claiming victory' |
     | 'claiming victory' | ignore             | 'game over'        | ignore             | ignore             | ignore             |
 
   end state model;

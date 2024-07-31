@@ -26,20 +26,20 @@ connectors :
     polyline :
       segment :
         start : x : 4740.0 y : 3167.0
-        end :   x : 4914.0 y : 3167.0
+        end :   x : 4967.0 y : 3167.0
       segment :
-        start : x : 4914.0 y : 3167.0
-        end :   x : 4914.0 y : 3240.0
+        start : x : 4967.0 y : 3167.0
+        end :   x : 4967.0 y : 3240.0
     anchors :
       start :
         point : x : 4740.0 y : 3167.0
         shape : ourturn
       end :
-        point : x : 4914.0 y : 3167.0
+        point : x : 4967.0 y : 3240.0
         shape : playingmove
     texts :
       text :
-        bounds : x : 4779.0 y : 3144.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : 4827.0 y : 3144.0 width : 0.0 height : 0.0 where : middle
   connector : playingmove____ActiveGame1__waitingonmove
     render : transition "lichess_bot::components::Engine::games::Active Game::Instance State Machine::playing move::ActiveGame1: waiting on move"
     polyline :
@@ -262,3 +262,22 @@ connectors :
     texts :
       text :
         bounds : x : 5115.0 y : 3604.0 width : 0.0 height : 0.0 where : middle
+  connector : playingmove____ActiveGame4__readytoplay
+    render : transition "lichess_bot::components::Engine::games::Active Game::Instance State Machine::playing move::ActiveGame4: ready to play"
+    polyline :
+      segment :
+        start : x : 4859.0 y : 3240.0
+        end :   x : 4859.0 y : 3220.0
+      segment :
+        start : x : 4859.0 y : 3220.0
+        end :   x : 4740.0 y : 3220.0
+    anchors :
+      start :
+        point : x : 4859.0 y : 3240.0
+        shape : playingmove
+      end :
+        point : x : 4740.0 y : 3220.0
+        shape : ourturn
+    texts :
+      text :
+        bounds : x : 4780.0 y : 3189.0 width : 0.0 height : 0.0 where : middle
