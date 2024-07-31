@@ -16,6 +16,8 @@
 
 #include "lichess_bot_sys_types.h"
 #include "sys_user_co.h"
+#include <string.h>
+#include <dirent.h>
 
 #ifdef SYS_USER_CO_PRINTF_ON
 #include <stdio.h>
@@ -85,6 +87,8 @@ void
 UserBackgroundProcessingCalloutf( void )
 {
   static char * argv[2];
+  DIR *dp;
+  struct dirent *ep;     
   argv[0] = "lichess_api_json";
   argv[1] = "001.json";
   /* Activate this invocation to periodically tick the example simple TIM.  */
@@ -92,9 +96,26 @@ UserBackgroundProcessingCalloutf( void )
   TIM_tick();
   #endif
   fprintf(stderr,"background....\n");
-  lichess_api_json( 1, &argv );
+  dp = opendir ("./outgoing");
+  if (dp != NULL) {
+    while ((ep = readdir (dp)) != NULL) {
+      argv[1] = Escher_stradd( "./outgoing/", ep->d_name );
+      printf("file name is %s.\n",argv[1]);
+      if ( 0 == strstr( argv[1], "json" ) ) {
+        continue;
+      } else {
+        lichess_api_json( 1, &argv );
+        if ( 0 != remove( argv[1] ) ) {
+          perror ("Could not remove file from directory ./outgoing");
+        }
+        break;
+      }
+    }
+    (void) closedir (dp);
+  } else {
+    perror ("Could not open the directory");
+  }
   fprintf(stderr,"BACKGROUND....\n");
-  /* Insert implementation specific code here.  */
 }
 
 /*

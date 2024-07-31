@@ -1,4 +1,5 @@
 #include "jsmn.h"
+#include "lichess_bot_sys_types.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -111,12 +112,213 @@ int init_parser_and_parse( int bytelength )
   return token_count;
 }
 
+
+lichess_bot_GameSource_t encode_GameSource( char * );
+lichess_bot_GameSource_t encode_GameSource( char * s )
+{
+  if ( 0 == Escher_strcmp( s, "LOBBY" ) ) {
+    return lichess_bot_GameSource_LOBBY_e;
+  } else if ( 0 == Escher_strcmp( s, "FRIEND" ) ) {
+    return lichess_bot_GameSource_FRIEND_e;
+  } else if ( 0 == Escher_strcmp( s, "AI" ) ) {
+    return lichess_bot_GameSource_AI_e;
+  } else if ( 0 == Escher_strcmp( s, "API" ) ) {
+    return lichess_bot_GameSource_API_e;
+  } else if ( 0 == Escher_strcmp( s, "TOURNAMENT" ) ) {
+    return lichess_bot_GameSource_TOURNAMENT_e;
+  } else if ( 0 == Escher_strcmp( s, "POSITION" ) ) {
+    return lichess_bot_GameSource_POSITION_e;
+  } else if ( 0 == Escher_strcmp( s, "IMPORT" ) ) {
+    return lichess_bot_GameSource_IMPORT_e;
+  } else if ( 0 == Escher_strcmp( s, "IMPORTLIVE" ) ) {
+    return lichess_bot_GameSource_IMPORTLIVE_e;
+  } else if ( 0 == Escher_strcmp( s, "SIMUL" ) ) {
+    return lichess_bot_GameSource_SIMUL_e;
+  } else if ( 0 == Escher_strcmp( s, "RELAY" ) ) {
+    return lichess_bot_GameSource_RELAY_e;
+  } else if ( 0 == Escher_strcmp( s, "POOL" ) ) {
+    return lichess_bot_GameSource_POOL_e;
+  } else if ( 0 == Escher_strcmp( s, "SWISS" ) ) {
+    return lichess_bot_GameSource_SWISS_e;
+  } else {
+    fprintf(stderr, "Error:  unknown GameSource:  %s\n", s );
+  }
+  return lichess_bot_GameSource__UNINITIALIZED__e;
+}
+
+
+lichess_bot_Color_t encode_Color( char * );
+lichess_bot_Color_t encode_Color( char * s )
+{
+  if ( 0 == Escher_strcmp( s, "WHITE" ) ) {
+    return lichess_bot_Color_WHITE_e;
+  } else if ( 0 == Escher_strcmp( s, "BLACK" ) ) {
+    return lichess_bot_Color_BLACK_e;
+  } else if ( 0 == Escher_strcmp( s, "RANDOM" ) ) {
+    return lichess_bot_Color_RANDOM_e;
+  } else {
+    fprintf(stderr, "Error:  unknown Color:  %s\n", s );
+  }
+  return lichess_bot_Color__UNINITIALIZED__e;
+}
+
+
+lichess_bot_GameSpeed_t encode_GameSpeed( char * );
+lichess_bot_GameSpeed_t encode_GameSpeed( char * s )
+{
+  if ( 0 == Escher_strcmp( s, "ULTRABULLET" ) ) {
+    return lichess_bot_GameSpeed_ULTRABULLET_e;
+  } else if ( 0 == Escher_strcmp( s, "BULLET" ) ) {
+    return lichess_bot_GameSpeed_BULLET_e;
+  } else if ( 0 == Escher_strcmp( s, "BLITZ" ) ) {
+    return lichess_bot_GameSpeed_BLITZ_e;
+  } else if ( 0 == Escher_strcmp( s, "RAPID" ) ) {
+    return lichess_bot_GameSpeed_RAPID_e;
+  } else if ( 0 == Escher_strcmp( s, "CLASSICAL" ) ) {
+    return lichess_bot_GameSpeed_CLASSICAL_e;
+  } else if ( 0 == Escher_strcmp( s, "CORRESPONDENCE" ) ) {
+    return lichess_bot_GameSpeed_CORRESPONDENCE_e;
+  } else {
+    fprintf(stderr, "Error:  unknown GameSpeed:  %s\n", s );
+  }
+  return lichess_bot_GameSpeed__UNINITIALIZED__e;
+}
+
+
+lichess_bot_Variant_t encode_Variant( char * );
+lichess_bot_Variant_t encode_Variant( char * s )
+{
+  if ( 0 == Escher_strcmp( s, "STANDARD" ) ) {
+    return lichess_bot_Variant_STANDARD_e;
+  } else if ( 0 == Escher_strcmp( s, "standard" ) ) {
+    return lichess_bot_Variant_STANDARD_e;
+  } else if ( 0 == Escher_strcmp( s, "CHESS960" ) ) {
+    return lichess_bot_Variant_CHESS960_e;
+  } else if ( 0 == Escher_strcmp( s, "CRAZYHOUSE" ) ) {
+    return lichess_bot_Variant_CRAZYHOUSE_e;
+  } else if ( 0 == Escher_strcmp( s, "ANTICHESS" ) ) {
+    return lichess_bot_Variant_ANTICHESS_e;
+  } else if ( 0 == Escher_strcmp( s, "ATOMIC" ) ) {
+    return lichess_bot_Variant_ATOMIC_e;
+  } else if ( 0 == Escher_strcmp( s, "HORDE" ) ) {
+    return lichess_bot_Variant_HORDE_e;
+  } else if ( 0 == Escher_strcmp( s, "KINGOFTHEHILL" ) ) {
+    return lichess_bot_Variant_KINGOFTHEHILL_e;
+  } else if ( 0 == Escher_strcmp( s, "RACINGKINGS" ) ) {
+    return lichess_bot_Variant_RACINGKINGS_e;
+  } else if ( 0 == Escher_strcmp( s, "THREECHECK" ) ) {
+    return lichess_bot_Variant_THREECHECK_e;
+  } else if ( 0 == Escher_strcmp( s, "FROMPOSITION" ) ) {
+    return lichess_bot_Variant_FROMPOSITION_e;
+  } else {
+    fprintf(stderr, "Error:  unknown Variant:  %s\n", s );
+  }
+  return lichess_bot_Variant__UNINITIALIZED__e;
+}
+
+
+lichess_bot_UserTitle_t encode_UserTitle( char * );
+lichess_bot_UserTitle_t encode_UserTitle( char * s )
+{
+  if ( 0 == Escher_strcmp( s, "GM" ) ) {
+    return lichess_bot_UserTitle_GM_e;
+  } else if ( 0 == Escher_strcmp( s, "WGM" ) ) {
+    return lichess_bot_UserTitle_WGM_e;
+  } else if ( 0 == Escher_strcmp( s, "IM" ) ) {
+    return lichess_bot_UserTitle_IM_e;
+  } else if ( 0 == Escher_strcmp( s, "WIM" ) ) {
+    return lichess_bot_UserTitle_WIM_e;
+  } else if ( 0 == Escher_strcmp( s, "FM" ) ) {
+    return lichess_bot_UserTitle_FM_e;
+  } else if ( 0 == Escher_strcmp( s, "WFM" ) ) {
+    return lichess_bot_UserTitle_WFM_e;
+  } else if ( 0 == Escher_strcmp( s, "NM" ) ) {
+    return lichess_bot_UserTitle_NM_e;
+  } else if ( 0 == Escher_strcmp( s, "CM" ) ) {
+    return lichess_bot_UserTitle_CM_e;
+  } else if ( 0 == Escher_strcmp( s, "WCM" ) ) {
+    return lichess_bot_UserTitle_WCM_e;
+  } else if ( 0 == Escher_strcmp( s, "WNM" ) ) {
+    return lichess_bot_UserTitle_WNM_e;
+  } else if ( 0 == Escher_strcmp( s, "LM" ) ) {
+    return lichess_bot_UserTitle_LM_e;
+  } else if ( 0 == Escher_strcmp( s, "BOT" ) ) {
+    return lichess_bot_UserTitle_BOT_e;
+  } else {
+    fprintf(stderr, "Error:  unknown UserTitle:  %s\n", s );
+  }
+  return lichess_bot_UserTitle__UNINITIALIZED__e;
+}
+
+
+lichess_bot_ChallengeStatus_t encode_ChallengeStatus( char * );
+lichess_bot_ChallengeStatus_t encode_ChallengeStatus( char * s )
+{
+  if ( 0 == Escher_strcmp( s, "CREATED" ) ) {
+    return lichess_bot_ChallengeStatus_CREATED_e;
+  } else if ( 0 == Escher_strcmp( s, "OFFLINE" ) ) {
+    return lichess_bot_ChallengeStatus_OFFLINE_e;
+  } else if ( 0 == Escher_strcmp( s, "CANCELED" ) ) {
+    return lichess_bot_ChallengeStatus_CANCELED_e;
+  } else if ( 0 == Escher_strcmp( s, "DECLINED" ) ) {
+    return lichess_bot_ChallengeStatus_DECLINED_e;
+  } else if ( 0 == Escher_strcmp( s, "ACCEPTED" ) ) {
+    return lichess_bot_ChallengeStatus_ACCEPTED_e;
+  } else {
+    fprintf(stderr, "Error:  unknown ChallengeStatus:  %s\n", s );
+  }
+  return lichess_bot_ChallengeStatus__UNINITIALIZED__e;
+}
+
+
+lichess_bot_GameStatus_t encode_GameStatus( char * );
+lichess_bot_GameStatus_t encode_GameStatus( char * s )
+{
+  if ( 0 == Escher_strcmp( s, "CREATED" ) ) {
+    return lichess_bot_GameStatus_CREATED_e;
+  } else if ( 0 == Escher_strcmp( s, "STARTED" ) ) {
+    return lichess_bot_GameStatus_STARTED_e; 
+  } else if ( 0 == Escher_strcmp( s, "ABORTED" ) ) {
+    return lichess_bot_GameStatus_ABORTED_e;
+  } else if ( 0 == Escher_strcmp( s, "MATE" ) ) {
+    return lichess_bot_GameStatus_MATE_e;
+  } else if ( 0 == Escher_strcmp( s, "RESIGN" ) ) {
+    return lichess_bot_GameStatus_RESIGN_e;
+  } else if ( 0 == Escher_strcmp( s, "STALEMATE" ) ) {
+    return lichess_bot_GameStatus_STALEMATE_e;
+  } else if ( 0 == Escher_strcmp( s, "TIMEOUT" ) ) {
+    return lichess_bot_GameStatus_TIMEOUT_e;
+  } else if ( 0 == Escher_strcmp( s, "DRAW" ) ) {
+    return lichess_bot_GameStatus_DRAW_e;
+  } else if ( 0 == Escher_strcmp( s, "OUTOFTIME" ) ) {
+    return lichess_bot_GameStatus_OUTOFTIME_e;
+  } else if ( 0 == Escher_strcmp( s, "CHEAT" ) ) {
+    return lichess_bot_GameStatus_CHEAT_e;
+  } else if ( 0 == Escher_strcmp( s, "NOSTART" ) ) {
+    return lichess_bot_GameStatus_NOSTART_e;
+  } else if ( 0 == Escher_strcmp( s, "UNKNOWNFINISH" ) ) {
+    return lichess_bot_GameStatus_UNKNOWNFINISH_e;
+  } else if ( 0 == Escher_strcmp( s, "VARIANTEND" ) ) {
+    return lichess_bot_GameStatus_VARIANTEND_e;
+  } else {
+    fprintf(stderr, "Error:  unknown GameStatus:  %s\n", s );
+  }
+  return lichess_bot_GameStatus__UNINITIALIZED__e;
+}
+
+
 void api_connected( const int, const int );
 void api_connected( const int starting_token_offset, const int token_count )
 {
   /* No arguments to this command.  */
 }
 
+#define json_detect_key( KEY ) ( jsoneq(json_buffer, &t[i], KEY) == 0 )
+#define json_get_string( STRVAR ) strncpy( STRVAR, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len ); STRVAR[len] = 0
+#define json_get_number( NUMVAR ) strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len ); s[len] = 0; NUMVAR = atoi(s)
+#define json_get_boolean( BOOLVAR ) strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len ); s[len] = 0; BOOLVAR = (s[0] == 't') ? 1 : 0
+
+/* This one is not used but was for practice.  */
 void api_connect( const int, const int );
 void api_connect( const int starting_token_offset, const int token_count )
 {
@@ -129,29 +331,20 @@ void api_connect( const int starting_token_offset, const int token_count )
   bool enable_debug_logging;
   for (i = starting_token_offset; i < token_count; i++) {
     len = t[i+1].end - t[i+1].start;
-    if (jsoneq(json_buffer, &t[i], "api_base_url") == 0) {
-      strncpy( api_base_url, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      api_base_url[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "access_token") == 0) {
-      strncpy( access_token, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      access_token[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "max_games") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      max_games = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "auto_open_challenge_url") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      auto_open_challenge_url = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "enable_debug_logging") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      enable_debug_logging = (s[0] == 't') ? 1 : 0;
-      i++;
+    if ( json_detect_key("api_base_url") ) {
+      json_get_string( api_base_url );
+    } else if ( json_detect_key("access_token") ) {
+      json_get_string( access_token );
+    } else if ( json_detect_key("max_games") ) {
+      json_get_number( max_games );
+    } else if ( json_detect_key("auto_open_challenge_url") ) {
+      json_get_boolean( auto_open_challenge_url );
+    } else if ( json_detect_key("enable_debug_logging") ) {
+      json_get_boolean( enable_debug_logging );
     } else {
       printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
+    i++;
   }
 }
 
@@ -161,194 +354,113 @@ void api_challenge( const int starting_token_offset, const int token_count )
   int i, len;
   char s[1024];
   char object_scope[1024] = {0};
-  /* challenge */
-    char challenge_id[1024];
-    char challenge_url[1024];
-    char challenge_status[1024];
-    /* challenger */
-      char challenger_id[1024];
-      char challenger_name[1024];
-      int challenger_rating;
-      bool challenger_provisional;
-      bool challenger_online;
-      bool challenger_patron;
-      char challenger_title[1024];
-    /* destUser */
-      char destUser_id[1024];
-      char destUser_name[1024];
-      int destUser_rating;
-      bool destUser_provisional;
-      bool destUser_online;
-      bool destUser_patron;
-      char destUser_title[1024];
-    /* variant */
-      char variant_key[1024];
-    bool challenge_rated;
-    char challenge_speed[1024];
-    /* timeControl */
-      char timeControl_type[1024];
-      int timeControl_limit;
-      int timeControl_increment;
-      int timeControl_daysPerTurn;
-      char timeControl_show[1024];
-    char challenge_color[1024];
-    char challenge_initialFen[1024];
-    char challenge_declineReason[1024];
-    char challenge_declineReasonKey[1024];
+  lichess_bot_sdt_Challenge challenge;
 
   for (i = starting_token_offset; i < token_count; i++) {
     len = t[i+1].end - t[i+1].start;
-    if (jsoneq(json_buffer, &t[i], "challenge") == 0) {
+    if ( json_detect_key("challenge") ) {
       strcpy( object_scope, "challenge" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "id") == 0) {
+    } else if ( json_detect_key("id") ) {
       if (0 == strcmp(object_scope, "challenge")) {
-        strncpy( challenge_id, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        challenge_id[len] = 0;
+        json_get_string( challenge.id );
       } else if (0 == strcmp(object_scope, "challenger")) {
-        strncpy( challenger_id, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        challenger_id[len] = 0;
+        json_get_string( challenge.challenger.id );
       } else if (0 == strcmp(object_scope, "destUser")) {
-        strncpy( destUser_id, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        destUser_id[len] = 0;
+        json_get_string( challenge.destUser.id );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "url") == 0) {
-      strncpy( challenge_url, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      challenge_url[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "status") == 0) {
-      strncpy( challenge_status, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      challenge_status[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "challenger") == 0) {
+    } else if ( json_detect_key("url") ) {
+      json_get_string( challenge.url );
+    } else if ( json_detect_key("status") ) {
+      json_get_string( s );
+      challenge.status = encode_ChallengeStatus( s );
+    } else if ( json_detect_key("challenger") ) {
       strcpy( object_scope, "challenger" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "destUser") == 0) {
+    } else if ( json_detect_key("destUser") ) {
       strcpy( object_scope, "destUser" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "name") == 0) {
+    } else if ( json_detect_key("name") ) {
       if (0 == strcmp(object_scope, "challenger")) {
-        strncpy( challenger_name, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        challenger_name[len] = 0;
+        json_get_string( challenge.challenger.name );
       } else if (0 == strcmp(object_scope, "destUser")) {
-        strncpy( destUser_name, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        destUser_name[len] = 0;
+        json_get_string( challenge.destUser.name );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "rating") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
+    } else if ( json_detect_key("rating") ) {
       if (0 == strcmp(object_scope, "challenger")) {
-        challenger_rating = atoi(s);
+        json_get_number( challenge.challenger.rating );
       } else if (0 == strcmp(object_scope, "destUser")) {
-        destUser_rating = atoi(s);
+        json_get_number( challenge.destUser.rating );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "provisional") == 0) {
+    } else if ( json_detect_key("provisional") ) {
       if (0 == strcmp(object_scope, "challenger")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        challenger_provisional = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( challenge.challenger.provisional );
       } else if (0 == strcmp(object_scope, "destUser")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        destUser_provisional = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( challenge.destUser.provisional );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "online") == 0) {
+    } else if ( json_detect_key("online") ) {
       if (0 == strcmp(object_scope, "challenger")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        challenger_online = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( challenge.challenger.online );
       } else if (0 == strcmp(object_scope, "destUser")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        destUser_online = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( challenge.destUser.online );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "patron") == 0) {
+    } else if ( json_detect_key("patron") ) {
       if (0 == strcmp(object_scope, "challenger")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        challenger_patron = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( challenge.challenger.patron );
       } else if (0 == strcmp(object_scope, "destUser")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        destUser_patron = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( challenge.destUser.patron );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "title") == 0) {
+    } else if ( json_detect_key("title") ) {
+      json_get_string( s );
       if (0 == strcmp(object_scope, "challenger")) {
-        strncpy( challenger_title, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        challenger_title[len] = 0;
+        challenge.challenger.title = encode_UserTitle( s );
       } else if (0 == strcmp(object_scope, "destUser")) {
-        strncpy( destUser_title, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        destUser_title[len] = 0;
+        challenge.destUser.title = encode_UserTitle( s );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "variant") == 0) {
+    } else if ( json_detect_key("variant") ) {
       strcpy( object_scope, "variant" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "key") == 0) {
+    } else if ( json_detect_key("key") ) {
       if (0 == strcmp(object_scope, "variant")) {
-        strncpy( variant_key, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        variant_key[len] = 0;
+        json_get_string( s );
+        challenge.variant = encode_Variant( s );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "rated") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      challenge_rated = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "speed") == 0) {
-      strncpy( challenge_speed, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      challenge_speed[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "timeControl") == 0) {
+    } else if ( json_detect_key("rated") ) {
+      json_get_boolean( challenge.rated );
+    } else if ( json_detect_key("speed") ) {
+      json_get_string( s );
+      challenge.speed = encode_GameSpeed( s );
+    } else if ( json_detect_key("timeControl") ) {
       strcpy( object_scope, "timeControl" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "type") == 0) {
+    } else if ( json_detect_key("type") ) {
       if (0 == strcmp(object_scope, "timeControl")) {
-        strncpy( timeControl_type, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        timeControl_type[len] = 0;
+        json_get_string( challenge.timeControl.controlType );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "limit") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
+    } else if ( json_detect_key("limit") ) {
       if (0 == strcmp(object_scope, "timeControl")) {
-        timeControl_limit = atoi(s);
+        json_get_number( challenge.timeControl.limit );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "increment") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
+    } else if ( json_detect_key("increment") ) {
       if (0 == strcmp(object_scope, "timeControl")) {
-        timeControl_increment = atoi(s);
+        json_get_number( challenge.timeControl.increment );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "daysPerTurn") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
+    } else if ( json_detect_key("daysPerTurn") ) {
       if (0 == strcmp(object_scope, "timeControl")) {
-        timeControl_daysPerTurn = atoi(s);
+        json_get_number( challenge.timeControl.daysPerTurn );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "show") == 0) {
+    } else if ( json_detect_key("show") ) {
       if (0 == strcmp(object_scope, "timeControl")) {
-        strncpy( timeControl_show, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        timeControl_show[len] = 0;
+        json_get_string( challenge.timeControl.show );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "color") == 0) {
-      strncpy( challenge_color, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      challenge_color[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "initialFen") == 0) {
-      strncpy( challenge_initialFen, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      challenge_initialFen[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "declineReason") == 0) {
-      strncpy( challenge_declineReason, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      challenge_declineReason[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "declineReasonKey") == 0) {
-      strncpy( challenge_declineReasonKey, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      challenge_declineReasonKey[len] = 0;
-      i++;
+    } else if ( json_detect_key("color") ) {
+      json_get_string( s );
+      challenge.color = encode_Color( s );
+    } else if ( json_detect_key("initialFen") ) {
+      json_get_string( challenge.initialFen );
+    } else if ( json_detect_key("declineReason") ) {
+      json_get_string( challenge.declineReason );
+    } else if ( json_detect_key("declineReasonKey") ) {
+      json_get_string( challenge.declineReasonKey );
     } else {
       printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
+    i++;
   }
 }
 
@@ -358,45 +470,37 @@ void api_gameStart( const int starting_token_offset, const int token_count )
   int i, len;
   char s[1024];
   char object_scope[1024] = {0};
-  /* game_event */
-    char game_event_id[1024];
-    char game_event_source[1024];
-    /* status */
-      int status_id;
-      char status_name[1024];
+  lichess_bot_sdt_GameEventInfo game_event;
 
   for (i = starting_token_offset; i < token_count; i++) {
     len = t[i+1].end - t[i+1].start;
-    if (jsoneq(json_buffer, &t[i], "game_event") == 0) {
+    if ( json_detect_key("game_event") ) {
       strcpy( object_scope, "game_event" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "status") == 0) {
+    } else if ( json_detect_key("status") ) {
       strcpy( object_scope, "status" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "id") == 0) {
+    } else if ( json_detect_key("id") ) {
       if (0 == strcmp(object_scope, "game_event")) {
-        strncpy( game_event_id, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        game_event_id[len] = 0;
+        json_get_string( game_event.id );
       } else if (0 == strcmp(object_scope, "status")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        status_id = atoi(s);
+        /* skip */
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "source") == 0) {
+    } else if ( json_detect_key("source") ) {
       if (0 == strcmp(object_scope, "game_event")) {
-        strncpy( game_event_source, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        game_event_source[len] = 0;
+        json_get_string( s );
+        game_event.source = encode_GameSource( s );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "name") == 0) {
+    } else if ( json_detect_key("name") ) {
       if (0 == strcmp(object_scope, "status")) {
-        strncpy( status_name, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        status_name[len] = 0;
+        json_get_string( s );
+        game_event.status = encode_GameStatus( s );
       }
-      i++;
+    } else if ( json_detect_key("winner") ) {
+      json_get_string( s );
+      game_event.winner = encode_Color( s );
     } else {
       printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
+    i++;
   }
 }
 
@@ -406,200 +510,113 @@ void api_gameFull( const int starting_token_offset, const int token_count )
   int i, len;
   char s[1024];
   char object_scope[1024] = {0};
-  /* game */
-    char game_id[1024];
-    /* variant */
-      char variant_key[1024];
-    char game_speed[1024];
-    bool game_rated;
-    int game_createdAt;
-    /* white */
-      char white_id[1024];
-      char white_name[1024];
-      int white_rating;
-      bool white_provisional;
-      bool white_online;
-      bool white_patron;
-      char white_title[1024];
-    /* black */
-      char black_id[1024];
-      char black_name[1024];
-      int black_rating;
-      bool black_provisional;
-      bool black_online;
-      bool black_patron;
-      char black_title[1024];
-    char game_initialFen[1024];
-    /* state */
-      char state_moves[1024];
-      int state_wtime;
-      int state_btime;
-      int state_winc;
-      int state_binc;
-      /* status */
-        int status_id;
-        char status_name[1024];
-      bool state_wdraw;
-      bool state_bdraw;
-      bool state_wtakeback;
-      bool state_btakeback;
-    char game_tournamentId[1024];
+  lichess_bot_sdt_Game game;
 
   for (i = starting_token_offset; i < token_count; i++) {
     len = t[i+1].end - t[i+1].start;
-    if (jsoneq(json_buffer, &t[i], "game") == 0) {
+    if ( json_detect_key("game") ) {
       strcpy( object_scope, "game" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "status") == 0) {
+    } else if ( json_detect_key("status") ) {
       strcpy( object_scope, "status" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "id") == 0) {
+    } else if ( json_detect_key("id") ) {
       if (0 == strcmp(object_scope, "game")) {
-        strncpy( game_id, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        game_id[len] = 0;
+        json_get_string( game.id );
       } else if (0 == strcmp(object_scope, "white")) {
-        strncpy( white_id, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        white_id[len] = 0;
+        json_get_string( game.white.id );
       } else if (0 == strcmp(object_scope, "black")) {
-        strncpy( black_id, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        black_id[len] = 0;
+        json_get_string( game.black.id );
       } else if (0 == strcmp(object_scope, "status")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        status_id = atoi(s);
+        /* skip */
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "variant") == 0) {
+    } else if ( json_detect_key("variant") ) {
       strcpy( object_scope, "variant" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "key") == 0) {
+    } else if ( json_detect_key("key") ) {
       if (0 == strcmp(object_scope, "variant")) {
-        strncpy( variant_key, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        variant_key[len] = 0;
+        json_get_string( s );
+        game.variant = encode_Variant( s );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "speed") == 0) {
-      strncpy( game_speed, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      game_speed[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "rated") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      game_rated = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "createdAt") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      status_id = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "white") == 0) {
+    } else if ( json_detect_key("speed") ) {
+      json_get_string( s );
+      game.speed = encode_GameSpeed( s );
+    } else if ( json_detect_key("rated") ) {
+      json_get_boolean( game.rated );
+    } else if ( json_detect_key("createdAt") ) {
+      json_get_number( game.createdAt );
+    } else if ( json_detect_key("white") ) {
       strcpy( object_scope, "white" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "name") == 0) {
+    } else if ( json_detect_key("name") ) {
       if (0 == strcmp(object_scope, "white")) {
-        strncpy( white_name, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        white_name[len] = 0;
+        json_get_string( game.white.name );
       } else if (0 == strcmp(object_scope, "black")) {
-        strncpy( black_name, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        black_name[len] = 0;
+        json_get_string( game.black.name );
       } else if (0 == strcmp(object_scope, "status")) {
-        strncpy( status_name, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        status_name[len] = 0;
+        json_get_string( s );
+        game.gameState.status = encode_GameStatus( s );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "rating") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
+    } else if ( json_detect_key("rating") ) {
       if (0 == strcmp(object_scope, "white")) {
-        white_rating = atoi(s);
+        json_get_number( game.white.rating );
       } else if (0 == strcmp(object_scope, "black")) {
-        black_rating = atoi(s);
+        json_get_number( game.black.rating );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "provisional") == 0) {
+    } else if ( json_detect_key("provisional") ) {
       if (0 == strcmp(object_scope, "white")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        white_provisional = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( game.white.provisional );
       } else if (0 == strcmp(object_scope, "black")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        black_provisional = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( game.black.provisional );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "online") == 0) {
+    } else if ( json_detect_key("online") ) {
       if (0 == strcmp(object_scope, "white")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        white_online = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( game.white.online );
       } else if (0 == strcmp(object_scope, "black")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        black_online = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( game.black.online );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "patron") == 0) {
+    } else if ( json_detect_key("patron") ) {
       if (0 == strcmp(object_scope, "white")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        white_patron = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( game.white.patron );
       } else if (0 == strcmp(object_scope, "black")) {
-        strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        black_patron = (s[0] == 't') ? 1 : 0;
+        json_get_boolean( game.black.patron );
       }
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "title") == 0) {
+    } else if ( json_detect_key("title") ) {
+      json_get_string( s );
       if (0 == strcmp(object_scope, "white")) {
-        strncpy( white_title, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        white_title[len] = 0;
+        game.white.title = encode_UserTitle( s );
       } else if (0 == strcmp(object_scope, "black")) {
-        strncpy( black_title, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-        black_title[len] = 0;
+        game.black.title = encode_UserTitle( s );
       }
-    } else if (jsoneq(json_buffer, &t[i], "initialFen") == 0) {
-      strncpy( game_speed, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      game_speed[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "state") == 0) {
+    } else if ( json_detect_key("initialFen") ) {
+      json_get_string( game.initialFen );
+    } else if ( json_detect_key("state") ) {
       strcpy( object_scope, "state" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "moves") == 0) {
-      strncpy( state_moves, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_moves[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "wtime") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_wtime = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "btime") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_btime = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "winc") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_winc = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "binc") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_binc = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "status") == 0) {
-      strcpy( object_scope, "status" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "wdraw") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_wdraw = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "bdraw") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_bdraw = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "wtakeback") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_wtakeback = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "btakeback") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_btakeback = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "trounamentId") == 0) {
-      strncpy( game_tournamentId, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      game_tournamentId[len] = 0;
-      i++;
+    } else if ( json_detect_key("moves") ) {
+      json_get_string( game.gameState.moves[0] );
+    } else if ( json_detect_key("wtime") ) {
+      json_get_number( game.gameState.wtime );
+    } else if ( json_detect_key("btime") ) {
+      json_get_number( game.gameState.btime );
+    } else if ( json_detect_key("winc") ) {
+      json_get_number( game.gameState.winc );
+    } else if ( json_detect_key("binc") ) {
+      json_get_number( game.gameState.binc );
+    } else if ( json_detect_key("id") ) {
+      /* skip */
+    } else if ( json_detect_key("name") ) {
+      json_get_string( s );
+      game.gameState.status = encode_GameStatus( s );
+    } else if ( json_detect_key("wdraw") ) {
+      json_get_boolean( game.gameState.wdraw );
+    } else if ( json_detect_key("bdraw") ) {
+      json_get_boolean( game.gameState.bdraw );
+    } else if ( json_detect_key("wtakeback") ) {
+      json_get_boolean( game.gameState.wtakeback );
+    } else if ( json_detect_key("btakeback") ) {
+      json_get_boolean( game.gameState.btakeback );
+    } else if ( json_detect_key("tournamentId") ) {
+      json_get_string( game.tournamentId );
     } else {
       printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
+    i++;
   }
 }
 
@@ -609,80 +626,43 @@ void api_gameState( const int starting_token_offset, const int token_count )
   int i, len;
   char s[1024];
   char object_scope[1024] = {0};
-  /* game_state */
-    char state_moves[1024];
-    int state_wtime;
-    int state_btime;
-    int state_winc;
-    int state_binc;
-    /* status */
-      int status_id;
-      char status_name[1024];
-    bool state_wdraw;
-    bool state_bdraw;
-    bool state_wtakeback;
-    bool state_btakeback;
   char game_id[1024];
-
+  lichess_bot_sdt_GameState game_state;
   for (i = starting_token_offset; i < token_count; i++) {
     len = t[i+1].end - t[i+1].start;
-    if (jsoneq(json_buffer, &t[i], "game_state") == 0) {
+    if ( json_detect_key("game_state") ) {
       strcpy( object_scope, "state" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "status") == 0) {
+    } else if ( json_detect_key("status") ) {
       strcpy( object_scope, "status" );
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "game_id") == 0) {
-      strncpy( game_id, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      game_id[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "moves") == 0) {
-      strncpy( state_moves, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_moves[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "wtime") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_wtime = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "btime") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_btime = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "winc") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_winc = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "binc") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_binc = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "id") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      status_id = atoi(s);
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "name") == 0) {
-      strncpy( state_moves, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      status_name[len] = 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "wdraw") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_wdraw = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "bdraw") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_bdraw = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "wtakeback") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_wtakeback = (s[0] == 't') ? 1 : 0;
-      i++;
-    } else if (jsoneq(json_buffer, &t[i], "btakeback") == 0) {
-      strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
-      state_btakeback = (s[0] == 't') ? 1 : 0;
-      i++;
+    } else if ( json_detect_key("game_id") ) {
+      json_get_string( game_id );
+    } else if ( json_detect_key("moves") ) {
+      json_get_string( game_state.moves[0] );
+    } else if ( json_detect_key("wtime") ) {
+      json_get_number( game_state.wtime );
+    } else if ( json_detect_key("btime") ) {
+      json_get_number( game_state.btime );
+    } else if ( json_detect_key("winc") ) {
+      json_get_number( game_state.winc );
+    } else if ( json_detect_key("binc") ) {
+      json_get_number( game_state.binc );
+    } else if ( json_detect_key("id") ) {
+      /* skip */
+    } else if ( json_detect_key("name") ) {
+      json_get_string( s );
+      game_state.status = encode_GameStatus( s );
+    } else if ( json_detect_key("wdraw") ) {
+      json_get_boolean( game_state.wdraw );
+    } else if ( json_detect_key("bdraw") ) {
+      json_get_boolean( game_state.bdraw );
+    } else if ( json_detect_key("wtakeback") ) {
+      json_get_boolean( game_state.wtakeback );
+    } else if ( json_detect_key("btakeback") ) {
+      json_get_boolean( game_state.btakeback );
     } else {
       printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
+    i++;
   }
 }
 
@@ -712,10 +692,10 @@ int lichess_api_json( int argc, char ** argv )
 
   for (i = 1; i < r; i++) {
     len = t[i+1].end - t[i+1].start;
-    if (jsoneq(json_buffer, &t[i], "name") == 0) {
-      strncpy( command, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len );
+    if ( json_detect_key("name") ) {
+      json_get_string( command );
       i++;
-    } else if (jsoneq(json_buffer, &t[i], "args") == 0) {
+    } else if ( json_detect_key("args") ) {
       i++;
       i++;
       /* Put switch statement here for various messages.  */
