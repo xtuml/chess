@@ -11,6 +11,7 @@ within lichess_bot::components::Engine is
     class PieceSpecification;
     class Player;
     class Square;
+    //! Every square is either occupied or not.
     relationship R1 is Square is_a (OccupiedSquare, OpenSquare);
 
     //! A piece still in play must occupy a square.
@@ -21,6 +22,7 @@ within lichess_bot::components::Engine is
     relationship R4 is Piece unconditionally 'is specified by' one PieceSpecification,
                        PieceSpecification conditionally 'defines properties of' many Piece;
 
+    //! A legal move describes how a piece may move from its occupied square to another square.
     relationship R5 is Piece conditionally 'can legally move to' many Square,
                        Square conditionally 'is reachable by' many Piece
                        using one Move;

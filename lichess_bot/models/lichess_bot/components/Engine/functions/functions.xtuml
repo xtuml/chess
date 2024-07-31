@@ -32,8 +32,8 @@ within lichess_bot::components::Engine is
     @function_num(4);
     function record_move('from': in instance of OccupiedSquare, 'to': in instance of Square, recorder: in string) is
       @noparse
-      start = param.from;
-      dest = param.to;
+      start = param.from;  // an occupied square
+      dest = param.to;     // a square - occupied? - or not?
       recorder = param.recorder;
       
       // these 3 lines are debug instrumentation
@@ -48,13 +48,13 @@ within lichess_bot::components::Engine is
       unrelate start from originsq across R1;
       delete object instance start;
       create object instance opsq of OpenSquare;
-      relate opsq to originsq across R1;
+      relate opsq to originsq across R1;  // the 'move from' square is no longer occupied
       taken = dest.occupant();
-      if (not_empty taken)
+      if (not_empty taken)  // the 'move to' square was already occupied - exchange occupants
         select one ocsq related by dest->OccupiedSquare[R1];
         unrelate taken from ocsq across R2.'occupies';
         taken.clean_moves();
-        //delete object instance taken;
+        //delete object instance taken; Keep instance for scoring purposes. TBD, may transition in a lifecycle
       else
         select one opsq related by dest->OpenSquare[R1];
         unrelate opsq from dest across R1;
@@ -92,7 +92,7 @@ within lichess_bot::components::Engine is
         end if;
       
         if (not_empty from and not_empty tosq)
-          ::record_move( from:from, to:tosq, recorder:" O-O " + recorder );
+          ::record_move( from:from, to:tosq, recorder:recorder + " O-O " );
         end if;
       
       end if;

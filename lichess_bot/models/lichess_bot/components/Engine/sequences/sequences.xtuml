@@ -2,8 +2,11 @@
 
 within lichess_bot::components::Engine is
 
+  //! A place holder for experimenting with useful move sequences.
+  //! At this time, only support for commonplace opening moves is offered.
   package sequences is
     class Openers;
+    //! Match frequently used opening moves against available legal options.
     @dialect("oal");
     @function_num(2);
     function pick_opener_move(moves: in set of instance of Move) return instance of Move is
