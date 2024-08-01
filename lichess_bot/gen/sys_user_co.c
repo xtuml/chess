@@ -18,6 +18,7 @@
 #include "sys_user_co.h"
 #include <string.h>
 #include <dirent.h>
+#include <stdlib.h>
 
 #ifdef SYS_USER_CO_PRINTF_ON
 #include <stdio.h>
@@ -74,7 +75,13 @@ UserPostOoaInitializationCalloutf( void )
   SYS_USER_CO_PRINTF( "UserPostOoaInitializationCallout\n" )
 }
 
-extern void lichess_api_json( int, char ** );
+static int file_select(const struct dirent *);
+static int file_select(const struct dirent * entry)
+{
+  return ( NULL == strstr(entry->d_name, "json") ) ? 0 : 1;
+}
+
+extern void lichess_api_json( char * );
 /*
  * UserBackgroundProcessingCallout
  *
@@ -86,34 +93,34 @@ extern void lichess_api_json( int, char ** );
 void
 UserBackgroundProcessingCalloutf( void )
 {
-  static char * argv[2];
+  char * filename;
   DIR *dp;
-  struct dirent *ep;     
-  argv[0] = "lichess_api_json";
-  argv[1] = "001.json";
+  struct dirent *ep, **namelist;
+  int i, n;
+
+  fprintf(stderr,"background....\n");
   /* Activate this invocation to periodically tick the example simple TIM.  */
   #if ESCHER_SYS_MAX_XTUML_TIMERS > 0
   TIM_tick();
   #endif
-  fprintf(stderr,"background....\n");
-  dp = opendir ("./outgoing");
-  if (dp != NULL) {
-    while ((ep = readdir (dp)) != NULL) {
-      argv[1] = Escher_stradd( "./outgoing/", ep->d_name );
-      printf("file name is %s.\n",argv[1]);
-      if ( 0 == strstr( argv[1], "json" ) ) {
-        continue;
-      } else {
-        lichess_api_json( 1, &argv );
-        if ( 0 != remove( argv[1] ) ) {
-          perror ("Could not remove file from directory ./outgoing");
-        }
-        break;
+
+  /* Read the directory and return only the JSON files names sorted alpha-numerically.  */
+  n = scandir( "./outgoing", &namelist, file_select, alphasort );
+  if (n < 0) {
+    perror("scandir");
+  } else {
+    if ( n > 0 ) {
+      printf("%s\n", namelist[0]->d_name);
+      filename = Escher_stradd( "./outgoing/", namelist[0]->d_name );
+      lichess_api_json( filename );
+      if ( 0 != remove( filename ) ) {
+        perror ("Could not remove file from directory ./outgoing");
       }
     }
-    (void) closedir (dp);
-  } else {
-    perror ("Could not open the directory");
+    for ( i=0; i<n; i++ ) {
+      free(namelist[i]);
+    }
+    free(namelist);
   }
   fprintf(stderr,"BACKGROUND....\n");
 }

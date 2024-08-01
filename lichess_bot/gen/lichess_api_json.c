@@ -307,16 +307,20 @@ lichess_bot_GameStatus_t encode_GameStatus( char * s )
 }
 
 
-void api_connected( const int, const int );
-void api_connected( const int starting_token_offset, const int token_count )
-{
-  /* No arguments to this command.  */
-}
-
+/* These macros streamline the heavy lifting being done with jsmn.  */
 #define json_detect_key( KEY ) ( jsoneq(json_buffer, &t[i], KEY) == 0 )
 #define json_get_string( STRVAR ) strncpy( STRVAR, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len ); STRVAR[len] = 0
 #define json_get_number( NUMVAR ) strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len ); s[len] = 0; NUMVAR = atoi(s)
 #define json_get_boolean( BOOLVAR ) strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len ); s[len] = 0; BOOLVAR = (s[0] == 't') ? 1 : 0
+
+
+void api_connected( const int, const int );
+void api_connected( const int starting_token_offset, const int token_count )
+{
+  lichess_bot_sdt_User user;
+  /* No arguments to this command.  */
+  user = Engine_chess_account();
+}
 
 /* This one is not used but was for practice.  */
 void api_connect( const int, const int );
@@ -462,6 +466,7 @@ void api_challenge( const int starting_token_offset, const int token_count )
     }
     i++;
   }
+  Engine_chess_challenge( challenge );
 }
 
 void api_gameStart( const int, const int );
@@ -666,12 +671,12 @@ void api_gameState( const int starting_token_offset, const int token_count )
   }
 }
 
-int lichess_api_json( int argc, char ** argv )
+int lichess_api_json( char * filename )
 {
   int i, r, bytes, len;
   char command[1024];
 
-  bytes = read_file_into_buffer( argv[1] );
+  bytes = read_file_into_buffer( filename );
   if ( bytes > 0 ) {
     r = init_parser_and_parse( bytes );
   }

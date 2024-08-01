@@ -3,3 +3,5 @@
 .invoke TagMaximumStringLength( 1024 )
 .//.invoke TagInstanceLoading()
 .invoke EnableTasking( "POSIX", "", 2 )
+.// doubly-linked list containers
+.invoke TagCollectionsFlavor( 20 )
