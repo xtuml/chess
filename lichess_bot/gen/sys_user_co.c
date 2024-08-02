@@ -19,6 +19,8 @@
 #include <string.h>
 #include <dirent.h>
 #include <stdlib.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #ifdef SYS_USER_CO_PRINTF_ON
 #include <stdio.h>
@@ -75,6 +77,29 @@ UserPostOoaInitializationCalloutf( void )
   SYS_USER_CO_PRINTF( "UserPostOoaInitializationCallout\n" )
 }
 
+/* Replace the first occurrence of orig in src with new and write result to dest
+   Return pointer to first character after the end of first match in src and
+   NULL if no match */
+static const char *replace(char *dest, const char *src, const char *orig, const char *new)
+{
+    char *ptr = strstr(src, orig); // First match
+
+    // If no match, we want dest to contain a copy of src
+    if(!ptr) {
+        strcpy(dest, src);
+        return NULL;
+    }
+
+    const ptrdiff_t offset = ptr - src; // Calculate offset
+    const int origlen = strlen(orig);
+    
+    strncpy(dest, src, offset); // Copy everything before match
+    strcpy(&dest[offset], new); // Copy replacement
+    strcpy(&dest[offset + strlen(new)], &src[offset + origlen]); // Copy rest
+
+    return src + offset + origlen;
+}
+
 static int file_select(const struct dirent *);
 static int file_select(const struct dirent * entry)
 {
@@ -93,7 +118,7 @@ extern void lichess_api_json( char * );
 void
 UserBackgroundProcessingCalloutf( void )
 {
-  char * filename;
+  char * filename, * filerename;
   DIR *dp;
   struct dirent *ep, **namelist;
   int i, n;
@@ -112,15 +137,16 @@ UserBackgroundProcessingCalloutf( void )
     if ( n > 0 ) {
       printf("%s\n", namelist[0]->d_name);
       filename = Escher_stradd( "./outgoing/", namelist[0]->d_name );
+      replace(filerename, filename, "json", "DONE");
       lichess_api_json( filename );
-      if ( 0 != remove( filename ) ) {
+      if ( 0 != rename( filename, filerename ) ) {
         perror ("Could not remove file from directory ./outgoing");
       }
     }
     for ( i=0; i<n; i++ ) {
-      free(namelist[i]);
+      //free(namelist[i]);
     }
-    free(namelist);
+    //free(namelist);
   }
   fprintf(stderr,"BACKGROUND....\n");
 }

@@ -507,6 +507,7 @@ void api_gameStart( const int starting_token_offset, const int token_count )
     }
     i++;
   }
+  Engine_chess_gameStart( game_event );
 }
 
 void api_gameFull( const int, const int );
@@ -623,6 +624,7 @@ void api_gameFull( const int starting_token_offset, const int token_count )
     }
     i++;
   }
+  Engine_chess_gameFull( game );
 }
 
 void api_gameState( const int, const int );
@@ -669,6 +671,7 @@ void api_gameState( const int starting_token_offset, const int token_count )
     }
     i++;
   }
+  Engine_chess_gameState( game_id, game_state );
 }
 
 int lichess_api_json( char * filename )
@@ -710,10 +713,14 @@ int lichess_api_json( char * filename )
         api_connected( i, r );
       } else if (0 == strcmp(command, "challenge")) {
         api_challenge( i, r );
+      } else if (0 == strcmp(command, "gameFull")) {
+        api_gameFull( i, r );
       } else if (0 == strcmp(command, "gameStart")) {
         api_gameStart( i, r );
       } else if (0 == strcmp(command, "gameState")) {
         api_gameState( i, r );
+      } else if (0 == strcmp(command, "gameFinish")) {
+        fprintf( stderr, "Unimplemented message:  gameFinish\n" );
       } else {
       }
       break;

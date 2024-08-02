@@ -36,6 +36,18 @@ Lichess_API_abort( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN] )
 bool
 Lichess_API_acceptChallenge( c_t p_challenge_id[ESCHER_SYS_MAX_STRING_LEN] )
 {
+  char * front = "{\"name\":\"acceptChallenge\",\"args\":{\"challenge_id\":\"";
+  char * back = "\"}}";
+  FILE * f = fopen( "incoming/acceptChallenge.json", "w" );
+
+  if ( f ) {
+    fprintf (stderr, "%s%s%s\n", front, p_challenge_id, back);
+    fprintf (f, "%s%s%s\n", front, p_challenge_id, back);
+    fclose (f);
+  } else {
+    fprintf (stderr, "error opening incoming/acceptChallenge.json\n");
+  }
+
   return true;
 }
 
@@ -48,6 +60,7 @@ lichess_bot_sdt_User
 Lichess_API_account()
 {
   lichess_bot_sdt_User r;
+  Escher_strcpy( r.id, "cortlandstarrett_bot" );
   return r;
 }
 
