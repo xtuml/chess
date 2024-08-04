@@ -85,9 +85,9 @@ within lichess_bot::components::Engine::games::'Active Game' is
       // we need an update to reflect the change from our last move:
       // some moves invalidated; ground truth of 2 squares changed.
       movestr = played_moves[i-2];  // our last move
-      fromsq = ::from_occupied( movestr:movestr );
+      fromocsq = ::from_occupied( movestr:movestr );
       tosquare = ::to_square( movestr:movestr );
-      select one piece related by fromsq->Piece[R2.'is occupied by'];
+      select one piece related by fromocsq->Piece[R2.'is occupied by'];
     
     	// now dispose of all moves for the piece we last played - not on the start square any more, so all moves are invalid
     	select many moves related by piece->Move[R5];
@@ -103,7 +103,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     	  piece.clean_moves();
     	end for;
     	// update ground truth of our board representation
-    	::record_move( from:fromsq, to:tosquare, recorder:" BOT: " );
+    	::record_move( from:fromocsq, to:tosquare, recorder:" BOT: " );
     end if;
     
     select one myplayer related by self->Player[R22.'is acting for'];
@@ -170,9 +170,9 @@ within lichess_bot::components::Engine::games::'Active Game' is
     i = 0;
     while (i < nlegals)  // for each legal move we could play...
       movestr = legal_moves[i];
-      fromsq = ::from_occupied( movestr:movestr );
+      fromocsq = ::from_occupied( movestr:movestr );
       tosq = ::to_square( movestr:movestr );
-      select one piece related by fromsq->Piece[R2.'is occupied by'];
+      select one piece related by fromocsq->Piece[R2.'is occupied by'];
       select many dests related by piece->Square[R5.'can legally move to'];
       found = false;
       for each dest in dests
