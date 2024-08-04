@@ -236,6 +236,18 @@ Lichess_API_gameState( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN], lichess_bot_sdt
 bool
 Lichess_API_move( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN], c_t p_move[ESCHER_SYS_MAX_STRING_LEN] )
 {
+  char * front = "{\"name\":\"move\",\"args\":{\"game_id\":\"";
+  char * middle = "\",\"move\":\"";
+  char * back = "\"}}";
+  FILE * f = fopen( "incoming/move.json", "w" );
+
+  if ( f ) {
+    fprintf (stderr, "%s%s%s%s%s\n", front, p_game_id, middle, p_move, back);
+    fprintf (f, "%s%s%s%s%s\n", front, p_game_id, middle, p_move, back);
+    fclose (f);
+  } else {
+    fprintf (stderr, "error opening incoming/move.json\n");
+  }
   return true;
 }
 

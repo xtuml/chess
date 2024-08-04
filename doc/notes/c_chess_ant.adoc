@@ -65,7 +65,6 @@ For C, a couple of ideas come to mind on how to go with this.
   .. take turn or wait
   .. send chess::move(game_id,move)
 
-
 == 5 Work Required
 
 === 5.1 Model, Realized Code and Model Compiler Changes
@@ -100,9 +99,9 @@ For C, a couple of ideas come to mind on how to go with this.
   ** Print from sys_user_co.c UserBackgroundCallout to prove it lives. [green]#(**done**)#
 * Periodically (once per second to start with) check for a message file. [green]#(**done**)#
   ** message files will be alphanumerically ordered. [green]#(**done**)#
-  ** Call Engine message from background parse routines passing in native struct types.
-* Dump Lichess bound messages into JSON file in folder.
-  ** `move(game_id, move)` is the primary message.
+  ** Call Engine message from background parse routines passing in native struct types. [green]#(**done**)#
+* Dump Lichess bound messages into JSON file in folder. [green]#(**done**)#
+  ** `move(game_id, move)` is the primary message. [green]#(**done**)#
 
 === 5.3 Loading Properties
 
@@ -113,8 +112,11 @@ For C, a couple of ideas come to mind on how to go with this.
 
 === 5.4 ChessLib
 
-* Look for C library?
-* Should we add this to the API.
+* Look for C library.  [green]#(**found one**)#
+* Should we add this to the API..  [green]#(**no**)#
+* Consider passing a structure containing an array.  GameState passes nicely.
+* Consider passing instance reference with array attribute.
+* Consider passing array attribute by reference.
 
 == 6 Acceptance Test
 

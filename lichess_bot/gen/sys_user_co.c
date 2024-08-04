@@ -118,7 +118,7 @@ extern void lichess_api_json( char * );
 void
 UserBackgroundProcessingCalloutf( void )
 {
-  char * filename, * filerename;
+  char * filename, filerename[ESCHER_SYS_MAX_STRING_LEN];
   DIR *dp;
   struct dirent *ep, **namelist;
   int i, n;

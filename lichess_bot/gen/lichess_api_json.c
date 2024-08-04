@@ -113,6 +113,50 @@ int init_parser_and_parse( int bytelength )
 }
 
 
+static char** str_split(char* , const char );
+static char** str_split(char* a_str, const char a_delim)
+{
+    char** result    = 0;
+    size_t count     = 0;
+    char* tmp        = a_str;
+    char* last_comma = 0;
+    char delim[2];
+    delim[0] = a_delim;
+    delim[1] = 0;
+
+    /* Count how many elements will be extracted. */
+    while (*tmp) {
+        if (a_delim == *tmp) {
+            count++;
+            last_comma = tmp;
+        }
+        tmp++;
+    }
+
+    /* Add space for trailing token. */
+    count += last_comma < (a_str + strlen(a_str) - 1);
+
+    /* Add space for terminating null string so caller
+       knows where the list of returned strings ends. */
+    count++;
+
+    result = malloc(sizeof(char*) * count);
+
+    if (result) {
+        size_t idx  = 0;
+        char* token = strtok(a_str, delim);
+
+        while (token) {
+            *(result + idx++) = strdup(token);
+            token = strtok(0, delim);
+        }
+        *(result + idx) = 0;
+    }
+
+    return result;
+}
+
+
 lichess_bot_GameSource_t encode_GameSource( char * );
 lichess_bot_GameSource_t encode_GameSource( char * s )
 {
@@ -514,6 +558,7 @@ void api_gameFull( const int, const int );
 void api_gameFull( const int starting_token_offset, const int token_count )
 {
   int i, len;
+  char ** tokens;
   char s[1024];
   char object_scope[1024] = {0};
   lichess_bot_sdt_Game game;
@@ -524,6 +569,10 @@ void api_gameFull( const int starting_token_offset, const int token_count )
       strcpy( object_scope, "game" );
     } else if ( json_detect_key("status") ) {
       strcpy( object_scope, "status" );
+    } else if ( json_detect_key("white") ) {
+      strcpy( object_scope, "white" );
+    } else if ( json_detect_key("black") ) {
+      strcpy( object_scope, "black" );
     } else if ( json_detect_key("id") ) {
       if (0 == strcmp(object_scope, "game")) {
         json_get_string( game.id );
@@ -595,7 +644,16 @@ void api_gameFull( const int starting_token_offset, const int token_count )
     } else if ( json_detect_key("state") ) {
       strcpy( object_scope, "state" );
     } else if ( json_detect_key("moves") ) {
-      json_get_string( game.gameState.moves[0] );
+      json_get_string( s );
+      tokens = str_split(s, ' ');
+      if (tokens) {
+        int j;
+        for (j = 0; *(tokens + j); j++) {
+            Escher_strcpy( game.gameState.moves[j], *(tokens + j) );
+            free(*(tokens + j));
+        }
+        free(tokens);
+      }
     } else if ( json_detect_key("wtime") ) {
       json_get_number( game.gameState.wtime );
     } else if ( json_detect_key("btime") ) {
@@ -631,6 +689,7 @@ void api_gameState( const int, const int );
 void api_gameState( const int starting_token_offset, const int token_count )
 {
   int i, len;
+  char ** tokens;
   char s[1024];
   char object_scope[1024] = {0};
   char game_id[1024];
@@ -644,7 +703,16 @@ void api_gameState( const int starting_token_offset, const int token_count )
     } else if ( json_detect_key("game_id") ) {
       json_get_string( game_id );
     } else if ( json_detect_key("moves") ) {
-      json_get_string( game_state.moves[0] );
+      json_get_string( s );
+      tokens = str_split(s, ' ');
+      if (tokens) {
+        int j;
+        for (j = 0; *(tokens + j); j++) {
+          Escher_strcpy( game_state.moves[j], *(tokens + j) );
+          free(*(tokens + j));
+        }
+        free(tokens);
+      }
     } else if ( json_detect_key("wtime") ) {
       json_get_number( game_state.wtime );
     } else if ( json_detect_key("btime") ) {
@@ -672,6 +740,47 @@ void api_gameState( const int starting_token_offset, const int token_count )
     i++;
   }
   Engine_chess_gameState( game_id, game_state );
+}
+
+void api_gameFinish( const int, const int );
+void api_gameFinish( const int starting_token_offset, const int token_count )
+{
+  int i, len;
+  char s[1024];
+  char object_scope[1024] = {0};
+  lichess_bot_sdt_GameEventInfo game_event;
+
+  for (i = starting_token_offset; i < token_count; i++) {
+    len = t[i+1].end - t[i+1].start;
+    if ( json_detect_key("game_event") ) {
+      strcpy( object_scope, "game_event" );
+    } else if ( json_detect_key("status") ) {
+      strcpy( object_scope, "status" );
+    } else if ( json_detect_key("id") ) {
+      if (0 == strcmp(object_scope, "game_event")) {
+        json_get_string( game_event.id );
+      } else if (0 == strcmp(object_scope, "status")) {
+        /* skip */
+      }
+    } else if ( json_detect_key("source") ) {
+      if (0 == strcmp(object_scope, "game_event")) {
+        json_get_string( s );
+        game_event.source = encode_GameSource( s );
+      }
+    } else if ( json_detect_key("name") ) {
+      if (0 == strcmp(object_scope, "status")) {
+        json_get_string( s );
+        game_event.status = encode_GameStatus( s );
+      }
+    } else if ( json_detect_key("winner") ) {
+      json_get_string( s );
+      game_event.winner = encode_Color( s );
+    } else {
+      printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
+    }
+    i++;
+  }
+  Engine_chess_gameFinish( game_event );
 }
 
 int lichess_api_json( char * filename )
@@ -720,7 +829,7 @@ int lichess_api_json( char * filename )
       } else if (0 == strcmp(command, "gameState")) {
         api_gameState( i, r );
       } else if (0 == strcmp(command, "gameFinish")) {
-        fprintf( stderr, "Unimplemented message:  gameFinish\n" );
+        api_gameFinish( i, r );
       } else {
       }
       break;
