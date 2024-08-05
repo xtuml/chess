@@ -40,14 +40,40 @@ ChessLib_destRank( c_t p_move[ESCHER_SYS_MAX_STRING_LEN] )
 }
 
 
+static const char * startpos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+static char game_moves[1024][ESCHER_SYS_MAX_STRING_LEN];
+static int game_move_count = 0;
 /*
  * Bridge:  legalMoves
  */
-c_t *
-ChessLib_legalMoves( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_fen[ESCHER_SYS_MAX_STRING_LEN] )
+i_t
+ChessLib_legalMoves( c_t p_fen[ESCHER_SYS_MAX_STRING_LEN], c_t p_legal_moves[218][ESCHER_SYS_MAX_STRING_LEN] )
 {
-  c_t * result = 0;
-  /* Insert your implementation code here... */
+  i_t result = 0;
+  printf("ChessLib_legalMoves\n");
+  int i;
+  move m;
+  char * uci;
+  chess *c = chessCreate();
+  for ( i = 0; i < game_move_count; i++ ) {
+    m = moveFromUci(game_moves[i]);
+    uci = moveGetUci(m);
+    printf("%s ", uci);
+    free(uci);
+    chessPlayMove(c, m);
+  }
+  moveList *moves = chessGetLegalMoves(c);
+  printf("\nChessLib_populateLegalMoves:  Legal Moves list\n");
+  for ( i = 0; i < moves->size && i < 218; i++ ) {
+    m = moveListGet(moves, i);
+    uci = moveGetUci(m);
+    Escher_strcpy( p_legal_moves[i], uci );
+    printf("%s ", uci);
+    free(uci);
+  }
+  result = moves->size;
+  chessFree(c);
+  printf("END ChessLib_populateLegalMoves with count of legal moves:%d\n",result);
   return result;
 }
 
@@ -56,10 +82,17 @@ ChessLib_legalMoves( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_fen[ESCHE
  * Bridge:  movesToFEN
  */
 c_t *
-ChessLib_movesToFEN( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_initialFen[ESCHER_SYS_MAX_STRING_LEN], c_t p_moves[0][ESCHER_SYS_MAX_STRING_LEN] )
+ChessLib_movesToFEN( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_initialFen[ESCHER_SYS_MAX_STRING_LEN], c_t p_moves[1024][ESCHER_SYS_MAX_STRING_LEN] )
 {
-  c_t * result = 0;
-  /* Insert your implementation code here... */
+  c_t * result = "";
+  int i;
+  fprintf(stderr,"START ChessLib_movesToFen\n");
+  for ( i = 0; i < 1024; i++ ) {
+    if ( Escher_strlen( p_moves[i] ) < 4 ) break;
+    Escher_strcpy( game_moves[i], p_moves[i] );
+  }
+  game_move_count = i;
+  fprintf(stderr,"END ChessLib_movesToFen with game_move_count:%d\n",game_move_count);
   return result;
 }
 
@@ -97,51 +130,5 @@ ChessLib_startpos( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN] )
   c_t * result = 0;
   /* Insert your implementation code here... */
   return result;
-}
-
-
-/*
- * Bridge:  populateLegalMoves
- */
-i_t
-ChessLib_populateLegalMoves( c_t p_legal_moves[32][ESCHER_SYS_MAX_STRING_LEN], const i_t p_move_count, c_t p_moves[32][ESCHER_SYS_MAX_STRING_LEN] )
-{
-  int result;
-  /*
-  Escher_strcpy( p_legal_moves[0], "a7a5" );
-  Escher_strcpy( p_legal_moves[1], "b7b5" );
-  Escher_strcpy( p_legal_moves[2], "c7c5" );
-  Escher_strcpy( p_legal_moves[3], "d7d5" );
-  Escher_strcpy( p_legal_moves[4], "e7e5" );
-  Escher_strcpy( p_legal_moves[5], "f7f5" );
-  Escher_strcpy( p_legal_moves[6], "g7g5" );
-  Escher_strcpy( p_legal_moves[7], "h7h5" );
-  */
-
-  printf("ChessLib_populateLegalMoves\n");
-  int i;
-  move m;
-  char * uci;
-  chess *c = chessCreate();
-  for ( i = 0; i < (p_move_count-1); i++ ) {
-    m = moveFromUci(p_moves[i]);
-    uci = moveGetUci(m);
-    printf("%s ", uci);
-    free(uci);
-    chessPlayMove(c, m);
-  }
-  moveList *moves = chessGetLegalMoves(c);
-  printf("\nChessLib_populateLegalMoves:  Legal Moves list\n");
-  for ( i = 0; i < moves->size && i < 32; i++ ) {
-    m = moveListGet(moves, i);
-    uci = moveGetUci(m);
-    Escher_strcpy( p_legal_moves[i], uci );
-    printf("%s ", uci);
-    free(uci);
-  }
-  chessFree(c);
-  printf("END ChessLib_populateLegalMoves\n");
-
-  return moves->size;
 }
 

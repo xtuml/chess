@@ -361,9 +361,7 @@ lichess_bot_GameStatus_t encode_GameStatus( char * s )
 void api_connected( const int, const int );
 void api_connected( const int starting_token_offset, const int token_count )
 {
-  lichess_bot_sdt_User user;
-  /* No arguments to this command.  */
-  user = Engine_chess_account();
+  Engine_chess_connected();
 }
 
 /* This one is not used but was for practice.  */
@@ -653,6 +651,8 @@ void api_gameFull( const int starting_token_offset, const int token_count )
             free(*(tokens + j));
         }
         free(tokens);
+        game.gameState.move_count = j; // We maintain move_count in game_state.
+        fprintf(stderr,"decoding GameFull, move_count is %d\n", game.gameState.move_count );
       }
     } else if ( json_detect_key("wtime") ) {
       json_get_number( game.gameState.wtime );
@@ -712,6 +712,8 @@ void api_gameState( const int starting_token_offset, const int token_count )
           free(*(tokens + j));
         }
         free(tokens);
+        game_state.move_count = j; // We maintain move_count in game_state.
+        fprintf(stderr,"decoding GameState, move_count is %d\n", game_state.move_count );
       }
     } else if ( json_detect_key("wtime") ) {
       json_get_number( game_state.wtime );
@@ -726,6 +728,9 @@ void api_gameState( const int starting_token_offset, const int token_count )
     } else if ( json_detect_key("name") ) {
       json_get_string( s );
       game_state.status = encode_GameStatus( s );
+    } else if ( json_detect_key("winner") ) {
+      json_get_string( s );
+      game_state.winner = encode_Color( s );
     } else if ( json_detect_key("wdraw") ) {
       json_get_boolean( game_state.wdraw );
     } else if ( json_detect_key("bdraw") ) {

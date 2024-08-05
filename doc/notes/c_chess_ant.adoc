@@ -82,10 +82,10 @@ For C, a couple of ideas come to mind on how to go with this.
      *** Maybe we could add `ChessLib::legal_moves(fen:fen, legal_moves:legal_moves)`
 . Explore the support variable length arrays in MC-3020.
   ** How can we work around this?
-     *** special EE?
-     *** Use fixed length arrays with a separate length value?
+     *** special EE?  [green]#(**no**)#
+     *** Use fixed length arrays with a separate length value?  [green]#(**yes**)#
 . Implement a communication channel between the Lichess component as Java
-  and the Engine component as C.
+  and the Engine component as C.  [green]#(**done**)#
 . Find a JSON parser for C (starting with the same one we started with in
   early Munin).
   ** Use <<dr-4, JSMN (Jasmine)>>. [green]#(**done**)#
@@ -114,9 +114,23 @@ For C, a couple of ideas come to mind on how to go with this.
 
 * Look for C library.  [green]#(**found one**)#
 * Should we add this to the API..  [green]#(**no**)#
-* Consider passing a structure containing an array.  GameState passes nicely.
-* Consider passing instance reference with array attribute.
-* Consider passing array attribute by reference.
+* Consider passing array attribute by reference.  [green]#(**done**)#
+
+=== 5.5 Proposed Model Changes
+
+* Use fixed length arrays, since variable length arrays are sketch in C.
+  ** Decide on length of arrays.
+     *** 1024 for 'GameState.moves'
+     *** 1024 for 'legal_moves'
+* Add a 'move_count' attribute to 'ActiveGame'.
+* Eschew the `length` operator on arrays.
+* Add `Chesslib::populateLegalMoves( legal_moves, moves, move_count ) : integer legal_move_count`.
+* Add `Chesslib::legalMoves( fen, legal_moves ) : integer legal_move_count`.
+* Add explicit EEs to the model.
+
+* Move move_count to be GameState.
+* Move legal_moves to be transient.
+* Minor adjustment to ChessLib::legalMoves.
 
 == 6 Acceptance Test
 

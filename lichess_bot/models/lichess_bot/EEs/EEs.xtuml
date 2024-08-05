@@ -34,7 +34,7 @@ within lichess_bot is
       //! Takes as input a FEN string representing the current position
       //! Returns a list of legal moves in the position
       @dialect("oal");
-      bridge legalMoves(fen: in string) return sequence (32) of string;
+      bridge legalMoves(fen: in string, legal_moves: out sequence (218) of string) return integer;
 
       //! Takes as input a FEN string and a list of moves represenging the
       //! current position. The position is determined by applying the
@@ -43,7 +43,7 @@ within lichess_bot is
       //! starting position. Returns a FEN string representing the
       //! position
       @dialect("oal");
-      bridge movesToFEN(initialFen: in string, moves: in sequence of string) return string;
+      bridge movesToFEN(initialFen: in string, moves: in sequence (1024) of string) return string;
 
       //! Takes as input a string representing a move in LAN and returns
       //! the source file as a string /[a-h]/
@@ -101,17 +101,6 @@ within lichess_bot is
 
       @dialect("oal");
       bridge loadProperties(file_name: in string) return Properties;
-
-    end external;
-
-    @key_letters("SS");
-    @realized;
-    external 'State Save' is
-      @dialect("oal");
-      bridge access() return string;
-
-      @dialect("oal");
-      bridge trigger();
 
     end external;
 
@@ -210,14 +199,6 @@ within lichess_bot is
       //! Turn the input numeric timestamp into a string.
       @dialect("oal");
       bridge timestamp_to_string(timestamp: in timestamp) return string;
-
-    end external;
-
-    @key_letters("MATH");
-    @realized;
-    external math is
-      @dialect("oal");
-      bridge sqrt(x: in real) return real;
 
     end external;
 

@@ -61,6 +61,7 @@ Lichess_API_account()
 {
   lichess_bot_sdt_User r;
   Escher_strcpy( r.id, "cortlandstarrett_bot" );
+  Escher_strcpy( r.username, "cortlandstarrett_bot" );
   return r;
 }
 
