@@ -275,6 +275,7 @@ within lichess_bot::components::Engine::board is
       // Dispose of all moves associated with this piece
       select many moves related by self->Move[R5];
       for each move in moves
+        LOG::LogInfo( message:"Cleaning Move: " + move.Notation );
         move.dispose();
       end for;
       @endnoparse

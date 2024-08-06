@@ -93,6 +93,8 @@ within lichess_bot::components::Engine::games is
     @operation_num(6);
     operation dispose() is
       @noparse
+      select one player related by self->Player[R22.'is acting for'];
+      unrelate self from player across R22.'is acting for';
       delete object instance self;
       @endnoparse
     end operation;
