@@ -22,9 +22,11 @@
 c_t *
 ChessLib_destFile( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_move[ESCHER_SYS_MAX_STRING_LEN] )
 {
-  c_t * result = 0;
-  /* Insert your implementation code here... */
-  return result;
+  A0xtumlsret[0] = 0;
+  if ( Escher_strlen( p_move ) >= 4 ) {
+    A0xtumlsret[0] = p_move[3]; A0xtumlsret[1] = 0;
+  }
+  return A0xtumlsret;
 }
 
 
@@ -34,15 +36,16 @@ ChessLib_destFile( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_move[ESCHER
 i_t
 ChessLib_destRank( c_t p_move[ESCHER_SYS_MAX_STRING_LEN] )
 {
-  i_t result = 0;
-  /* Insert your implementation code here... */
-  return result;
+  char number[2];
+  if ( Escher_strlen( p_move ) >= 4 ) {
+    number[0] = p_move[2]; number[1] = 0;
+    return STRING_atoi( number );
+  } else {
+    return 0;
+  }
 }
 
 
-static const char * startpos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-static char game_moves[1024][ESCHER_SYS_MAX_STRING_LEN];
-static int game_move_count = 0;
 /*
  * Bridge:  legalMoves
  */
@@ -52,18 +55,15 @@ ChessLib_legalMoves( c_t p_fen[ESCHER_SYS_MAX_STRING_LEN], c_t p_legal_moves[218
   i_t result = 0;
   printf("ChessLib_legalMoves\n");
   int i;
+  chess * c;
   move m;
   char * uci;
-  chess *c = chessCreate();
-  for ( i = 0; i < game_move_count; i++ ) {
-    m = moveFromUci(game_moves[i]);
-    uci = moveGetUci(m);
-    printf("%s ", uci);
-    free(uci);
-    chessPlayMove(c, m);
+  if ( ( 0 == Escher_strcmp( p_fen, "" ) ) || ( 0 == p_fen[0] ) ) {
+    c = chessCreate();
+  } else {
+    c = chessCreateFen(p_fen);
   }
   moveList *moves = chessGetLegalMoves(c);
-  printf("\nChessLib_populateLegalMoves:  Legal Moves list\n");
   for ( i = 0; i < moves->size && i < 218; i++ ) {
     m = moveListGet(moves, i);
     uci = moveGetUci(m);
@@ -73,7 +73,7 @@ ChessLib_legalMoves( c_t p_fen[ESCHER_SYS_MAX_STRING_LEN], c_t p_legal_moves[218
   }
   result = moves->size;
   chessFree(c);
-  printf("END ChessLib_populateLegalMoves with count of legal moves:%d\n",result);
+  printf("\nEND ChessLib_legalMoves with count of legal moves:%d\n",result);
   return result;
 }
 
@@ -84,16 +84,23 @@ ChessLib_legalMoves( c_t p_fen[ESCHER_SYS_MAX_STRING_LEN], c_t p_legal_moves[218
 c_t *
 ChessLib_movesToFEN( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_initialFen[ESCHER_SYS_MAX_STRING_LEN], c_t p_moves[1024][ESCHER_SYS_MAX_STRING_LEN] )
 {
-  c_t * result = "";
-  int i;
-  fprintf(stderr,"START ChessLib_movesToFen\n");
+  int i, move_count = 0;
+  chess * c;
+  move m;
+  char * uci;
+  c = chessCreate();
   for ( i = 0; i < 1024; i++ ) {
     if ( Escher_strlen( p_moves[i] ) < 4 ) break;
-    Escher_strcpy( game_moves[i], p_moves[i] );
   }
-  game_move_count = i;
-  fprintf(stderr,"END ChessLib_movesToFen with game_move_count:%d\n",game_move_count);
-  return result;
+  move_count = i;
+  for ( i = 0; i < move_count; i++ ) {
+    m = moveFromUci(p_moves[i]);
+    chessPlayMove(c, m);
+  }
+  Escher_strcpy( A0xtumlsret, chessGetFen(c) );
+  chessFree(c);
+  printf("ChessLib_movesToFen with move_count:%d\n",move_count);
+  return A0xtumlsret;
 }
 
 
@@ -103,9 +110,11 @@ ChessLib_movesToFEN( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_initialFe
 c_t *
 ChessLib_sourceFile( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_move[ESCHER_SYS_MAX_STRING_LEN] )
 {
-  c_t * result = 0;
-  /* Insert your implementation code here... */
-  return result;
+  A0xtumlsret[0] = 0;
+  if ( Escher_strlen( p_move ) >= 4 ) {
+    A0xtumlsret[0] = p_move[0]; A0xtumlsret[1] = 0;
+  }
+  return A0xtumlsret;
 }
 
 
@@ -115,20 +124,24 @@ ChessLib_sourceFile( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_move[ESCH
 i_t
 ChessLib_sourceRank( c_t p_move[ESCHER_SYS_MAX_STRING_LEN] )
 {
-  i_t result = 0;
-  /* Insert your implementation code here... */
-  return result;
+  char number[2];
+  if ( Escher_strlen( p_move ) >= 4 ) {
+    number[0] = p_move[0]; number[1] = 0;
+    return STRING_atoi( number );
+  } else {
+    return 0;
+  }
 }
 
 
+static const char * startpos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 /*
  * Bridge:  startpos
  */
 c_t *
 ChessLib_startpos( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN] )
 {
-  c_t * result = 0;
-  /* Insert your implementation code here... */
-  return result;
+  Escher_strcpy( A0xtumlsret, startpos );
+  return A0xtumlsret;
 }
 

@@ -121,16 +121,22 @@ For C, a couple of ideas come to mind on how to go with this.
 * Use fixed length arrays, since variable length arrays are sketch in C.
   ** Decide on length of arrays.
      *** 1024 for 'GameState.moves'
-     *** 1024 for 'legal_moves'
+     *** 218 for 'legal_moves'
 * Add a 'move_count' attribute to 'ActiveGame'.
 * Eschew the `length` operator on arrays.
-* Add `Chesslib::populateLegalMoves( legal_moves, moves, move_count ) : integer legal_move_count`.
-* Add `Chesslib::legalMoves( fen, legal_moves ) : integer legal_move_count`.
-* Add explicit EEs to the model.
+* Modify `Chesslib::legalMoves( fen, legal_moves ) : integer legal_move_count`.
+* Add explicit EEs to the model only as needed and maybe delete them after
+  bridge files are coded.
 
-* Move move_count to be GameState.
-* Move legal_moves to be transient.
-* Minor adjustment to ChessLib::legalMoves.
+=== 5.6 ChessLib
+
+* Clone `ChessLib` from <<dr-5>>.
+* Build it.
+* 'Include' and link it in a makefile in the `/src` folder.
+
+=== 5.7 README
+
+* Update the README to give instructions on the using the C code generated bot.
 
 == 6 Acceptance Test
 
@@ -145,6 +151,7 @@ For C, a couple of ideas come to mind on how to go with this.
 . [[dr-2]] https://github.com/xtuml/chess[xtUML Chess Playing Robot]
 . [[dr-3]] https://lichess.org/[lichess.org]
 . [[dr-4]] https://github.com/zserge/jsmn[JSMN - Simple #include-only JSON Parser]
+. [[dr-5]] https://github.com/thearst3rd/chesslib[ChessLib Implemented in ANSI C - thearst3rd]
 
 ---
 
