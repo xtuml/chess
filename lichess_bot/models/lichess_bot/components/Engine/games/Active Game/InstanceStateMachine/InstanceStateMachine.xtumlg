@@ -35,7 +35,7 @@ connectors :
         point : x : 4740.0 y : 3167.0
         shape : ourturn
       end :
-        point : x : 4967.0 y : 3167.0
+        point : x : 4967.0 y : 3240.0
         shape : playingmove
     texts :
       text :
@@ -276,7 +276,7 @@ connectors :
         point : x : 4859.0 y : 3240.0
         shape : playingmove
       end :
-        point : x : 4859.0 y : 3220.0
+        point : x : 4740.0 y : 3220.0
         shape : ourturn
     texts :
       text :

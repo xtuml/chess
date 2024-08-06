@@ -10,14 +10,14 @@ shapes :
   shape : functions
     render : package "lichess_bot::components::Engine::functions"
     bounds : x : -4088.0 y : -3420.0 width : 200.0 height : 150.0
+  shape : bot
+    render : package "lichess_bot::components::Engine::bot"
+    bounds : x : -4528.0 y : -3420.0 width : 200.0 height : 150.0
   shape : types
     render : package "lichess_bot::components::Engine::types"
     bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
   shape : EEs
     render : package "lichess_bot::components::Engine::EEs"
-    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
-  shape : bot
-    render : package "lichess_bot::components::Engine::bot"
     bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :
