@@ -24,6 +24,14 @@ public class GameState {
 	public void setMoves(List<String> moves) {
 		this.moves = moves;
 	}
+	
+	public int getMove_count() {
+		return moves.size();
+	}
+	
+	public void setMove_count(int move_count) {
+		throw new UnsupportedOperationException();
+	}
 
 	public int getWtime() {
 		return wtime;
