@@ -122,7 +122,8 @@ within lichess_bot::types is
     );
 
     type GameState is structure
-      moves: sequence of string;
+      moves: sequence (1024) of string;
+      move_count: integer;
       wtime: integer;
       btime: integer;
       winc: integer;
