@@ -3,7 +3,7 @@ render : "lichess_bot::components::Engine"
 shapes :
   shape : lichess_bot____components____Engine container
     render : component_container "lichess_bot::components::Engine"
-    bounds : x : -4560.0 y : -3504.0 width : 4772.0 height : 3666.0
+    bounds : x : -4560.0 y : -3504.0 width : 1787.0 height : 575.0
   shape : games
     render : package "lichess_bot::components::Engine::games"
     bounds : x : -4308.0 y : -3420.0 width : 200.0 height : 150.0
@@ -15,10 +15,13 @@ shapes :
     bounds : x : -4528.0 y : -3420.0 width : 200.0 height : 150.0
   shape : types
     render : package "lichess_bot::components::Engine::types"
-    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : -3636.0 y : -3420.0 width : 200.0 height : 150.0
   shape : EEs
     render : package "lichess_bot::components::Engine::EEs"
-    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : -3864.0 y : -3420.0 width : 200.0 height : 150.0
+  shape : move_selection
+    render : package "lichess_bot::components::Engine::move_selection"
+    bounds : x : -4513.0 y : -3194.0 width : 191.0 height : 142.0
 
 connectors :
   connector : chess____LichessAPI
@@ -40,14 +43,14 @@ connectors :
     render : provided_interface "lichess_bot::components::Engine::inst::Instrumentation"
     polyline :
       segment :
-        start : x : -4188.0 y : 162.0
-        end :   x : -4188.0 y : 283.0
+        start : x : -4188.0 y : -2929.0
+        end :   x : -4188.0 y : -2808.0
     anchors :
       start :
-        point : x : -4188.0 y : 162.0
+        point : x : -4188.0 y : -2929.0
         shape : lichess_bot____components____Engine
       end :
-        point : x : -4188.0 y : 283.0
+        point : x : -4188.0 y : -2808.0
     texts :
       text :
-        bounds : x : -4319.0 y : 210.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : -4319.0 y : -2881.0 width : 0.0 height : 0.0 where : middle

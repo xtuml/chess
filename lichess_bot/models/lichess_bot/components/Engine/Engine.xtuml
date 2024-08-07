@@ -8,6 +8,7 @@ within lichess_bot::components is
     package bot;
     package functions;
     package games;
+    package move_selection;
     package types is lichess_bot::types;
     
     required port chess implements LichessAPI is
@@ -137,6 +138,7 @@ within lichess_bot::components is
         @noparse
         select any bot from instances of Bot;
         bot.user = chess::account();
+        ::send_challenge();
         @endnoparse
       end message;
 

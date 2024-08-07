@@ -1,0 +1,5 @@
+render : "lichess_bot::components::Engine::move_selection"
+
+shapes :
+
+connectors :
