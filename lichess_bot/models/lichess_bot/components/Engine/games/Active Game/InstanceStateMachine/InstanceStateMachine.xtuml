@@ -68,35 +68,6 @@ within lichess_bot::components::Engine::games::'Active Game' is
     
     played_moves = self.game_state.moves;
     
-    /*
-    i = played_moves.length;
-    if (i > 1)
-      // we need an update to reflect the change from our last move:
-      // some moves invalidated; ground truth of 2 squares changed.
-      movestr = played_moves[i-2];  // our last move
-      fromocsq = ::from_occupied( movestr:movestr );
-      tosquare = ::to_square( movestr:movestr );
-      /*
-      select one piece related by fromocsq->Piece[R2.'is occupied by'];
-    
-    	// now dispose of all moves for the piece we last played - not on the start square any more, so all moves are invalid
-    	select many moves related by piece->Move[R5];
-    	for each move in moves
-    	  move.dispose();
-    	end for;
-    	// Any moves that would have passed through the newly occupied square are now invalid
-    	// Consider a Bishop which may have had legal moves to 5 empty squares.
-    	// If a Knight's Pawn advances by 2, the last of those is no longer reachable.
-    	// Simply eliminate all moves that may be so compromised; they will be rebuilt as needed.
-    	select many pieces related by tosquare->Piece[R5.'is reachable by'];
-    	for each piece in pieces
-    	  piece.clean_moves();
-    	end for;
-    	
-    	// update ground truth of our board representation
-    	::record_move( from:fromocsq, to:tosquare, recorder:" BOT: " );
-    end if;
-    */
     
     select one myplayer related by self->Player[R22.'is acting for'];
     select one opponent related by myplayer->Player[R8.'opposes'];
@@ -111,18 +82,6 @@ within lichess_bot::components::Engine::games::'Active Game' is
       opponent_fromocsq = ::from_occupied( movestr:movestr );
       opponent_tosquare = ::to_square( movestr:movestr );
       ::record_move( from:opponent_fromocsq, to:opponent_tosquare, recorder:"player: " );
-      /*
-      select one moved_from related by opponent_fromocsq->Square[R1]; // this was potentially a target
-      select many moves related by moved_from->Move[R5];  // these moves are no longer interesting as targets
-      for each move in moves
-        move.dispose();
-      end for;
-      select many pieces related by opponent_tosquare->Piece[R5.'is reachable by'];
-      // any move(s) that may pass through that square are now invalid
-      for each piece in pieces
-        piece.clean_moves();
-      end for;
-      */
     end if;
     
     // aquire a list of legal moves to choose from
@@ -155,15 +114,6 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end for;
     LOG::LogInteger( message:count );
     LOG::LogInfo( message:"old moves disposed" );
-    
-    /*
-    if (played_moves.length > 0)
-      // record the last move - the opponent's - to update our board ground truth
-      // Note: this must not be done until all navigation to the played occupied square is done.
-      ::record_move( from:opponent_fromocsq, to:opponent_tosquare, recorder:"player: " );
-    end if;
-    */
-    
     
     // start: a simplistic attempt to choose a move based on high-value target.
     select any chosen_move from instances of Move where false;  // decl
@@ -213,22 +163,25 @@ within lichess_bot::components::Engine::games::'Active Game' is
     targets = potentialtargets & reachablesquares;
     
     // now, targets is the set of reachable squares occupied by opponent pieces
-    // choose the highest value target piece
-     
-    best = 0;
-    select any chosen from instances of OccupiedSquare where false;  // decl
-    for each target in targets
-      select one spec related by target->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
-      if (spec.Value > best)
-        best = spec.Value;
-        chosen = target;
-      end if;
+    
+    best  = 0;
+    select any chosen_move from instances of Move where false;  // decl
+    select many moves related by targets->Square[R1]->Move[R5];
+    for each move in moves
+      select one spec related by move->Square[R5.'can legally move to']
+                                          ->OccupiedSquare[R1]
+                                          ->Piece[R2.'is occupied by']
+                                          ->PieceSpecification[R4.'is specified by'];
+       cost = ::evaluate_response( move:move, fen:self.initial_fen, played_moves: played_moves );
+       move.Value = spec.Value - cost;  // the value of a piece less the price of response
+       if (move.Value > best)
+         best = move.Value;
+         chosen_move = move;
+       end if;
     end for;
     
-    if (not_empty chosen)  // we have a target occupied square with a high-value piece - pick any piece (for now) that can attack
-      select any chosen_move related by chosen->Square[R1]->Move[R5];
-    else
-      // if no targets, may be opening stages of game; look for a move
+    if (empty chosen_move)  
+      // if no targetted move selected, may be opening stages of game; look for a move
       if (played_moves.length < 10)  // arbitrary limit on opening move search
     	  select many openermoves from instances of Move;
     	  chosen_move = ::pick_opener_move( moves:openermoves );

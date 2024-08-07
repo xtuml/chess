@@ -4,6 +4,43 @@ within lichess_bot::components::Engine is
 
   package functions is
     @dialect("oal");
+    @function_num(5);
+    function evaluate_response(move: in instance of Move, fen: in string, played_moves: in sequence of string) return integer is
+      @noparse
+      potential_move = param.move;
+      fen = param.fen;
+      played = param.played_moves;
+      
+      l = played.length;
+      proposed[l] = potential_move.Notation;
+      i = 0;
+      while (i < l)
+        proposed[i] = played[i];
+        i = i + 1;
+      end while;
+      
+      responses = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: fen, moves: proposed));
+      
+      worst = 0;
+      l = responses.length;
+      i = 0;
+      while (i < l)
+        response = responses[i];
+        tosq = ::to_square( movestr:response );
+        piece = tosq.occupant();
+        if (not_empty piece)
+          select one spec related by piece->PieceSpecification[R4.'is specified by'];
+          if (spec.Value > worst)
+            worst = spec.Value;
+          end if;
+        end if;
+        i = i + 1;
+      end while;
+      return worst;
+      @endnoparse
+    end function;
+
+    @dialect("oal");
     @function_num(3);
     function init() is
       @noparse
