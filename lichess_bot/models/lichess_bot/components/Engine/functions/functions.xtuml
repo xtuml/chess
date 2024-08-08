@@ -12,8 +12,9 @@ within lichess_bot::components::Engine is
       fen = param.fen;
       played = param.played_moves;
       
+      LOG::LogInfo( message:"Evaluating responses to " + potential_move.Notation);
       
-      mysq = ::to_square( movestr: potential_move.Notation );
+      mysq = ::to_square( movestr: potential_move.Notation );  // where the move placed the piece
       select any piece from instances of Piece where false;  // decl
       
       l = played.length;
@@ -32,14 +33,14 @@ within lichess_bot::components::Engine is
       while (i < l)
         response = responses[i];
         tosq = ::to_square( movestr:response );
-        if (tosq == mysq)
-          LOG::LogInfo( message:"I may get taken!!  -  " + response);
-          fromocsq = ::from_occupied( movestr:response );
+        if (tosq == mysq)  // the response targets the square moved to
+          LOG::LogInfo( message:"!! I may get taken by  " + response);
+          fromocsq = ::from_occupied( movestr:potential_move.Notation );  // where the move started
           select one piece related by fromocsq->Piece[R2.'is occupied by'];
         else  
           piece = tosq.occupant();
         end if;
-        if (not_empty piece)
+        if (not_empty piece)  // the response takes a piece (cannot move to self-occupied square)
           select one spec related by piece->PieceSpecification[R4.'is specified by'];
           if (spec.Value > worst)
             worst = spec.Value;
