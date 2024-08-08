@@ -7,9 +7,14 @@ within lichess_bot::components::Engine is
     @function_num(5);
     function evaluate_response(move: in instance of Move, fen: in string, played_moves: in sequence of string) return integer is
       @noparse
+      // return the highest value which may be taken by a response to the given move
       potential_move = param.move;
       fen = param.fen;
       played = param.played_moves;
+      
+      
+      mysq = ::to_square( movestr: potential_move.Notation );
+      select any piece from instances of Piece where false;  // decl
       
       l = played.length;
       proposed[l] = potential_move.Notation;
@@ -27,7 +32,13 @@ within lichess_bot::components::Engine is
       while (i < l)
         response = responses[i];
         tosq = ::to_square( movestr:response );
-        piece = tosq.occupant();
+        if (tosq == mysq)
+          LOG::LogInfo( message:"I may get taken!!  -  " + response);
+          fromocsq = ::from_occupied( movestr:response );
+          select one piece related by fromocsq->Piece[R2.'is occupied by'];
+        else  
+          piece = tosq.occupant();
+        end if;
         if (not_empty piece)
           select one spec related by piece->PieceSpecification[R4.'is specified by'];
           if (spec.Value > worst)
