@@ -152,15 +152,19 @@ mvn dependency:get -DgroupId=io.ciera -DartifactId=runtime -Dversion=2.7.2
 7. Create folders `incoming` and `outgoing`.  This is for file-based communication
    between the Lichess API Standalone application and the running C program.
 
-8. In the same folder (`lichess_api`), run the C program by executing
+8. Copy the "lichess_bot.properties" file from
+   `chess/lichess_bot/src/main/resources/` to the `chess/lichess_api/`
+   directory.
+
+9. In the same folder (`lichess_api`), run the C program by executing
    `../lichess_bot/bin/cbot3020`.
 
-9. From BridgePoint, from the Java perspective, in the Package Explorer,
-   navigate to `src/main/java/lichess`.
+10. From BridgePoint, from the Java perspective, in the Package Explorer,
+    navigate to `src/main/java/lichess`.
 
-10. Right-click on LichessAPIStandalone.java and run as Java Application.
+11. Right-click on LichessAPIStandalone.java and run as Java Application.
 
-11. You can now challenge your bot as with Verifier and Ciera.
+12. You can now challenge your bot as with Verifier and Ciera.
 
 
 ### Bot versus Bot
