@@ -1,0 +1,160 @@
+= xtUML Chess as C
+
+xtUML Project Analysis Note
+
+== 1 Abstract
+
+This note documents a path to running an xtUML model + lichess.org
+application as C generated from MC-3020.
+
+== 2 Introduction and Background
+
+<<dr-2>> is a git repository for an xtUML application that can play chess
+through an API to <<dr-3,lichess.org>>.  The repository contains support
+of Verifier and the Ciera model compiler.
+
+It would be interesting to compare the performance of Ciera Java with
+MC-3020 C in move selection.
+
+== 3 Requirements
+
+=== 3.1 Provide Lichess API
+
+A Lichess API exists for Java and integrates with Java generated from
+Ciera.  It also works with BridgePoint Verifier which is also a Java
+application.  Either natively in C or leveraging the Lichess Java API,
+supply support to communicate with the chess interface published by
+<<dr-3, lichess.org>>.
+
+== 4 Analysis
+
+=== 4.1 Realized EEs
+
+Two external entities (EEs) have been written for the Java support of the
+Lichess API.  `PROP` and `ChessLib` provide utility routines to facilitate
+communication through the Lichess API.
+
+==== 4.1.1 `PROP`
+
+`PROP` provides a wrapper around `java.util.Properties`.  A properties
+file is used to carry user ID and authentication information.  `PROP`
+supports reading the properties file and passing a Properties object.
+Properties are a distincly Java notion.
+
+For C, a couple of ideas come to mind on how to go with this.
+
+. Read and parse the properties file in C.
+  ** This has been done before.  `Poco` and `log4cplus` support reading
+     and parsing Java-ish Properties files.
+. Switch to a different format for the project configuration values.
+  ** The first format to switch to is JSON.
+. Skip it and hand edit a file with needed data.
+
+=== 4.2 Sequence of Game
+
+. ::init()
+  .. Load configuration.  // could be hard-coded
+  .. send chess::connect(config) // can be simulated by dropping JSON message to API
+. recv chess::connected()
+  .. send chess::account() to get User ID.
+. recv chess::challenge()
+  .. send chess::acceptChallenge(challenge.id)
+. recv chess::GameStart(game_event)
+  .. create ActiveGame
+. recv chess::GameState(game_id,game_state)
+  .. take turn or wait
+  .. send chess::move(game_id,move)
+
+== 5 Work Required
+
+=== 5.1 Model, Realized Code and Model Compiler Changes
+
+. Implement the `ARCH` EE (for the openURL bridge). [green]#(**done**)#
+. Implement the `PROP` EE, perhaps switching both Java and C to using JSON.
+  ** Consider skipping and using an edited JSON file as a message.
+. Implement the `ChessLib` EE.
+  ** Consider adding a bridge that does not return an array of strings.
+. Explore the support for passing arrays of strings in MC-3020.
+  ** With TagInstanceLoading turned on, we do get transient string array
+     initializers.
+  ** MC-3020 does not support assigning an array to an array.
+     *** e.g. `legal_moves = ChessLib::legal_moves(fen:fen)`
+     *** Maybe we could add `ChessLib::legal_moves(fen:fen, legal_moves:legal_moves)`
+. Explore the support variable length arrays in MC-3020.
+  ** How can we work around this?
+     *** special EE?  [green]#(**no**)#
+     *** Use fixed length arrays with a separate length value?  [green]#(**yes**)#
+. Implement a communication channel between the Lichess component as Java
+  and the Engine component as C.  [green]#(**done**)#
+. Find a JSON parser for C (starting with the same one we started with in
+  early Munin).
+  ** Use <<dr-4, JSMN (Jasmine)>>. [green]#(**done**)#
+
+=== 5.2 File Communication
+
+* Consider POSIX threading to be more CPU friendly.
+  ** Turn on POSIX threading in `system.mark`. [green]#(**done**)#
+  ** Modify TIM_bridge.c to wake in 1 second if there are no ticking
+     timers. [green]#(**done**)#
+  ** Print from sys_user_co.c UserBackgroundCallout to prove it lives. [green]#(**done**)#
+* Periodically (once per second to start with) check for a message file. [green]#(**done**)#
+  ** message files will be alphanumerically ordered. [green]#(**done**)#
+  ** Call Engine message from background parse routines passing in native struct types. [green]#(**done**)#
+* Dump Lichess bound messages into JSON file in folder. [green]#(**done**)#
+  ** `move(game_id, move)` is the primary message. [green]#(**done**)#
+
+=== 5.3 Loading Properties
+
+* This is kinda needed but only to get past defaults.  Skip this for now.
+* send chess::account() to get User ID. (PROBLEM:  discuss)
+  ** This can be hard-coded.  It is used to distinguish a challenge that was
+     created by someone other than me.
+
+=== 5.4 ChessLib
+
+* Look for C library.  [green]#(**found one**)#
+* Should we add this to the API..  [green]#(**no**)#
+* Consider passing array attribute by reference.  [green]#(**done**)#
+
+=== 5.5 Proposed Model Changes
+
+* Use fixed length arrays, since variable length arrays are sketch in C.
+  ** Decide on length of arrays.
+     *** 1024 for 'GameState.moves'
+     *** 218 for 'legal_moves'
+* Add a 'move_count' attribute to 'ActiveGame'.
+* Eschew the `length` operator on arrays.
+* Modify `Chesslib::legalMoves( fen, legal_moves ) : integer legal_move_count`.
+* Add explicit EEs to the model only as needed and maybe delete them after
+  bridge files are coded.
+
+=== 5.6 ChessLib
+
+* Clone `ChessLib` from <<dr-5>>.
+* Build it.
+* 'Include' and link it in a makefile in the `/src` folder.
+
+=== 5.7 README
+
+* Update the README to give instructions on the using the C code generated bot.
+
+== 6 Acceptance Test
+
+. Generate code from xtuml/chess using MC-3020.
+. Compile it.
+. Run it.
+. See it play.
+
+== 7 Document References
+
+. [[dr-1]] https://support.onefact.net/issues/12845[12845 - C code generation for the chess model]
+. [[dr-2]] https://github.com/xtuml/chess[xtUML Chess Playing Robot]
+. [[dr-3]] https://lichess.org/[lichess.org]
+. [[dr-4]] https://github.com/zserge/jsmn[JSMN - Simple #include-only JSON Parser]
+. [[dr-5]] https://github.com/thearst3rd/chesslib[ChessLib Implemented in ANSI C - thearst3rd]
+
+---
+
+This work is licensed under the Creative Commons CC0 License
+
+---

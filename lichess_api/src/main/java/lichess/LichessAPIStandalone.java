@@ -34,10 +34,14 @@ public class LichessAPIStandalone {
 
 	private final Path inDir;
 	private final Path outDir;
+	private final Path processedDir;
 
-	LichessAPIStandalone(final String inDir, final String outDir, final String configFile) {
+	private int messageNum = 0;
+
+	LichessAPIStandalone(final String inDir, final String outDir, final String processedDir, final String configFile) {
 		this.inDir = Path.of(inDir);
 		this.outDir = Path.of(outDir);
+		this.processedDir = Path.of(processedDir);
 
 		// load properties
 		try {
@@ -56,6 +60,7 @@ public class LichessAPIStandalone {
 		try {
 			Files.createDirectories(this.inDir);
 			Files.createDirectories(this.outDir);
+			Files.createDirectories(this.processedDir);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -109,7 +114,7 @@ public class LichessAPIStandalone {
 					System.err.println("Failed to process file: " + command);
 					e.printStackTrace();
 				} finally {
-					Files.delete(command);
+					Files.move(command, processedDir.resolve(String.format("%03d.json", (messageNum++) % 1000)));
 				}
 			} catch (NoSuchElementException e) {
 				// normal behavior -- no command to process
@@ -210,7 +215,7 @@ public class LichessAPIStandalone {
 	}
 
 	public static void main(String[] args) {
-		LichessAPIStandalone app = new LichessAPIStandalone("incoming", "outgoing", "lichess_bot.properties");
+		LichessAPIStandalone app = new LichessAPIStandalone("incoming", "outgoing", "processed", "lichess_bot.properties");
 		app.run();
 	}
 

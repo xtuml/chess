@@ -11,10 +11,12 @@ public class ChessLib {
 
 	public static final String STARTPOS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-	public static List<String> legalMoves(String fen) {
+	public static int legalMoves(String fen, List<String> legalMoves) {
 		final var board = new Board();
 		board.loadFromFen(fen);
-		return board.legalMoves().stream().map(Move::toString).collect(Collectors.toList());
+		legalMoves.clear();
+		legalMoves.addAll(board.legalMoves().stream().map(Move::toString).collect(Collectors.toList()));
+		return legalMoves.size();
 	}
 
 	public static String sourceFile(String move) {
