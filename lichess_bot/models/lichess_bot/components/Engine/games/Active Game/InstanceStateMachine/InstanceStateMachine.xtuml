@@ -72,8 +72,8 @@ within lichess_bot::components::Engine::games::'Active Game' is
     select one myplayer related by self->Player[R22.'is acting for'];
     select one opponent related by myplayer->Player[R8.'opposes'];
     
-    select any opponent_fromocsq from instances of OccupiedSquare where false;  // decl
-    select any opponent_tosquare from instances of Square where false;  // decl
+    //select any opponent_fromocsq from instances of OccupiedSquare where false;  // decl
+    //select any opponent_tosquare from instances of Square where false;  // decl
     
     i = played_moves.length;
     if (i > 0)
@@ -84,6 +84,9 @@ within lichess_bot::components::Engine::games::'Active Game' is
       ::record_move( from:opponent_fromocsq, to:opponent_tosquare, recorder:"player: " );
     end if;
     
+    ::reconcile_moves( fen:self.initial_fen, moves:played_moves, player:myplayer );
+    
+    /*
     // aquire a list of legal moves to choose from
     legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: played_moves));
     nlegals = legal_moves.length;
@@ -151,10 +154,14 @@ within lichess_bot::components::Engine::games::'Active Game' is
     if (cardinality moves != nlegals)
       LOG::LogInfo(message: "Oops - non matched moves");
     end if;
+    */
     
     // now we have bona-fide set of legal Move instances
     // let's pick the 'interesting' ones - those that have a target of value
     
+    target_moves = ::find_target_moves( fen:self.initial_fen, moves: played_moves, player: myplayer );
+    
+    /*
     select many potentialtargets related by opponent->Piece[R7.'owns']
                                                     ->OccupiedSquare[R2.'occupies'];
     select many reachablesquares related by myplayer->Move[R6.'considers']
@@ -178,6 +185,15 @@ within lichess_bot::components::Engine::games::'Active Game' is
          best = move.Value;
          chosen_move = move;
        end if;
+    end for;
+    */
+    best = 0;
+    select any chosen_move from instances of Move where false;  // decl
+    for each move in target_moves
+      if (move.Value > best)
+        best = move.Value;
+        chosen_move = move;
+      end if;
     end for;
     
     if (empty chosen_move)  

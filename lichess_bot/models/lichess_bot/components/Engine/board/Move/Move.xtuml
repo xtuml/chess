@@ -16,7 +16,7 @@ within lichess_bot::components::Engine::board is
     operation dispose() is
       @noparse
       // dispose of this move
-        LOG::LogInfo( message:"Disposing of Move: " + self.Notation );
+        //LOG::LogInfo( message:"Disposing of Move: " + self.Notation );
         select one player related by self->Player[R6.'is considered by'];
         if (empty player)
           LOG::LogFailure( message:"Oops - problem in Move.dispose()" );
