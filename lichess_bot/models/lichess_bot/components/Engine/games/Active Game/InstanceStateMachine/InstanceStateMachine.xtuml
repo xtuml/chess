@@ -84,109 +84,14 @@ within lichess_bot::components::Engine::games::'Active Game' is
       ::record_move( from:opponent_fromocsq, to:opponent_tosquare, recorder:"player: " );
     end if;
     
+    // ensure that Move instances match allowed moves
     ::reconcile_moves( fen:self.initial_fen, moves:played_moves, player:myplayer );
-    
-    /*
-    // aquire a list of legal moves to choose from
-    legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: self.initial_fen, moves: played_moves));
-    nlegals = legal_moves.length;
-    
-    // clean any move instances that are now no longer legal
-    // (consider, for instance, check may vastly reduce legal moves)
-    count = 0;
-    select many potentialmoves related by myplayer->Move[R6.'considers'];
-    for each potentialmove in potentialmoves
-      select one start related by potentialmove->Piece[R5.'is reachable by']
-                                                ->OccupiedSquare[R2.'occupies']->Square[R1];
-      select one finish related by potentialmove->Square[R5.'can legally move to'];
-      movestr = ::movestr( from:start, to:finish );
-      i = 0;
-      matched = false;
-      while (i < nlegals)  // for each legal move we could play...
-        if (movestr == legal_moves[i])
-          matched = true;
-          break;
-        end if;
-        i = i + 1;
-      end while;
-      if (not matched)
-        count = count + 1;
-        LOG::LogInfo(message: "Disposing non-legal move: " + movestr);
-        potentialmove.dispose();
-      end if;
-    end for;
-    LOG::LogInteger( message:count );
-    LOG::LogInfo( message:"old moves disposed" );
-    
-    // start: a simplistic attempt to choose a move based on high-value target.
-    select any chosen_move from instances of Move where false;  // decl
-    
-    // ensure that a move instance exists for each legal move; create any needed new ones
-    count = 0;
-    i = 0;
-    while (i < nlegals)  // for each legal move we could play...
-      movestr = legal_moves[i];
-      fromocsq = ::from_occupied( movestr:movestr );
-      tosq = ::to_square( movestr:movestr );
-      select one piece related by fromocsq->Piece[R2.'is occupied by'];
-      select many dests related by piece->Square[R5.'can legally move to'];
-      found = false;
-      for each dest in dests
-        if (dest == tosq)
-          found = true;
-          break;
-        end if;
-      end for;
-      if (not found)
-        create object instance m of Move;
-        m.Notation = movestr;  // for debug
-        relate piece to tosq across R5 using m;
-        relate m to myplayer across R6.'is considered by';
-        count = count + 1;
-      end if; 
-      i = i + 1;
-    end while;
-    LOG::LogInteger( message:count );
-    LOG::LogInfo( message:"new moves added" );
-    
-    // sanity check
-    select many moves related by myplayer->Move[R6.'considers'];
-    if (cardinality moves != nlegals)
-      LOG::LogInfo(message: "Oops - non matched moves");
-    end if;
-    */
     
     // now we have bona-fide set of legal Move instances
     // let's pick the 'interesting' ones - those that have a target of value
     
     target_moves = ::find_target_moves( fen:self.initial_fen, moves: played_moves, player: myplayer );
     
-    /*
-    select many potentialtargets related by opponent->Piece[R7.'owns']
-                                                    ->OccupiedSquare[R2.'occupies'];
-    select many reachablesquares related by myplayer->Move[R6.'considers']
-                                                    ->Square[R5.'can legally move to']
-                                                    ->OccupiedSquare[R1];
-    targets = potentialtargets & reachablesquares;
-    
-    // now, targets is the set of reachable squares occupied by opponent pieces
-    
-    best  = 0;
-    select any chosen_move from instances of Move where false;  // decl
-    select many moves related by targets->Square[R1]->Move[R5];
-    for each move in moves
-      select one spec related by move->Square[R5.'can legally move to']
-                                          ->OccupiedSquare[R1]
-                                          ->Piece[R2.'is occupied by']
-                                          ->PieceSpecification[R4.'is specified by'];
-       cost = ::evaluate_response( move:move, fen:self.initial_fen, played_moves: played_moves );
-       move.Value = spec.Value - cost;  // the value of a piece less the price of response
-       if (move.Value > best)
-         best = move.Value;
-         chosen_move = move;
-       end if;
-    end for;
-    */
     best = 0;
     select any chosen_move from instances of Move where false;  // decl
     for each move in target_moves
@@ -201,10 +106,26 @@ within lichess_bot::components::Engine::games::'Active Game' is
       if (played_moves.length < 10)  // arbitrary limit on opening move search
     	  select many openermoves from instances of Move;
     	  chosen_move = ::pick_opener_move( moves:openermoves );
+        LOG::LogInfo(message: "BOT picked opening move: " + chosen_move.Notation); 
       end if;
-      if (empty chosen_move)
-        select any chosen_move from instances of Move;
+    end if;
+    
+    // Hmmm.. no clear choice; time for some heuristic...
+    if (empty chosen_move)
+      if (not_empty target_moves)
+    		for each move in target_moves
+    		  if (move.Value > -2)  // in desperation, allow for minor loss
+    		    chosen_move = move;
+            LOG::LogInfo(message: "BOT picked sacrifice move: " + chosen_move.Notation);
+    		    break;
+    		  end if;
+    		end for;
       end if;
+    end if;
+    
+    if (empty chosen_move)
+      select any chosen_move from instances of Move;
+      LOG::LogInfo(message: "BOT picked random move: " + chosen_move.Notation); // last resort!
     end if;
     
     select one piece related by chosen_move->Piece[R5.'is reachable by'];
@@ -213,7 +134,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
                                             ->OccupiedSquare[R2.'occupies']->Square[R1];
     // play the move - in lichess notation
     ourmove = ::movestr( from:fromsq, to:tosq );
-    LOG::LogInfo(message: "BOT selected: " + ourmove); 
+    //LOG::LogInfo(message: "BOT selected: " + ourmove); 
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
     // zero-timer prevents event prioritization by event-to-self acceleration.
     t = TIM::timer_start(event_inst:e, microseconds: 0);
@@ -225,7 +146,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     movestr = param.move;
     
     // play the move
-    LOG::LogInfo( message:"BOT asking to play move: " + movestr );
+    //LOG::LogInfo( message:"BOT asking to play move: " + movestr );
     success = chess::move(game_id: self.id, move: movestr);
     if success then
       fromocsq = ::from_occupied( movestr:movestr );
