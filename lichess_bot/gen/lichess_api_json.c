@@ -36,42 +36,42 @@ static int dump(const char *js, jsmntok_t *t, size_t count, int indent) {
     return 0;
   }
   if (t->type == JSMN_PRIMITIVE) {
-    printf("%.*s", t->end - t->start, js + t->start);
+    debug_fprintf("%.*s", t->end - t->start, js + t->start);
     return 1;
   } else if (t->type == JSMN_STRING) {
-    printf("\"%.*s\"", t->end - t->start, js + t->start);
+    debug_fprintf("\"%.*s\"", t->end - t->start, js + t->start);
     return 1;
   } else if (t->type == JSMN_OBJECT) {
-    printf("{\n");
+    debug_fprintf("{\n");
     j = 0;
     for (i = 0; i < t->size; i++) {
       for (k = 0; k < indent; k++) {
-        printf("  ");
+        debug_fprintf("  ");
       }
       key = t + 1 + j;
       j += dump(js, key, count - j, indent + 1);
       if (key->size > 0) {
-        printf(": ");
+        debug_fprintf(": ");
         j += dump(js, t + 1 + j, count - j, indent + 1);
       }
       if (i < (t->size-1)) {
-        printf(",\n");
+        debug_fprintf(",\n");
       }
     }
-    printf("}\n");
+    debug_fprintf("}\n");
     return j + 1;
   } else if (t->type == JSMN_ARRAY) {
     j = 0;
-    printf("[\n");
+    debug_fprintf("[\n");
     for (i = 0; i < t->size; i++) {
       for (k = 0; k < indent - 1; k++) {
-        printf("  ");
+        debug_fprintf("  ");
       }
-      printf("   - ");
+      debug_fprintf("   - ");
       j += dump(js, t + 1 + j, count - j, indent + 1);
-      printf("\n");
+      debug_fprintf("\n");
     }
-    printf("]\n");
+    debug_fprintf("]\n");
     return j + 1;
   }
   return 0;
@@ -185,7 +185,7 @@ lichess_bot_GameSource_t encode_GameSource( char * s )
   } else if ( 0 == Escher_strcmp( s, "SWISS" ) ) {
     return lichess_bot_GameSource_SWISS_e;
   } else {
-    fprintf(stderr, "Error:  unknown GameSource:  %s\n", s );
+    debug_fprintf(stderr, "Error:  unknown GameSource:  %s\n", s );
   }
   return lichess_bot_GameSource__UNINITIALIZED__e;
 }
@@ -201,7 +201,7 @@ lichess_bot_Color_t encode_Color( char * s )
   } else if ( 0 == Escher_strcmp( s, "RANDOM" ) ) {
     return lichess_bot_Color_RANDOM_e;
   } else {
-    fprintf(stderr, "Error:  unknown Color:  %s\n", s );
+    debug_fprintf(stderr, "Error:  unknown Color:  %s\n", s );
   }
   return lichess_bot_Color__UNINITIALIZED__e;
 }
@@ -223,7 +223,7 @@ lichess_bot_GameSpeed_t encode_GameSpeed( char * s )
   } else if ( 0 == Escher_strcmp( s, "CORRESPONDENCE" ) ) {
     return lichess_bot_GameSpeed_CORRESPONDENCE_e;
   } else {
-    fprintf(stderr, "Error:  unknown GameSpeed:  %s\n", s );
+    debug_fprintf(stderr, "Error:  unknown GameSpeed:  %s\n", s );
   }
   return lichess_bot_GameSpeed__UNINITIALIZED__e;
 }
@@ -255,7 +255,7 @@ lichess_bot_Variant_t encode_Variant( char * s )
   } else if ( 0 == Escher_strcmp( s, "FROMPOSITION" ) ) {
     return lichess_bot_Variant_FROMPOSITION_e;
   } else {
-    fprintf(stderr, "Error:  unknown Variant:  %s\n", s );
+    debug_fprintf(stderr, "Error:  unknown Variant:  %s\n", s );
   }
   return lichess_bot_Variant__UNINITIALIZED__e;
 }
@@ -289,7 +289,7 @@ lichess_bot_UserTitle_t encode_UserTitle( char * s )
   } else if ( 0 == Escher_strcmp( s, "BOT" ) ) {
     return lichess_bot_UserTitle_BOT_e;
   } else {
-    fprintf(stderr, "Error:  unknown UserTitle:  %s\n", s );
+    debug_fprintf(stderr, "Error:  unknown UserTitle:  %s\n", s );
   }
   return lichess_bot_UserTitle__UNINITIALIZED__e;
 }
@@ -309,7 +309,7 @@ lichess_bot_ChallengeStatus_t encode_ChallengeStatus( char * s )
   } else if ( 0 == Escher_strcmp( s, "ACCEPTED" ) ) {
     return lichess_bot_ChallengeStatus_ACCEPTED_e;
   } else {
-    fprintf(stderr, "Error:  unknown ChallengeStatus:  %s\n", s );
+    debug_fprintf(stderr, "Error:  unknown ChallengeStatus:  %s\n", s );
   }
   return lichess_bot_ChallengeStatus__UNINITIALIZED__e;
 }
@@ -345,7 +345,7 @@ lichess_bot_GameStatus_t encode_GameStatus( char * s )
   } else if ( 0 == Escher_strcmp( s, "VARIANTEND" ) ) {
     return lichess_bot_GameStatus_VARIANTEND_e;
   } else {
-    fprintf(stderr, "Error:  unknown GameStatus:  %s\n", s );
+    debug_fprintf(stderr, "Error:  unknown GameStatus:  %s\n", s );
   }
   return lichess_bot_GameStatus__UNINITIALIZED__e;
 }
@@ -388,7 +388,7 @@ void api_connect( const int starting_token_offset, const int token_count )
     } else if ( json_detect_key("enable_debug_logging") ) {
       json_get_boolean( enable_debug_logging );
     } else {
-      printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
+      debug_fprintf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
     i++;
   }
@@ -504,7 +504,7 @@ void api_challenge( const int starting_token_offset, const int token_count )
     } else if ( json_detect_key("declineReasonKey") ) {
       json_get_string( challenge.declineReasonKey );
     } else {
-      printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
+      debug_fprintf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
     i++;
   }
@@ -545,7 +545,7 @@ void api_gameStart( const int starting_token_offset, const int token_count )
       json_get_string( s );
       game_event.winner = encode_Color( s );
     } else {
-      printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
+      debug_fprintf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
     i++;
   }
@@ -652,7 +652,7 @@ void api_gameFull( const int starting_token_offset, const int token_count )
         }
         free(tokens);
         game.gameState.move_count = j; // We maintain move_count in game_state.
-        fprintf(stderr,"decoding GameFull, move_count is %d\n", game.gameState.move_count );
+        debug_fprintf(stderr,"decoding GameFull, move_count is %d\n", game.gameState.move_count );
       }
     } else if ( json_detect_key("wtime") ) {
       json_get_number( game.gameState.wtime );
@@ -678,7 +678,7 @@ void api_gameFull( const int starting_token_offset, const int token_count )
     } else if ( json_detect_key("tournamentId") ) {
       json_get_string( game.tournamentId );
     } else {
-      printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
+      debug_fprintf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
     i++;
   }
@@ -713,7 +713,7 @@ void api_gameState( const int starting_token_offset, const int token_count )
         }
         free(tokens);
         game_state.move_count = j; // We maintain move_count in game_state.
-        fprintf(stderr,"decoding GameState, move_count is %d\n", game_state.move_count );
+        debug_fprintf(stderr,"decoding GameState, move_count is %d\n", game_state.move_count );
       }
     } else if ( json_detect_key("wtime") ) {
       json_get_number( game_state.wtime );
@@ -740,7 +740,7 @@ void api_gameState( const int starting_token_offset, const int token_count )
     } else if ( json_detect_key("btakeback") ) {
       json_get_boolean( game_state.btakeback );
     } else {
-      printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
+      debug_fprintf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
     i++;
   }
@@ -781,7 +781,7 @@ void api_gameFinish( const int starting_token_offset, const int token_count )
       json_get_string( s );
       game_event.winner = encode_Color( s );
     } else {
-      printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
+      debug_fprintf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
     i++;
   }
@@ -799,7 +799,7 @@ int lichess_api_json( char * filename )
   }
 
   if (r < 0) {
-    printf("Failed to parse JSON: %d\n", r);
+    debug_fprintf("Failed to parse JSON: %d\n", r);
     return 1;
   }
 
@@ -808,7 +808,7 @@ int lichess_api_json( char * filename )
 
   /* Assume the top-level element is an object */
   if (r < 1 || t[0].type != JSMN_OBJECT) {
-    printf("Object expected\n");
+    debug_fprintf("Object expected\n");
     return 1;
   }
 
@@ -839,7 +839,7 @@ int lichess_api_json( char * filename )
       }
       break;
     } else {
-      printf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
+      debug_fprintf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
     }
   }
   return EXIT_SUCCESS;

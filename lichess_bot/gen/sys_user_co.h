@@ -12,6 +12,14 @@
 extern	"C"	{
 #endif
 
+
+// Debug fprintf
+#ifdef DEBUG
+#define debug_fprintf fprintf
+#else
+#define debug_fprintf(...) ((void)0)
+#endif
+
 #define SYS_USER_CO_PRINTF_ON 1
 
 /*
