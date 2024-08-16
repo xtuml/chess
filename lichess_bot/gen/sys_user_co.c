@@ -118,7 +118,7 @@ extern void lichess_api_json( char * );
 void
 UserBackgroundProcessingCalloutf( void )
 {
-  char * filename, filerename[ESCHER_SYS_MAX_STRING_LEN];
+  char filename[ESCHER_SYS_MAX_STRING_LEN], filerename[ESCHER_SYS_MAX_STRING_LEN];
   DIR *dp;
   struct dirent *ep, **namelist;
   int i, n;
@@ -136,7 +136,7 @@ UserBackgroundProcessingCalloutf( void )
   } else {
     if ( n > 0 ) {
       debug_fprintf("%s\n", namelist[0]->d_name);
-      filename = Escher_stradd( "./outgoing/", namelist[0]->d_name );
+      Escher_strcpy(filename, Escher_stradd( "./outgoing/", namelist[0]->d_name ));
       replace(filerename, filename, "json", "DONE");
       lichess_api_json( filename );
       if ( 0 != rename( filename, filerename ) ) {
