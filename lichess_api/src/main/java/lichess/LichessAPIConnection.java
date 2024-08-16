@@ -81,7 +81,9 @@ public class LichessAPIConnection implements LichessAPIProvider {
 
 	public void initialize() {
 		// check if the account is a bot and upgrade if necessary
-		upgradeAccount();
+		if (user == null) {
+			upgradeAccount();
+		}
 
 		// wait for incoming events
 		handleBotEvents();
@@ -143,13 +145,13 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	@Override
-	public boolean createChallenge(String user, boolean rated, int clock_limit, int clock_increment, Color color,
+	public boolean createChallenge(String user, boolean rated, int clockLimit, int clockIncrement, Color color,
 			Variant variant, String fen) {
 		final var params = new HashMap<String, String>();
 		params.put("rated", Boolean.toString(rated));
-		if (clock_limit >= 0 && clock_increment >= 0) {
-			params.put("clock.limit", Integer.toString(clock_limit));
-			params.put("clock.increment", Integer.toString(clock_increment));
+		if (clockLimit >= 0 && clockIncrement >= 0) {
+			params.put("clock.limit", Integer.toString(clockLimit));
+			params.put("clock.increment", Integer.toString(clockIncrement));
 		}
 		params.put("color", color.name().toLowerCase());
 		params.put("variant", variant.getValue());
@@ -288,7 +290,6 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
 			}
 		});
-		out.printf("Game over: %s\n", gameId);
 	}
 
 	private boolean postRequest(String url) {

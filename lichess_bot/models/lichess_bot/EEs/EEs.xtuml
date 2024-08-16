@@ -19,7 +19,7 @@ within lichess_bot is
       //! Takes as input a FEN string representing the current position
       //! Returns a list of legal moves in the position
       @dialect("oal");
-      bridge legalMoves(fen: in string) return sequence of string;
+      bridge legalMoves(fen: in string, legal_moves: out sequence (218) of string) return integer;
 
       //! Takes as input a FEN string and a list of moves represenging the
       //! current position. The position is determined by applying the
@@ -28,7 +28,7 @@ within lichess_bot is
       //! starting position. Returns a FEN string representing the
       //! position
       @dialect("oal");
-      bridge movesToFEN(initialFen: in string, moves: in sequence of string) return string;
+      bridge movesToFEN(initialFen: in string, moves: in sequence (1024) of string) return string;
 
       //! Takes as input a string representing a move in LAN and returns
       //! the source file as a string /[a-h]/

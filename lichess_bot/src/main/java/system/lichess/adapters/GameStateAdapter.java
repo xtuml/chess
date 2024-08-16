@@ -9,6 +9,7 @@ public class GameStateAdapter extends GameState {
 	public GameStateAdapter(lichess.types.GameState o) {
 		if (o != null) {
 			setMoves(o.getMoves().toArray(new String[0]));
+			setMove_count(o.getMove_count());
 			setWtime(o.getWtime());
 			setBtime(o.getBtime());
 			setWinc(o.getWinc());

@@ -130,6 +130,42 @@ mvn dependency:get -DgroupId=io.ciera -DartifactId=runtime -Dversion=2.7.2
 
 6. Click "Run" to launch the application.
 
+### With MC-3020 C
+
+1. Clone this git repository:  [ChessLib Implemented in ANSI C - thearst3rd](https://github.com/thearst3rd/chesslib),
+   which is a C implementation of 'ChessLib' used to supply legal moves.
+   It is important that you clone this repo as a peer to your chess repo
+   (having the same parent directory in the filesystem).  The makefile
+   will assume that `chesslib` is "right next to" `chess`.
+
+2. Follow the instructions to build the `chesslib` library (basically running `make`).
+
+3. In BridgePoint, in the 'xtUML Modeling' perspective, select the 'lichess_bot'
+   project and 'Build Project'.  This will generate C code from your bot model.
+
+4. From a command line, navigate to `chess/lichess_bot/src`.
+
+5. Run `make` to compile your generated C code and link in the chesslib library.
+
+6. From a command line, navigate to `chess/lichess_api`.
+
+7. Create folders `incoming` and `outgoing`.  This is for file-based communication
+   between the Lichess API Standalone application and the running C program.
+
+8. Copy the "lichess_bot.properties" file from
+   `chess/lichess_bot/src/main/resources/` to the `chess/lichess_api/`
+   directory.
+
+9. In the same folder (`lichess_api`), run the C program by executing
+   `../lichess_bot/bin/cbot3020`.
+
+10. From BridgePoint, from the Java perspective, in the Package Explorer,
+    navigate to `src/main/java/lichess`.
+
+11. Right-click on LichessAPIStandalone.java and run as Java Application.
+
+12. You can now challenge your bot as with Verifier and Ciera.
+
 
 ### Bot versus Bot
 
