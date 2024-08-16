@@ -56,13 +56,11 @@ Lichess_API_acceptChallenge( c_t p_challenge_id[ESCHER_SYS_MAX_STRING_LEN] )
  * Provided Port:  API
  * To Provider Message:  account
  */
+lichess_bot_sdt_User _bot_user;
 lichess_bot_sdt_User
 Lichess_API_account()
 {
-  lichess_bot_sdt_User r;
-  Escher_strcpy( r.id, "cortlandstarrett_bot" );
-  Escher_strcpy( r.username, "cortlandstarrett_bot" );
-  return r;
+  return _bot_user;
 }
 
 /*

@@ -81,7 +81,9 @@ public class LichessAPIConnection implements LichessAPIProvider {
 
 	public void initialize() {
 		// check if the account is a bot and upgrade if necessary
-		upgradeAccount();
+		if (user == null) {
+			upgradeAccount();
+		}
 
 		// wait for incoming events
 		handleBotEvents();

@@ -788,6 +788,38 @@ void api_gameFinish( const int starting_token_offset, const int token_count )
   Engine_chess_gameFinish( game_event );
 }
 
+extern lichess_bot_sdt_User _bot_user;
+void api_account( const int, const int );
+void api_account( const int starting_token_offset, const int token_count )
+{
+  int i, len;
+  char s[1024];
+  char object_scope[1024] = {0};
+
+  for (i = starting_token_offset; i < token_count; i++) {
+    len = t[i+1].end - t[i+1].start;
+    if ( json_detect_key("user") ) {
+      strcpy( object_scope, "user" );
+    } else if ( json_detect_key("id") ) {
+      if (0 == strcmp(object_scope, "user")) {
+        json_get_string( _bot_user.id );
+      }
+    } else if ( json_detect_key("username") ) {
+      if (0 == strcmp(object_scope, "user")) {
+        json_get_string( _bot_user.username );
+      }
+    } else if ( json_detect_key("title") ) {
+      if (0 == strcmp(object_scope, "user")) {
+        json_get_string( s );
+        _bot_user.title = encode_UserTitle( s );
+      }
+    } else {
+      debug_fprintf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
+    }
+    i++;
+  }
+}
+
 int lichess_api_json( char * filename )
 {
   int i, r, bytes, len;
@@ -835,6 +867,8 @@ int lichess_api_json( char * filename )
         api_gameState( i, r );
       } else if (0 == strcmp(command, "gameFinish")) {
         api_gameFinish( i, r );
+      } else if (0 == strcmp(command, "account")) {
+        api_account( i, r );
       } else {
       }
       break;

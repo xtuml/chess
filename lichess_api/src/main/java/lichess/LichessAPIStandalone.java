@@ -31,6 +31,7 @@ public class LichessAPIStandalone {
 	private final Properties props = new Properties();
 	private final Gson gson;
 	private final LichessAPIConnection lichess;
+	private final Subscriber sub;
 
 	private final Path inDir;
 	private final Path outDir;
@@ -67,10 +68,14 @@ public class LichessAPIStandalone {
 		}
 
 		// create API connection
-		lichess = new LichessAPIConnection(System.out, System.err, new Subscriber(), props);
+		sub = new Subscriber();
+		lichess = new LichessAPIConnection(System.out, System.err, sub, props);
 	}
 
 	void run() {
+		// send account information
+		sub.sendMessage("account", Map.of("user", lichess.account()));
+
 		// initialize the Lichess connection
 		lichess.initialize();
 
@@ -149,7 +154,7 @@ public class LichessAPIStandalone {
 
 		private int messageNum = 0;
 
-		private void sendMessage(String name, Map<String, Object> args) {
+		synchronized void sendMessage(String name, Map<String, Object> args) {
 			try {
 				final JsonObject msg = new JsonObject();
 				msg.addProperty("name", name);
