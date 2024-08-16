@@ -14,50 +14,74 @@ within lichess_bot::components::Engine is
       
       LOG::LogInfo( message:"Evaluating responses to " + potential_move.Notation);
       
-      mysq = ::to_square( movestr: potential_move.Notation );  // where the move placed the piece
-      select any piece from instances of Piece where false;  // decl
+      select one moved_piece related by potential_move->Piece[R5.'is reachable by']; // the hypothesized moved piece
+      select one tosq related by potential_move->Square[R5.'can legally move to'];
+      //select one fromocsq related by moved_piece->OccupiedSquare[R2.'occupies'];
+      select one movedto related by tosq->OccupiedSquare[R1];  // the move supposedly targetted an opponent piece
+      //select any taken from instances of Piece where false;  // decl
+      /*
+      if (not_empty movedto)  // just playing safe...
+        // temporarily adjust board ground truth
+        fromsq = ::from_occupied( movestr: potential_move.Notation );
+        unrelate moved_piece from fromsq across R2.'occupies';
+        select one taken related by movedto->Piece[R2.'is occupied by'];
+        unrelate taken from movedto across R2.'occupies';
+        relate moved_piece to movedto across R2.'occupies';
+      end if;
+      */
       
+      select one player related by potential_move->Player[R6.'is considered by'];
+      select one opponent related by player->Player[R8.'opposes'];
+      
+      // set up a phoney move sequence as if this potential move were played
       l = played.length;
-      proposed[l] = potential_move.Notation;
+      as_if_played[l] = potential_move.Notation;
       i = 0;
       while (i < l)
-        proposed[i] = played[i];
+        as_if_played[i] = played[i];
         i = i + 1;
       end while;
       
-      responses = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: fen, moves: proposed));
+      // ensure possible opponent moves are represented
+      ::reconcile_moves( fen:fen, moves:as_if_played, player:opponent );
       
+      // look for vulnerabilities
+      vulnerables = ::find_targets( player:opponent );
+      select many vulnerables related by opponent->Move[R6.'considers']
+                                                  ->Square[R5.'can legally move to']
+                                                  ->OccupiedSquare[R1];
       worst = 0;
-      l = responses.length;
-      i = 0;
-      while (i < l)
-        response = responses[i];
-        tosq = ::to_square( movestr:response );
-        if (tosq == mysq)  // the response targets the square moved to
-          LOG::LogInfo( message:"!! I may get taken by  " + response);
-          fromocsq = ::from_occupied( movestr:potential_move.Notation );  // where the move started
-          select one piece related by fromocsq->Piece[R2.'is occupied by'];
-        else  
-          piece = tosq.occupant();
+      select any piece from instances of Piece where false;
+      for each ocsq in vulnerables
+        if (ocsq == movedto)
+          piece = moved_piece;
+        else
+          select one piece related by ocsq->Piece[R2.'is occupied by'];
         end if;
-        if (not_empty piece)  // the response takes a piece (cannot move to self-occupied square)
-          select one spec related by piece->PieceSpecification[R4.'is specified by'];
-          if (spec.Value > worst)
-            worst = spec.Value;
-          end if;
+        select one spec related by piece->PieceSpecification[R4.'is specified by'];
+        cost = spec.Value;  
+        if (cost > worst)
+          worst = cost;
         end if;
-        i = i + 1;
-      end while;
+      end for;
+      
+      /*
+      if (not_empty movedto )
+        // restore fudged ground truth
+        unrelate moved_piece from movedto across R2.'occupies';
+        relate moved_piece to fromocsq across R2.'occupies';
+        relate taken to movedto across R2.'occupies';
+      end if;
+      */
+      
       return worst;
       @endnoparse
     end function;
 
     @dialect("oal");
     @function_num(7);
-    function find_target_moves(fen: in string, moves: in sequence of string, player: in instance of Player) return set of instance of Move is
+    function find_targets(player: in instance of Player) return set of instance of OccupiedSquare is
       @noparse
-      fen = param.fen;
-      played_moves = param.moves;
       player = param.player;
       
       select one opponent related by player->Player[R8.'opposes'];
@@ -69,18 +93,7 @@ within lichess_bot::components::Engine is
                                                       ->OccupiedSquare[R1];
       targets = potentialtargets & reachablesquares;
       
-      // now, targets is the set of reachable squares occupied by opponent pieces
-      select any chosen_move from instances of Move where false;  // decl
-      select many tgtmoves related by targets->Square[R1]->Move[R5];
-      for each tgtmove in tgtmoves
-        select one spec related by tgtmove->Square[R5.'can legally move to']
-                                          ->OccupiedSquare[R1]
-                                          ->Piece[R2.'is occupied by']
-                                          ->PieceSpecification[R4.'is specified by'];
-         cost = ::evaluate_response( move:tgtmove, fen:fen, played_moves: played_moves );
-         tgtmove.Value = spec.Value - cost;  // the value of a piece less the price of response
-      end for;
-      return tgtmoves;
+      return targets;
       @endnoparse
     end function;
 

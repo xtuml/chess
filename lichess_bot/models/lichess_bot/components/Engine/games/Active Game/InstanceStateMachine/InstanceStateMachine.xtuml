@@ -72,9 +72,6 @@ within lichess_bot::components::Engine::games::'Active Game' is
     select one myplayer related by self->Player[R22.'is acting for'];
     select one opponent related by myplayer->Player[R8.'opposes'];
     
-    //select any opponent_fromocsq from instances of OccupiedSquare where false;  // decl
-    //select any opponent_tosquare from instances of Square where false;  // decl
-    
     i = played_moves.length;
     if (i > 0)
       // now update based on opponent's last move
@@ -87,24 +84,31 @@ within lichess_bot::components::Engine::games::'Active Game' is
     // ensure that Move instances match allowed moves
     ::reconcile_moves( fen:self.initial_fen, moves:played_moves, player:myplayer );
     
-    // now we have bona-fide set of legal Move instances
-    // let's pick the 'interesting' ones - those that have a target of value
+    // now we have bona-fide set of legal Move instances find those that end on opponent squares
+    //targets = ::find_targets( player:myplayer );
+    select many target_moves related by myplayer->Move[R6.'considers']
+                                                ->Square[R5.'can legally move to']
+                                                ->OccupiedSquare[R1]->Square[R1]->Move[R5];
     
-    target_moves = ::find_target_moves( fen:self.initial_fen, moves: played_moves, player: myplayer );
+    for each tgtmove in target_moves
+      cost = ::evaluate_response( move:tgtmove, fen:self.initial_fen, played_moves: played_moves );
+      select one spec related by tgtmove->Square[R5.'can legally move to']->OccupiedSquare[R1]->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
+      tgtmove.Value = spec.Value-cost;
+    end for;
     
     best = 0;
     select any chosen_move from instances of Move where false;  // decl
-    for each move in target_moves
-      if (move.Value > best)
-        best = move.Value;
-        chosen_move = move;
+    for each tgtmove in target_moves
+      if (tgtmove.Value > best)
+        best = tgtmove.Value;
+        chosen_move = tgtmove;
       end if;
     end for;
     
     if (empty chosen_move)  
       // if no targetted move selected, may be opening stages of game; look for a move
       if (played_moves.length < 10)  // arbitrary limit on opening move search
-    	  select many openermoves from instances of Move;
+    	  select many openermoves related by myplayer->Move[R6.'considers'];
     	  chosen_move = ::pick_opener_move( moves:openermoves );
         LOG::LogInfo(message: "BOT picked opening move: " + chosen_move.Notation); 
       end if;
