@@ -41,11 +41,11 @@ Lichess_API_acceptChallenge( c_t p_challenge_id[ESCHER_SYS_MAX_STRING_LEN] )
   FILE * f = fopen( "incoming/acceptChallenge.json", "w" );
 
   if ( f ) {
-    fprintf (stderr, "%s%s%s\n", front, p_challenge_id, back);
+    debug_fprintf (stderr, "%s%s%s\n", front, p_challenge_id, back);
     fprintf (f, "%s%s%s\n", front, p_challenge_id, back);
     fclose (f);
   } else {
-    fprintf (stderr, "error opening incoming/acceptChallenge.json\n");
+    debug_fprintf (stderr, "error opening incoming/acceptChallenge.json\n");
   }
 
   return true;
@@ -56,13 +56,11 @@ Lichess_API_acceptChallenge( c_t p_challenge_id[ESCHER_SYS_MAX_STRING_LEN] )
  * Provided Port:  API
  * To Provider Message:  account
  */
+lichess_bot_sdt_User _bot_user;
 lichess_bot_sdt_User
 Lichess_API_account()
 {
-  lichess_bot_sdt_User r;
-  Escher_strcpy( r.id, "cortlandstarrett_bot" );
-  Escher_strcpy( r.username, "cortlandstarrett_bot" );
-  return r;
+  return _bot_user;
 }
 
 /*
@@ -243,11 +241,11 @@ Lichess_API_move( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN], c_t p_move[ESCHER_SY
   FILE * f = fopen( "incoming/move.json", "w" );
 
   if ( f ) {
-    fprintf (stderr, "%s%s%s%s%s\n", front, p_game_id, middle, p_move, back);
+    debug_fprintf (stderr, "%s%s%s%s%s\n", front, p_game_id, middle, p_move, back);
     fprintf (f, "%s%s%s%s%s\n", front, p_game_id, middle, p_move, back);
     fclose (f);
   } else {
-    fprintf (stderr, "error opening incoming/move.json\n");
+    debug_fprintf (stderr, "error opening incoming/move.json\n");
   }
   return true;
 }

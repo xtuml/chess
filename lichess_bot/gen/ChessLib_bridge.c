@@ -7,6 +7,7 @@
  *--------------------------------------------------------------------------*/
 
 #include "lichess_bot_sys_types.h"
+#include "sys_user_co.h"
 #include "ARCH_bridge.h"
 #include "ChessLib_bridge.h"
 #include "LOG_bridge.h"
@@ -53,7 +54,7 @@ i_t
 ChessLib_legalMoves( c_t p_fen[ESCHER_SYS_MAX_STRING_LEN], c_t p_legal_moves[218][ESCHER_SYS_MAX_STRING_LEN] )
 {
   i_t result = 0;
-  printf("ChessLib_legalMoves\n");
+  debug_fprintf(stdout, "ChessLib_legalMoves\n");
   int i;
   chess * c;
   move m;
@@ -68,12 +69,12 @@ ChessLib_legalMoves( c_t p_fen[ESCHER_SYS_MAX_STRING_LEN], c_t p_legal_moves[218
     m = moveListGet(moves, i);
     uci = moveGetUci(m);
     Escher_strcpy( p_legal_moves[i], uci );
-    printf("%s ", uci);
+    debug_fprintf(stdout, "%s ", uci);
     free(uci);
   }
   result = moves->size;
   chessFree(c);
-  printf("\nEND ChessLib_legalMoves with count of legal moves:%d\n",result);
+  debug_fprintf(stdout, "\nEND ChessLib_legalMoves with count of legal moves:%d\n",result);
   return result;
 }
 
@@ -99,7 +100,7 @@ ChessLib_movesToFEN( c_t A0xtumlsret[ESCHER_SYS_MAX_STRING_LEN], c_t p_initialFe
   }
   Escher_strcpy( A0xtumlsret, chessGetFen(c) );
   chessFree(c);
-  printf("ChessLib_movesToFen with move_count:%d\n",move_count);
+  debug_fprintf(stdout, "ChessLib_movesToFen with move_count:%d\n",move_count);
   return A0xtumlsret;
 }
 

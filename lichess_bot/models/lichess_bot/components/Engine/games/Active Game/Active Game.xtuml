@@ -32,7 +32,7 @@ within lichess_bot::components::Engine::games is
     @operation_num(2);
     operation resign() is
       @noparse
-      if self.game_state.moves.length > 1 then
+      if self.game_state.move_count > 1 then
         r = chess::resign(game_id:self.id);
       else
         r = chess::abort(game_id:self.id);

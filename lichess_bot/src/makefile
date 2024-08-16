@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wno-pointer-to-int-cast -Wno-parentheses-equality -I ../../../chesslib/include
+CFLAGS=-Wno-pointer-to-int-cast -Wno-parentheses-equality -I ../../../chesslib/include # -DDEBUG
 SOURCES=$(shell ls *.c)
 OBJECTS=$(SOURCES:.c=.o) ../../../chesslib/bin/libchesslib.a
 EXECUTABLE=../bin/cbot3020
