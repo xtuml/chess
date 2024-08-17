@@ -15,23 +15,11 @@ within lichess_bot::components::Engine is
       LOG::LogInfo( message:"Evaluating responses to " + potential_move.Notation);
       
       select one moved_piece related by potential_move->Piece[R5.'is reachable by']; // the hypothesized moved piece
+      select one fromocsq related by moved_piece->OccupiedSquare[R2.'occupies'];
       select one tosq related by potential_move->Square[R5.'can legally move to'];
-      //select one fromocsq related by moved_piece->OccupiedSquare[R2.'occupies'];
       select one movedto related by tosq->OccupiedSquare[R1];  // the move supposedly targetted an opponent piece
-      //select any taken from instances of Piece where false;  // decl
-      /*
-      if (not_empty movedto)  // just playing safe...
-        // temporarily adjust board ground truth
-        fromsq = ::from_occupied( movestr: potential_move.Notation );
-        unrelate moved_piece from fromsq across R2.'occupies';
-        select one taken related by movedto->Piece[R2.'is occupied by'];
-        unrelate taken from movedto across R2.'occupies';
-        relate moved_piece to movedto across R2.'occupies';
-      end if;
-      */
       
-      select one player related by potential_move->Player[R6.'is considered by'];
-      select one opponent related by player->Player[R8.'opposes'];
+      select one opponent related by potential_move->Player[R6.'is considered by']->Player[R8.'opposes'];
       
       // set up a phoney move sequence as if this potential move were played
       l = played.length;
@@ -46,13 +34,16 @@ within lichess_bot::components::Engine is
       ::reconcile_moves( fen:fen, moves:as_if_played, player:opponent );
       
       // look for vulnerabilities
-      vulnerables = ::find_targets( player:opponent );
       select many vulnerables related by opponent->Move[R6.'considers']
                                                   ->Square[R5.'can legally move to']
                                                   ->OccupiedSquare[R1];
+      
       worst = 0;
       select any piece from instances of Piece where false;
       for each ocsq in vulnerables
+        if (ocsq == fromocsq)
+          continue;  // if move was made, this would be empty - not vulnerable
+        end if;
         if (ocsq == movedto)
           piece = moved_piece;
         else
@@ -65,35 +56,22 @@ within lichess_bot::components::Engine is
         end if;
       end for;
       
-      /*
-      if (not_empty movedto )
-        // restore fudged ground truth
-        unrelate moved_piece from movedto across R2.'occupies';
-        relate moved_piece to fromocsq across R2.'occupies';
-        relate taken to movedto across R2.'occupies';
-      end if;
-      */
-      
       return worst;
       @endnoparse
     end function;
 
     @dialect("oal");
     @function_num(7);
-    function find_targets(player: in instance of Player) return set of instance of OccupiedSquare is
+    function find_target_moves(player: in instance of Player) return set of instance of Move is
       @noparse
       player = param.player;
       
-      select one opponent related by player->Player[R8.'opposes'];
-      
-      select many potentialtargets related by opponent->Piece[R7.'owns']
-                                                      ->OccupiedSquare[R2.'occupies'];
-      select many reachablesquares related by player->Move[R6.'considers']
+      select many square_moves related by player->Move[R6.'considers']
                                                       ->Square[R5.'can legally move to']
-                                                      ->OccupiedSquare[R1];
-      targets = potentialtargets & reachablesquares;
-      
-      return targets;
+                                                      ->OccupiedSquare[R1]->Square[R1]->Move[R5];
+      select many player_moves related by player->Move[R6.'considers'];
+      target_moves = square_moves & player_moves;
+      return target_moves;
       @endnoparse
     end function;
 

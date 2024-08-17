@@ -85,10 +85,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     ::reconcile_moves( fen:self.initial_fen, moves:played_moves, player:myplayer );
     
     // now we have bona-fide set of legal Move instances find those that end on opponent squares
-    //targets = ::find_targets( player:myplayer );
-    select many target_moves related by myplayer->Move[R6.'considers']
-                                                ->Square[R5.'can legally move to']
-                                                ->OccupiedSquare[R1]->Square[R1]->Move[R5];
+    target_moves = ::find_target_moves( player:myplayer );
     
     for each tgtmove in target_moves
       cost = ::evaluate_response( move:tgtmove, fen:self.initial_fen, played_moves: played_moves );
@@ -128,7 +125,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end if;
     
     if (empty chosen_move)
-      select any chosen_move from instances of Move;
+      select any chosen_move related by myplayer->Move[R6.'considers'];
       LOG::LogInfo(message: "BOT picked random move: " + chosen_move.Notation); // last resort!
     end if;
     
