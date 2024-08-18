@@ -111,6 +111,31 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     end if;
     
+    if (empty chosen_move)
+      select many threats related by opponent->Move[R6.'considers']->Square[R5.'can legally move to']->OccupiedSquare[R1];
+      select any highpiece from instances of Piece where false; // decl
+      highest = 0;
+      for each ocsq in threats
+        select one piece related by ocsq->Piece[R2.'is occupied by'];
+        select one spec related by piece->PieceSpecification[R4.'is specified by'];
+        if (spec.Value > highest)
+          highest = spec.Value;
+          highpiece = piece;
+        end if;
+      end for;
+    	if (not_empty highpiece)
+        select many coveredsquares related by opponent->Move[R6.'considers']->Square[R5.'can legally move to']->OpenSquare[R1];
+        select many reachables related by highpiece->Square[R5.'can legally move to']->OpenSquare[R1];
+    	  refuges = reachables - coveredsquares;
+    	  select many frommoves related by highpiece->Move[R5];
+    	  for each refuge in refuges
+    	    select many tomoves related by refuge->Square[R1]->Move[R5];
+    	    safemoves = frommoves & tomoves;
+          select any chosen_move related by safemoves->Square[R5.'can legally move to']->Move[R5];
+    	  end for;
+    	end if;
+    end if;
+    
     // Hmmm.. no clear choice; time for some heuristic...
     if (empty chosen_move)
       if (not_empty target_moves)
@@ -123,6 +148,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     		end for;
       end if;
     end if;
+    
     
     if (empty chosen_move)
       select any chosen_move related by myplayer->Move[R6.'considers'];
