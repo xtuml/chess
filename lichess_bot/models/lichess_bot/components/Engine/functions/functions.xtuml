@@ -136,8 +136,7 @@ within lichess_bot::components::Engine is
           potentialmove.dispose();
         end if;
       end for;
-      LOG::LogInfo( message:"old moves disposed: " + STRING::itoa(i:count));
-      
+      //LOG::LogInfo( message:"old moves disposed: " + STRING::itoa(i:count));
       // start: a simplistic attempt to choose a move based on high-value target.
       select any chosen_move from instances of Move where false;  // decl
       
@@ -166,7 +165,7 @@ within lichess_bot::components::Engine is
         end if; 
         i = i + 1;
       end while;
-      LOG::LogInfo( message:"new moves added: " + STRING::itoa(i:count));
+      //LOG::LogInfo( message:"new moves added: " + STRING::itoa(i:count));
       
       // sanity check
       select many moves related by player->Move[R6.'considers'];
@@ -203,7 +202,7 @@ within lichess_bot::components::Engine is
         select one ocsq related by dest->OccupiedSquare[R1];
         unrelate taken from ocsq across R2.'occupies';
         select one spec related by taken->PieceSpecification[R4.'is specified by'];
-        LOG::LogInfo( message:"Captured " + spec.Name + " on " + dest.lichess_desig );
+        LOG::LogInfo( message:recorder + " captured " + spec.Name + " on " + dest.lichess_desig );
         taken.clean_moves();  // all moves now invalid
         //delete object instance taken; Keep instance for scoring purposes. TBD, may transition in a lifecycle
       else
