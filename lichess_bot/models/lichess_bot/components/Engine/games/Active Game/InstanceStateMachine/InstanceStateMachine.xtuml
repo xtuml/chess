@@ -109,41 +109,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end if;
     
     if (empty chosen_move)
-      select many threats related by opponent->Move[R6.'considers']->Square[R5.'can legally move to']->OccupiedSquare[R1];
-      select any highpiece from instances of Piece where false; // decl
-      highest = 0;
-      for each ocsq in threats
-        select one piece related by ocsq->Piece[R2.'is occupied by'];
-        select one spec related by piece->PieceSpecification[R4.'is specified by'];
-        select one sq related by ocsq->Square[R1];
-        LOG::LogInfo(message:"Threatened: " + spec.Name + " on " + sq.lichess_desig);
-        if (spec.Value > highest)
-          highest = spec.Value;
-          highpiece = piece;
-        end if;
-      end for;
-    	if (not_empty highpiece)
-    	  select one sq related by highpiece->OccupiedSquare[R2.'occupies']->Square[R1];
-        LOG::LogInfo(message:"Seeking safety for piece on " + sq.lichess_desig);
-        select many coveredsquares related by opponent->Move[R6.'considers']->Square[R5.'can legally move to']->OpenSquare[R1];
-        select many reachables related by highpiece->Square[R5.'can legally move to']->OpenSquare[R1];
-    	  refuges = reachables - coveredsquares;
-    	  select many frommoves related by highpiece->Move[R5];
-    	  for each refuge in refuges
-    	    select one sq related by refuge->Square[R1];
-          LOG::LogInfo(message:"Looking for move to " + sq.lichess_desig);
-    	    select many tomoves related by refuge->Square[R1]->Move[R5];
-    	    safemoves = frommoves & tomoves;
-    	    for each s in safemoves
-    	      select one sq related by s->Square[R5.'can legally move to'];
-            LOG::LogInfo(message:"Can safely move to " + sq.lichess_desig);
-          end for;
-          select any chosen_move related by safemoves->Square[R5.'can legally move to']->Move[R5];
-          if (not_empty chosen_move)
-            break;
-          end if;
-    	  end for;
-    	end if;
+      chosen_move = ::play_safe( opponent:opponent );
     end if;
     
     // Hmmm.. no clear choice; time for some heuristic...
