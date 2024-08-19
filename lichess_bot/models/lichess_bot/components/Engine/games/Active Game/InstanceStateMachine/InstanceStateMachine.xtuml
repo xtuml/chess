@@ -84,12 +84,14 @@ within lichess_bot::components::Engine::games::'Active Game' is
     // now we have bona-fide set of legal Move instances find those that end on opponent squares
     target_moves = ::find_target_moves( player:myplayer );
     
+    // evaluate the possible consequence of each such move - what might opponent capture?
     for each tgtmove in target_moves
-      cost = ::evaluate_response( move:tgtmove, fen:self.initial_fen, played_moves: played_moves );
       select one spec related by tgtmove->Square[R5.'can legally move to']->OccupiedSquare[R1]->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
-      tgtmove.Value = spec.Value-cost;
+      tgtmove.Value = spec.Value;
+      ::evaluate_response( move:tgtmove, fen:self.initial_fen, played_moves: played_moves );
     end for;
     
+    // select the move with the best trade-off - if there is one
     best = 0;
     select any chosen_move from instances of Move where false;  // decl
     for each tgtmove in target_moves
@@ -108,11 +110,12 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     end if;
     
+    // nothing worthwhile to attack - consider vulnerablity avoidance
     if (empty chosen_move)
       chosen_move = ::play_safe( opponent:opponent );
     end if;
     
-    // Hmmm.. no clear choice; time for some heuristic...
+    // still no clear choice of move; time for some heuristic...
     if (empty chosen_move)
       if (not_empty target_moves)
     		for each move in target_moves
@@ -125,6 +128,23 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     end if;
     
+    // look for benign move
+    if (empty chosen_move)
+      select many mymoves related by myplayer->Move[R6.'considers'];
+      select many reachables related by mymoves->Square[R5.'can legally move to']->OpenSquare[R1];
+      select many coveredsquares related by opponent->Move[R6.'considers']->Square[R5.'can legally move to']->OpenSquare[R1];
+      refuges = reachables - coveredsquares;
+      select many tomoves related by refuges->Square[R1]->Move[R5];
+      escapemoves = mymoves & tomoves;
+      for each escape in escapemoves
+        select one sq related by escape->Square[R5.'can legally move to'];
+        LOG::LogInfo(message:"Random safe move to " + sq.lichess_desig);
+        chosen_move = escape; 
+        break;
+      end for;
+    end if;  
+    
+    // have to do something!
     if (empty chosen_move)
       select any chosen_move related by myplayer->Move[R6.'considers'];
       LOG::LogInfo(message: "BOT picked random move: " + chosen_move.Notation); // last resort!

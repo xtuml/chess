@@ -5,9 +5,9 @@ within lichess_bot::components::Engine is
   package functions is
     @dialect("oal");
     @function_num(5);
-    function evaluate_response(move: in instance of Move, fen: in string, played_moves: in sequence of string) return integer is
+    function evaluate_response(move: in instance of Move, fen: in string, played_moves: in sequence of string) is
       @noparse
-      // return the highest value which may be taken by a response to the given move
+      // reduce the move value by the highest value which may be taken by a response
       potential_move = param.move;
       fen = param.fen;
       played = param.played_moves;
@@ -44,21 +44,20 @@ within lichess_bot::components::Engine is
         if (ocsq == fromocsq)
           continue;  // if move was made, this would be empty - not vulnerable
         end if;
-        if (ocsq == movedto)
+        if (ocsq == movedto)  // response takes the potentially moved piece
           piece = moved_piece;
         else
           select one piece related by ocsq->Piece[R2.'is occupied by'];
         end if;
         select one spec related by piece->PieceSpecification[R4.'is specified by'];
         select one sq related by ocsq->Square[R1];
-        LOG::LogInfo( message:spec.Name + " vulnerable on " + sq.lichess_desig );
+        //LOG::LogInfo( message:spec.Name + " vulnerable on " + sq.lichess_desig );
         cost = spec.Value;  
         if (cost > worst)
           worst = cost;
         end if;
       end for;
-      
-      return worst;
+      potential_move.Value = potential_move.Value - worst;
       @endnoparse
     end function;
 
@@ -73,6 +72,7 @@ within lichess_bot::components::Engine is
                                                       ->OccupiedSquare[R1]->Square[R1]->Move[R5];
       select many player_moves related by player->Move[R6.'considers'];
       target_moves = square_moves & player_moves;
+      // debug/instrumentation start
       ctxt = "White";
       if (player.Color == Color::BLACK)
         ctxt = "Black";
@@ -84,6 +84,7 @@ within lichess_bot::components::Engine is
       	  LOG::LogInfo( message:ctxt + " target move " + move.Notation );
       	end for;
       end if;
+      // debug/instrumentation end
       return target_moves;
       @endnoparse
     end function;
@@ -153,7 +154,7 @@ within lichess_bot::components::Engine is
         end for;
       end if;
       if (empty chosen_move)
-        LOG::LogInfo(message:"No safe move found");
+        LOG::LogInfo(message:"No safe escape move found");
       end if;
       return chosen_move;
       @endnoparse
@@ -184,7 +185,7 @@ within lichess_bot::components::Engine is
         i = 0;
         matched = false;
         while (i < nlegals)  // for each legal move we could play...
-          if (movestr == legal_moves[i])
+          if (movestr == STRING::substr(s:legal_moves[i], begin:0, end:4));
             matched = true;
             break;
           end if;
@@ -204,7 +205,7 @@ within lichess_bot::components::Engine is
       count = 0;
       i = 0;
       while (i < nlegals)  // for each legal move we could play...
-        movestr = legal_moves[i];
+        movestr = STRING::substr(s:legal_moves[i], begin:0, end:4);
         fromocsq = ::from_occupied( movestr:movestr );
         tosq = ::to_square( movestr:movestr );
         select one piece related by fromocsq->Piece[R2.'is occupied by'];
