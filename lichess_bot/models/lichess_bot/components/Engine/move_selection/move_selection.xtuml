@@ -5,15 +5,15 @@ within lichess_bot::components::Engine is
   package move_selection is
     @dialect("oal");
     @function_num(1);
-    function simple_max_advance(legal_moves: in sequence of string, color: in Color) return string is
+    function simple_max_advance(legal_moves: in sequence of string, move_count: in integer, color: in Color) return string is
       @noparse
-      legal_moves = param.legal_moves;
+      move_count = param.move_count;
       
       // Loop through legal moves.  Find the move that maximises file increase.
       i = 0; max_index = 0; max_advance = 0; advance = 0;
-      while ( i < legal_moves.length )
-        rank_start = STRING::atoi(s:STRING::substr(s:legal_moves[i], begin:1, end:2)) - 1;
-        rank_end = STRING::atoi(s:STRING::substr(s:legal_moves[i], begin:3, end:4)) - 1;
+      while ( i < move_count )
+        rank_start = STRING::atoi(s:STRING::substr(s:param.legal_moves[i], begin:1, end:2)) - 1;
+        rank_end = STRING::atoi(s:STRING::substr(s:param.legal_moves[i], begin:3, end:4)) - 1;
         if ( param.color == Color::WHITE ) then
           advance = rank_end - rank_start;
         else
@@ -26,11 +26,11 @@ within lichess_bot::components::Engine is
         i = i + 1;
       end while;
       
-      move = legal_moves[max_index];
+      move = param.legal_moves[max_index];
       if ( max_advance == 0 ) then
         // select a random legal move
-        i = TIM::current_clock() % legal_moves.length;
-        move = legal_moves[i];
+        i = TIM::current_clock() % move_count;
+        move = param.legal_moves[i];
       end if;
       
       return move;

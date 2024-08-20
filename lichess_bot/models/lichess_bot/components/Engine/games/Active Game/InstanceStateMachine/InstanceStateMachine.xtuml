@@ -84,7 +84,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     move = legal_moves[i];
     
     // simple_max_advance:  replace random move with one that prefers to advance
-    move = ::simple_max_advance( legal_moves:legal_moves, color:self.color );
+    move = ::simple_max_advance( legal_moves:legal_moves, move_count:legal_moves_count, color:self.color );
     
     // play the move
     create event instance e of ActiveGame3:'play move'(move: move) to self;
