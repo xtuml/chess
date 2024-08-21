@@ -14,9 +14,9 @@ within lichess_bot::components::Engine is
 
       LOG::LogInfo( message:"Evaluating responses to " + potential_move.Notation);
 
-      select one moved_piece related by potential_move->Piece[R5.'is reachable by']; // the hypothesized moved piece
+      select one moved_piece related by potential_move->Piece[R9.'is made by']; // the hypothesized moved piece
       select one fromocsq related by moved_piece->OccupiedSquare[R2.'occupies'];
-      select one tosq related by potential_move->Square[R5.'can legally move to'];
+      select one tosq related by potential_move->Square[R5.'occupies'];
       select one movedto related by tosq->OccupiedSquare[R1];  // the move supposedly targetted an opponent piece
 
       select one opponent related by potential_move->Player[R6.'is considered by']->Player[R8.'opposes'];
@@ -35,7 +35,7 @@ within lichess_bot::components::Engine is
 
       // look for vulnerabilities
       select many vulnerables related by opponent->Move[R6.'considers']
-                                                  ->Square[R5.'can legally move to']
+                                                  ->Square[R5.'occupies']
                                                   ->OccupiedSquare[R1];
 
       worst = 0;
@@ -68,7 +68,7 @@ within lichess_bot::components::Engine is
       player = param.player;
 
       select many square_moves related by player->Move[R6.'considers']
-                                                      ->Square[R5.'can legally move to']
+                                                      ->Square[R5.'occupies']
                                                       ->OccupiedSquare[R1]->Square[R1]->Move[R5];
       select many player_moves related by player->Move[R6.'considers'];
       target_moves = square_moves & player_moves;
@@ -122,7 +122,7 @@ within lichess_bot::components::Engine is
       // explore escape moves for highest (or any) threatened piece.
       opponent = param.opponent;
       select any chosen_move from instances of Move where false; // decl
-      select many threats related by opponent->Move[R6.'considers']->Square[R5.'can legally move to']->OccupiedSquare[R1];
+      select many threats related by opponent->Move[R6.'considers']->Square[R5.'occupies']->OccupiedSquare[R1];
       select any highpiece from instances of Piece where false; // decl
       highestvalue = 0;
       for each ocsq in threats
@@ -141,14 +141,14 @@ within lichess_bot::components::Engine is
       if (not_empty highpiece)
         select one sq related by highpiece->OccupiedSquare[R2.'occupies']->Square[R1];
         LOG::LogInfo(message:"Seeking safety for piece on " + sq.lichess_desig);
-        select many coveredsquares related by opponent->Move[R6.'considers']->Square[R5.'can legally move to']->OpenSquare[R1];
-        select many reachables related by highpiece->Square[R5.'can legally move to']->OpenSquare[R1];
+        select many coveredsquares related by opponent->Move[R6.'considers']->Square[R5.'occupies']->OpenSquare[R1];
+        select many reachables related by highpiece->Move[R9.'can make']->Square[R5.'occupies']->OpenSquare[R1];
         refuges = reachables - coveredsquares;
         select many tomoves related by refuges->Square[R1]->Move[R5];
-        select many frommoves related by highpiece->Move[R5];
+        select many frommoves related by highpiece->Move[R9.'can make'];
         escapemoves = frommoves & tomoves;
         for each escape in escapemoves
-          select one sq related by escape->Square[R5.'can legally move to'];
+          select one sq related by escape->Square[R5.'occupies'];
           LOG::LogInfo(message:"Found safe move to " + sq.lichess_desig);
           chosen_move = escape; 
           break;
@@ -179,9 +179,8 @@ within lichess_bot::components::Engine is
       count = 0;
       select many potentialmoves related by player->Move[R6.'considers'];
       for each potentialmove in potentialmoves
-        select one start related by potentialmove->Piece[R5.'is reachable by']
-                                                  ->OccupiedSquare[R2.'occupies']->Square[R1];
-        select one finish related by potentialmove->Square[R5.'can legally move to'];
+        select one start related by potentialmove->OccupiedSquare[R5.'vacates']->Square[R1];
+        select one finish related by potentialmove->Square[R5.'occupies'];
         movestr = ::movestr( from:start, to:finish );
         i = 0;
         matched = false;
@@ -210,7 +209,7 @@ within lichess_bot::components::Engine is
         fromocsq = ::from_occupied( movestr:movestr );
         tosq = ::to_square( movestr:movestr );
         select one piece related by fromocsq->Piece[R2.'is occupied by'];
-        select many dests related by piece->Square[R5.'can legally move to'];
+        select many dests related by piece->Move[R9]->Square[R5.'occupies'];
         found = false;
         for each dest in dests
           if (dest == tosq)
@@ -221,7 +220,8 @@ within lichess_bot::components::Engine is
         if (not found)
           create object instance m of Move;
           m.Notation = movestr;  // for debug
-          relate piece to tosq across R5 using m;
+          relate fromocsq to tosq across R5 using m;
+          relate m to piece across R9;
           relate m to player across R6.'is considered by';
           count = count + 1;
         end if; 
@@ -259,6 +259,7 @@ within lichess_bot::components::Engine is
       delete object instance start;
       create object instance opsq of OpenSquare;
       relate opsq to originsq across R1;  // the 'move from' square is no longer occupied
+
       taken = dest.occupant();
       if (not_empty taken)  // the 'move to' square was already occupied - exchange occupants
         select one ocsq related by dest->OccupiedSquare[R1];
@@ -278,15 +279,10 @@ within lichess_bot::components::Engine is
       select one spec related by piece->PieceSpecification[R4.'is specified by'];
       if (spec.Name == "Pawn")
        and (dest.rank == 1 or dest.rank == 8) // made to the far rank
-      	select many frommoves related by piece->Move[R5];
-      	select many tomoves related by dest->Move[R5];
-      	themove = frommoves & tomoves;
-      	if (not_empty themove)
-          unrelate piece from spec across R4.'is specified by';
-          select any qspec from instances of PieceSpecification
-      		 where (selected.Name == "Queen");  // always pick a Queen - why not?!
-      		relate piece to qspec across R4.'is specified by';
-      	end if;
+        unrelate piece from spec across R4.'is specified by';
+        select any qspec from instances of PieceSpecification
+         where (selected.Name == "Queen");  // always pick a Queen - why not?!
+        relate piece to qspec across R4.'is specified by';
       end if;
       relate piece to ocsq across R2.'occupies';
       piece.clean_moves();  // all are now invalid - no longer on start square

@@ -273,7 +273,7 @@ within lichess_bot::components::Engine::board is
     operation clean_moves() is
       @noparse
       // Dispose of all moves associated with this piece
-      select many moves related by self->Move[R5];
+      select many moves related by self->Move[R9.'can make'];
       for each move in moves
         //LOG::LogInfo( message:"Cleaning Move: " + move.Notation );
         move.dispose();

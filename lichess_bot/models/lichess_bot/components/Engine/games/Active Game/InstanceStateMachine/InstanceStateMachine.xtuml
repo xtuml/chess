@@ -86,7 +86,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
 
     // evaluate the possible consequence of each such move - what might opponent capture?
     for each tgtmove in target_moves
-      select one spec related by tgtmove->Square[R5.'can legally move to']->OccupiedSquare[R1]->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
+      select one spec related by tgtmove->Square[R5.'occupies']->OccupiedSquare[R1]->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
       tgtmove.Value = spec.Value;
       ::evaluate_response( move:tgtmove, fen:self.initial_fen, played_moves: played_moves );
     end for;
@@ -131,13 +131,13 @@ within lichess_bot::components::Engine::games::'Active Game' is
     // look for benign move
     if (empty chosen_move)
       select many mymoves related by myplayer->Move[R6.'considers'];
-      select many reachables related by mymoves->Square[R5.'can legally move to']->OpenSquare[R1];
-      select many coveredsquares related by opponent->Move[R6.'considers']->Square[R5.'can legally move to']->OpenSquare[R1];
+      select many reachables related by mymoves->Square[R5.'occupies']->OpenSquare[R1];
+      select many coveredsquares related by opponent->Move[R6.'considers']->Square[R5.'occupies']->OpenSquare[R1];
       refuges = reachables - coveredsquares;
       select many tomoves related by refuges->Square[R1]->Move[R5];
       escapemoves = mymoves & tomoves;
       for each escape in escapemoves
-        select one sq related by escape->Square[R5.'can legally move to'];
+        select one sq related by escape->Square[R5.'occupies'];
         LOG::LogInfo(message:"Random safe move to " + sq.lichess_desig);
         chosen_move = escape; 
         break;
@@ -150,10 +150,9 @@ within lichess_bot::components::Engine::games::'Active Game' is
       LOG::LogInfo(message: "BOT picked random move: " + chosen_move.Notation); // last resort!
     end if;
 
-    select one piece related by chosen_move->Piece[R5.'is reachable by'];
-    select one tosq related by chosen_move->Square[R5.'can legally move to'];
-    select one fromsq related by chosen_move->Piece[R5.'is reachable by']
-                                            ->OccupiedSquare[R2.'occupies']->Square[R1];
+    select one piece related by chosen_move->Piece[R9.'is made by'];
+    select one tosq related by chosen_move->Square[R5.'occupies'];
+    select one fromsq related by chosen_move->OccupiedSquare[R5.'vacates']->Square[R1];
     // play the move - in lichess notation
     ourmove = ::movestr( from:fromsq, to:tosq );
     if (tosq.rank == 1 or tosq.rank == 8)

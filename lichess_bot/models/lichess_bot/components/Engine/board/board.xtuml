@@ -23,8 +23,8 @@ within lichess_bot::components::Engine is
                        PieceSpecification conditionally 'defines properties of' many Piece;
 
     //! A legal move describes how a piece may move from its occupied square to another square.
-    relationship R5 is Piece conditionally 'can legally move to' many Square,
-                       Square conditionally 'is reachable by' many Piece
+    relationship R5 is OccupiedSquare unconditionally occupies one Square,
+                       Square unconditionally vacates one OccupiedSquare
                        using one Move;
 
     //! At his turn, a player must choose one the allowed moves for one of his pieces.
@@ -37,6 +37,9 @@ within lichess_bot::components::Engine is
     //! A symmetric association reflecting that two players compete against each other.
     relationship R8 is Player unconditionally opposes one Player,
                        Player unconditionally relates to one Player;
+
+    relationship R9 is Move unconditionally 'is made by' one Piece,
+                       Piece conditionally 'can make' many Move;
 
   end package;
 
