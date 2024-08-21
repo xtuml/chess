@@ -27,7 +27,7 @@ within lichess_bot::components::Engine::board is
       ranks[2] = "3";
       ranks[1] = "2";
       ranks[0] = "1";
-      
+
       files[7] = "h";
       files[6] = "g";
       files[5] = "f";
@@ -36,7 +36,7 @@ within lichess_bot::components::Engine::board is
       files[2] = "c";
       files[1] = "b";
       files[0] = "a";
-      
+
       r = 0;
       while (r < 8)
         f = 0;

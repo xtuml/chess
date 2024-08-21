@@ -12,7 +12,7 @@ within lichess_bot::components::Engine::board is
 
     @dialect("oal");
     @operation_num(1);
-    class operation initialize() is
+    class operation initialize(unused: in instance of OpenSquare) is
       @noparse
       create object instance p1 of Player;
       p1.Color = Color::BLACK;

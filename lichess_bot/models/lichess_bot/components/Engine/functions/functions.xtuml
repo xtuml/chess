@@ -11,16 +11,16 @@ within lichess_bot::components::Engine is
       potential_move = param.move;
       fen = param.fen;
       played = param.played_moves;
-      
+
       LOG::LogInfo( message:"Evaluating responses to " + potential_move.Notation);
-      
+
       select one moved_piece related by potential_move->Piece[R5.'is reachable by']; // the hypothesized moved piece
       select one fromocsq related by moved_piece->OccupiedSquare[R2.'occupies'];
       select one tosq related by potential_move->Square[R5.'can legally move to'];
       select one movedto related by tosq->OccupiedSquare[R1];  // the move supposedly targetted an opponent piece
-      
+
       select one opponent related by potential_move->Player[R6.'is considered by']->Player[R8.'opposes'];
-      
+
       // set up a phoney move sequence as if this potential move were played
       l = played.length;
       as_if_played[l] = potential_move.Notation;
@@ -29,15 +29,15 @@ within lichess_bot::components::Engine is
         as_if_played[i] = played[i];
         i = i + 1;
       end while;
-      
+
       // ensure possible opponent moves are represented
       ::reconcile_moves( fen:fen, moves:as_if_played, player:opponent );
-      
+
       // look for vulnerabilities
       select many vulnerables related by opponent->Move[R6.'considers']
                                                   ->Square[R5.'can legally move to']
                                                   ->OccupiedSquare[R1];
-      
+
       worst = 0;
       select any piece from instances of Piece where false;
       for each ocsq in vulnerables
@@ -66,7 +66,7 @@ within lichess_bot::components::Engine is
     function find_target_moves(player: in instance of Player) return set of instance of Move is
       @noparse
       player = param.player;
-      
+
       select many square_moves related by player->Move[R6.'considers']
                                                       ->Square[R5.'can legally move to']
                                                       ->OccupiedSquare[R1]->Square[R1]->Move[R5];
@@ -99,16 +99,17 @@ within lichess_bot::components::Engine is
       	create object instance bot of Bot;
       	bot.config = PROP::loadProperties(file_name:"lichess_bot.properties");
       end if;
-      
-      Player::initialize();
+
+      select any opsq from instances of OpenSquare where false; // decl for unused param
+      Player::initialize(unused:opsq);
       PieceSpecification::initialize();
       Square::initialize();
       Piece::initialize();
       Openers::initialize();
-      
+
       // connect to the Lichess API and start listening for events
       send chess::connect(properties: bot.config);
-      
+
       LOG::LogInfo(message: "Initialization complete");
       @endnoparse
     end function;
@@ -168,11 +169,11 @@ within lichess_bot::components::Engine is
       initial_fen = param.fen;
       played_moves = param.moves;
       player = param.player;
-      
+
       // aquire a list of legal moves to choose from
       legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: initial_fen, moves: played_moves));
       nlegals = legal_moves.length;
-      
+
       // clean any move instances that are now no longer legal
       // (consider, for instance, check may vastly reduce legal moves)
       count = 0;
@@ -200,7 +201,7 @@ within lichess_bot::components::Engine is
       //LOG::LogInfo( message:"old moves disposed: " + STRING::itoa(i:count));
       // start: a simplistic attempt to choose a move based on high-value target.
       select any chosen_move from instances of Move where false;  // decl
-      
+
       // ensure that a move instance exists for each legal move; create any needed new ones
       count = 0;
       i = 0;
@@ -227,7 +228,7 @@ within lichess_bot::components::Engine is
         i = i + 1;
       end while;
       //LOG::LogInfo( message:"new moves added: " + STRING::itoa(i:count));
-      
+
       // sanity check
       select many moves related by player->Move[R6.'considers'];
       if (cardinality moves != nlegals)
@@ -244,12 +245,12 @@ within lichess_bot::components::Engine is
       start = param.from;  // an occupied square
       dest = param.to;     // a square - occupied? - or not?
       recorder = param.recorder;
-      
+
       // these 3 lines are debug instrumentation
       select one sq related by start->Square[R1];
       str = ::movestr( from:sq, to:dest );
       LOG::LogInfo( message:"recording move from " + recorder + str );
-      
+
       select one piece related by start->Piece[R2.'is occupied by'];
       select any ocsq from instances of OccupiedSquare where false;  // decl
       unrelate piece from start across R2.'occupies';
@@ -273,22 +274,36 @@ within lichess_bot::components::Engine is
         create object instance ocsq of OccupiedSquare;
         relate ocsq to dest across R1;
       end if;
+      // check for promotion before finalizing ground truth
+      select one spec related by piece->PieceSpecification[R4.'is specified by'];
+      if (spec.Name == "Pawn")
+       and (dest.rank == 1 or dest.rank == 8) // made to the far rank
+      	select many frommoves related by piece->Move[R5];
+      	select many tomoves related by dest->Move[R5];
+      	themove = frommoves & tomoves;
+      	if (not_empty themove)
+          unrelate piece from spec across R4.'is specified by';
+          select any qspec from instances of PieceSpecification
+      		 where (selected.Name == "Queen");  // always pick a Queen - why not?!
+      		relate piece to qspec across R4.'is specified by';
+      	end if;
+      end if;
       relate piece to ocsq across R2.'occupies';
       piece.clean_moves();  // all are now invalid - no longer on start square
-      
+
       // Castling? - the only time a King can move 2 squares along Rank 1 or 8.
       // lichess does not report the Rook's part in this; record it here to maintain ground truth.
-      
+
       select one spec related by piece->PieceSpecification[R4.'is specified by'];
       if (spec.Name == "King" 
-        and (originsq.rank == 1 or originsq.rank == 8) 
-        and dest.rank == originsq.rank 
-        and originsq.file == 5)
-      
+       and (originsq.rank == 1 or originsq.rank == 8) 
+       and dest.rank == originsq.rank 
+       and originsq.file == 5)
+
         select any from from instances of OccupiedSquare where false;
         select any tosq from instances of Square where false;
         rank = originsq.rank;
-        
+
         if (dest.file == 7)  // King side
           select any sq from instances of Square
            where (selected.rank == rank and selected.file == 8);
@@ -302,11 +317,11 @@ within lichess_bot::components::Engine is
           select any tosq from instances of Square
            where (selected.rank == rank and selected.file == 4);
         end if;
-      
+
         if (not_empty from and not_empty tosq)
           ::record_move( from:from, to:tosq, recorder:recorder + " O-O " );
         end if;
-      
+
       end if;
       @endnoparse
     end function;

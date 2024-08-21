@@ -65,10 +65,10 @@ within lichess_bot::components::Engine::games::'Active Game' is
   state 'our turn' is
     @noparse
     played_moves = self.game_state.moves;
-    
+
     select one myplayer related by self->Player[R22.'is acting for'];
     select one opponent related by myplayer->Player[R8.'opposes'];
-    
+
     i = played_moves.length;
     if (i > 0)
       // now update based on opponent's last move
@@ -77,20 +77,20 @@ within lichess_bot::components::Engine::games::'Active Game' is
       opponent_tosquare = ::to_square( movestr:movestr );
       ::record_move( from:opponent_fromocsq, to:opponent_tosquare, recorder:"player: " );
     end if;
-    
+
     // ensure that Move instances match allowed moves
     ::reconcile_moves( fen:self.initial_fen, moves:played_moves, player:myplayer );
-    
+
     // now we have bona-fide set of legal Move instances find those that end on opponent squares
     target_moves = ::find_target_moves( player:myplayer );
-    
+
     // evaluate the possible consequence of each such move - what might opponent capture?
     for each tgtmove in target_moves
       select one spec related by tgtmove->Square[R5.'can legally move to']->OccupiedSquare[R1]->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
       tgtmove.Value = spec.Value;
       ::evaluate_response( move:tgtmove, fen:self.initial_fen, played_moves: played_moves );
     end for;
-    
+
     // select the move with the best trade-off - if there is one
     best = 0;
     select any chosen_move from instances of Move where false;  // decl
@@ -100,7 +100,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
         chosen_move = tgtmove;
       end if;
     end for;
-    
+
     if (empty chosen_move)  
       // if no targetted move selected, may be opening stages of game; look for a move
       if (played_moves.length < 10)  // arbitrary limit on opening move search
@@ -109,12 +109,12 @@ within lichess_bot::components::Engine::games::'Active Game' is
         LOG::LogInfo(message: "BOT picked opening move: " + chosen_move.Notation); 
       end if;
     end if;
-    
+
     // nothing worthwhile to attack - consider vulnerablity avoidance
     if (empty chosen_move)
       chosen_move = ::play_safe( opponent:opponent );
     end if;
-    
+
     // still no clear choice of move; time for some heuristic...
     if (empty chosen_move)
       if (not_empty target_moves)
@@ -127,7 +127,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     		end for;
       end if;
     end if;
-    
+
     // look for benign move
     if (empty chosen_move)
       select many mymoves related by myplayer->Move[R6.'considers'];
@@ -143,19 +143,25 @@ within lichess_bot::components::Engine::games::'Active Game' is
         break;
       end for;
     end if;  
-    
+
     // have to do something!
     if (empty chosen_move)
       select any chosen_move related by myplayer->Move[R6.'considers'];
       LOG::LogInfo(message: "BOT picked random move: " + chosen_move.Notation); // last resort!
     end if;
-    
+
     select one piece related by chosen_move->Piece[R5.'is reachable by'];
     select one tosq related by chosen_move->Square[R5.'can legally move to'];
     select one fromsq related by chosen_move->Piece[R5.'is reachable by']
                                             ->OccupiedSquare[R2.'occupies']->Square[R1];
     // play the move - in lichess notation
     ourmove = ::movestr( from:fromsq, to:tosq );
+    if (tosq.rank == 1 or tosq.rank == 8)
+      select one spec related by piece->PieceSpecification[R4.'is specified by'];
+      if (spec.Name == "Pawn")
+        ourmove = ourmove + "q";  // request promotion to Queen
+      end if;
+    end if;
     //LOG::LogInfo(message: "BOT selected: " + ourmove); 
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
     // zero-timer prevents event prioritization by event-to-self acceleration.
@@ -166,7 +172,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
   state 'playing move'(move: in string) is
     @noparse
     movestr = param.move;
-    
+
     // play the move
     //LOG::LogInfo( message:"BOT asking to play move: " + movestr );
     success = chess::move(game_id: self.id, move: movestr);
@@ -199,7 +205,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
       (self.color == Color::BLACK and self.game_state.wtakeback) then
       self.handle_takeback_proposal();
     end if;
-    
+
     // handle draw offers
     if (self.color == Color::WHITE and self.game_state.bdraw) or
       (self.color == Color::BLACK and self.game_state.wdraw) then

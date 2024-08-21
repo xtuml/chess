@@ -15,7 +15,7 @@ within lichess_bot::components::Engine::board is
       // Create and place white pieces
       select any player from instances of Player
        where ( selected.Color == Color::WHITE);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Rook");
       create object instance p of Piece;
@@ -24,7 +24,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "h1");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Knight");
       create object instance p of Piece;
@@ -33,7 +33,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "g1");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Bishop");
       create object instance p of Piece;
@@ -42,7 +42,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "f1");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "King");
       create object instance p of Piece;
@@ -51,7 +51,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "e1");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Queen");
       create object instance p of Piece;
@@ -60,7 +60,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "d1");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Bishop");
       create object instance p of Piece;
@@ -69,7 +69,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "c1");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Knight");
       create object instance p of Piece;
@@ -78,7 +78,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "b1");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Rook");
       create object instance p of Piece;
@@ -87,7 +87,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "a1");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Pawn");
       create object instance p of Piece;
@@ -138,11 +138,11 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "a2");
       sq.occupy(piece:p);
-      
+
       // Create and place black pieces
       select any player from instances of Player
        where ( selected.Color == Color::BLACK);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Rook");
       create object instance p of Piece;
@@ -151,7 +151,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "h8");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Knight");
       create object instance p of Piece;
@@ -160,7 +160,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "g8");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Bishop");
       create object instance p of Piece;
@@ -169,7 +169,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "f8");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "King");
       create object instance p of Piece;
@@ -178,7 +178,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "e8");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Queen");
       create object instance p of Piece;
@@ -187,7 +187,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "d8");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Bishop");
       create object instance p of Piece;
@@ -196,7 +196,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "c8");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Knight");
       create object instance p of Piece;
@@ -205,7 +205,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "b8");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Rook");
       create object instance p of Piece;
@@ -214,7 +214,7 @@ within lichess_bot::components::Engine::board is
       select any sq from instances of Square
        where (selected.lichess_desig == "a8");
       sq.occupy(piece:p);
-      
+
       select any spec from instances of PieceSpecification
        where ( selected.Name == "Pawn");
       create object instance p of Piece;

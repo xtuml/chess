@@ -197,6 +197,7 @@ within lichess_bot::components is
         
         // if this a restart, process any earlier played moves to re-establish board ground truth
         moves = game.game_state.moves;
+        /*
         l = moves.length - 1;  
         if (game.is_our_turn())
           l = moves.length - 1;  // don't record the latest opponent move - leave it for 'our turn'
@@ -209,6 +210,7 @@ within lichess_bot::components is
           i = i + 1;
           l = l - 1;
         end while;
+        */
         
         // update the game state
         game.update_game_state(game_state: g.gameState);
