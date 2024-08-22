@@ -147,6 +147,24 @@ Lichess_API_connected()
 bool
 Lichess_API_createChallenge( const i_t p_clock_increment, const i_t p_clock_limit, const lichess_bot_Color_t p_color, c_t p_fen[ESCHER_SYS_MAX_STRING_LEN], const bool p_rated, c_t p_user[ESCHER_SYS_MAX_STRING_LEN], const lichess_bot_Variant_t p_variant )
 {
+  /* Note that only the user, fen and clock values are used.  The rest is hard-coded.  */
+  char * s = "{\"name\":\"createChallenge\",\"args\":{\
+  \"user\":\"%s\",\
+  \"clock_limit\":%d,\
+  \"clock_increment\":%d,\
+  \"rated\":false,\
+  \"color\":\"RANDOM\",\
+  \"fen\":\"%s\",\
+  \"variant\":{\"key\":\"standard\"}}}\n";
+
+  FILE * f = fopen( "incoming/createChallenge.json", "w" );
+  if ( f ) {
+    debug_fprintf (stderr, s, p_user, p_clock_limit, p_clock_increment, p_fen);
+    fprintf (f, s, p_user, p_clock_limit, p_clock_increment, p_fen);
+    fclose (f);
+  } else {
+    debug_fprintf (stderr, "error opening incoming/createChallenge.json\n");
+  }
   return true;
 }
 
