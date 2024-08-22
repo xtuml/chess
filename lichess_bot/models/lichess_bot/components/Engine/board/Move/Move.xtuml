@@ -2,7 +2,7 @@
 
 within lichess_bot::components::Engine::board is
 
-  //! One possible allowed move by a piece, belonging to one of the players, from an occupied square to another square on the board.
+  //! A piece changes squares.
   @key_letters("Move");
   @class_num(3);
   class Move is
@@ -17,9 +17,9 @@ within lichess_bot::components::Engine::board is
       @noparse
       // dispose of this move
       //LOG::LogInfo( message:"Disposing of Move: " + self.Notation );
-      select one player related by self->Player[R6.'is considered by'];
-      unrelate self from player across R6.'is considered by';
-      select one square related by self->Square[R5.'occupies'];
+      select one player related by self->Player[R6.'is playable by'];
+      unrelate self from player across R6.'is playable by';
+      select one square related by self->Square[R5.'targets'];
       select one occupiedsquare related by self->OccupiedSquare[R5.'vacates'];
       unrelate occupiedsquare from square across R5 using self;
       select one piece related by self->Piece[R9.'is made by'];

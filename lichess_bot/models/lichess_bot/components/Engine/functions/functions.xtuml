@@ -16,10 +16,10 @@ within lichess_bot::components::Engine is
 
       select one moved_piece related by potential_move->Piece[R9.'is made by']; // the hypothesized moved piece
       select one fromocsq related by moved_piece->OccupiedSquare[R2.'occupies'];
-      select one tosq related by potential_move->Square[R5.'occupies'];
+      select one tosq related by potential_move->Square[R5.'targets'];
       select one movedto related by tosq->OccupiedSquare[R1];  // the move supposedly targetted an opponent piece
 
-      select one opponent related by potential_move->Player[R6.'is considered by']->Player[R8.'opposes'];
+      select one opponent related by potential_move->Player[R6.'is playable by']->Player[R8.'opposes'];
 
       // set up a phoney move sequence as if this potential move were played
       l = played.length;
@@ -31,11 +31,11 @@ within lichess_bot::components::Engine is
       end while;
 
       // ensure possible opponent moves are represented
-      ::reconcile_moves( fen:fen, moves:as_if_played, player:opponent );
+      ::reconcile_moves( fen:fen, moves:as_if_played, player:opponent, hypothetical: potential_move );
 
       // look for vulnerabilities
-      select many vulnerables related by opponent->Move[R6.'considers']
-                                                  ->Square[R5.'occupies']
+      select many vulnerables related by opponent->Move[R6.'can play']
+                                                  ->Square[R5.'targets']
                                                   ->OccupiedSquare[R1];
 
       worst = 0;
@@ -58,6 +58,10 @@ within lichess_bot::components::Engine is
         end if;
       end for;
       potential_move.Value = potential_move.Value - worst;
+      select many response_moves related by potential_move->Move[R10.'engenders'];
+      for each response in response_moves
+        response.dispose();
+      end for;
       @endnoparse
     end function;
 
@@ -67,11 +71,10 @@ within lichess_bot::components::Engine is
       @noparse
       player = param.player;
 
-      select many square_moves related by player->Move[R6.'considers']
-                                                      ->Square[R5.'occupies']
-                                                      ->OccupiedSquare[R1]->Square[R1]->Move[R5];
-      select many player_moves related by player->Move[R6.'considers'];
-      target_moves = square_moves & player_moves;
+      select many target_moves related by player->Move[R6.'can play']
+                                                ->Square[R5.'targets']
+                                                ->OccupiedSquare[R1]
+                                                ->Square[R1]->Move[R5];
       // debug/instrumentation start
       ctxt = "White";
       if (player.Color == Color::BLACK)
@@ -122,7 +125,7 @@ within lichess_bot::components::Engine is
       // explore escape moves for highest (or any) threatened piece.
       opponent = param.opponent;
       select any chosen_move from instances of Move where false; // decl
-      select many threats related by opponent->Move[R6.'considers']->Square[R5.'occupies']->OccupiedSquare[R1];
+      select many threats related by opponent->Move[R6.'can play']->Square[R5.'targets']->OccupiedSquare[R1];
       select any highpiece from instances of Piece where false; // decl
       highestvalue = 0;
       for each ocsq in threats
@@ -141,14 +144,14 @@ within lichess_bot::components::Engine is
       if (not_empty highpiece)
         select one sq related by highpiece->OccupiedSquare[R2.'occupies']->Square[R1];
         LOG::LogInfo(message:"Seeking safety for piece on " + sq.lichess_desig);
-        select many coveredsquares related by opponent->Move[R6.'considers']->Square[R5.'occupies']->OpenSquare[R1];
-        select many reachables related by highpiece->Move[R9.'can make']->Square[R5.'occupies']->OpenSquare[R1];
+        select many coveredsquares related by opponent->Move[R6.'can play']->Square[R5.'targets']->OpenSquare[R1];
+        select many reachables related by highpiece->Move[R9.'can make']->Square[R5.'targets']->OpenSquare[R1];
         refuges = reachables - coveredsquares;
         select many tomoves related by refuges->Square[R1]->Move[R5];
         select many frommoves related by highpiece->Move[R9.'can make'];
         escapemoves = frommoves & tomoves;
         for each escape in escapemoves
-          select one sq related by escape->Square[R5.'occupies'];
+          select one sq related by escape->Square[R5.'targets'];
           LOG::LogInfo(message:"Found safe move to " + sq.lichess_desig);
           chosen_move = escape; 
           break;
@@ -163,24 +166,25 @@ within lichess_bot::components::Engine is
 
     @dialect("oal");
     @function_num(6);
-    function reconcile_moves(fen: in string, moves: in sequence of string, player: in instance of Player) is
+    function reconcile_moves(fen: in string, moves: in sequence of string, player: in instance of Player, hypothetical: in instance of Move) is
       @noparse
       // match Move instances to allowable moves
-      initial_fen = param.fen;
+      fen = param.fen;
       played_moves = param.moves;
       player = param.player;
+      hypo = param.hypothetical;
 
       // aquire a list of legal moves to choose from
-      legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: initial_fen, moves: played_moves));
+      legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: fen, moves: played_moves));
       nlegals = legal_moves.length;
 
       // clean any move instances that are now no longer legal
       // (consider, for instance, check may vastly reduce legal moves)
       count = 0;
-      select many potentialmoves related by player->Move[R6.'considers'];
+      select many potentialmoves related by player->Move[R6.'can play'];
       for each potentialmove in potentialmoves
         select one start related by potentialmove->OccupiedSquare[R5.'vacates']->Square[R1];
-        select one finish related by potentialmove->Square[R5.'occupies'];
+        select one finish related by potentialmove->Square[R5.'targets'];
         movestr = ::movestr( from:start, to:finish );
         i = 0;
         matched = false;
@@ -209,7 +213,7 @@ within lichess_bot::components::Engine is
         fromocsq = ::from_occupied( movestr:movestr );
         tosq = ::to_square( movestr:movestr );
         select one piece related by fromocsq->Piece[R2.'is occupied by'];
-        select many dests related by piece->Move[R9]->Square[R5.'occupies'];
+        select many dests related by piece->Move[R9]->Square[R5.'targets'];
         found = false;
         for each dest in dests
           if (dest == tosq)
@@ -222,7 +226,13 @@ within lichess_bot::components::Engine is
           m.Notation = movestr;  // for debug
           relate fromocsq to tosq across R5 using m;
           relate m to piece across R9;
-          relate m to player across R6.'is considered by';
+          relate m to player across R6.'is playable by';
+          if (not_empty hypo)
+            select one tgt related by hypo->Square[R5.'targets'];
+            if (tgt == tosq)
+              relate m to hypo across R10.'is hypothetical response to';
+            end if;
+          end if;
           count = count + 1;
         end if; 
         i = i + 1;
@@ -230,7 +240,7 @@ within lichess_bot::components::Engine is
       //LOG::LogInfo( message:"new moves added: " + STRING::itoa(i:count));
 
       // sanity check
-      select many moves related by player->Move[R6.'considers'];
+      select many moves related by player->Move[R6.'can play'];
       if (cardinality moves != nlegals)
         LOG::LogInfo(message: "Oops - non matched moves");
       end if;

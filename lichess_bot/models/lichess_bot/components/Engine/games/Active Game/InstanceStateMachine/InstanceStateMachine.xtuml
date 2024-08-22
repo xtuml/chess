@@ -79,14 +79,15 @@ within lichess_bot::components::Engine::games::'Active Game' is
     end if;
 
     // ensure that Move instances match allowed moves
-    ::reconcile_moves( fen:self.initial_fen, moves:played_moves, player:myplayer );
+    select any nullinstance from instances of Move where false;
+    ::reconcile_moves( fen:self.initial_fen, moves:played_moves, player:myplayer, hypothetical:nullinstance );
 
     // now we have bona-fide set of legal Move instances find those that end on opponent squares
     target_moves = ::find_target_moves( player:myplayer );
 
     // evaluate the possible consequence of each such move - what might opponent capture?
     for each tgtmove in target_moves
-      select one spec related by tgtmove->Square[R5.'occupies']->OccupiedSquare[R1]->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
+      select one spec related by tgtmove->Square[R5.'targets']->OccupiedSquare[R1]->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
       tgtmove.Value = spec.Value;
       ::evaluate_response( move:tgtmove, fen:self.initial_fen, played_moves: played_moves );
     end for;
@@ -104,7 +105,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     if (empty chosen_move)  
       // if no targetted move selected, may be opening stages of game; look for a move
       if (played_moves.length < 10)  // arbitrary limit on opening move search
-    	  select many openermoves related by myplayer->Move[R6.'considers'];
+    	  select many openermoves related by myplayer->Move[R6.'can play'];
     	  chosen_move = ::pick_opener_move( moves:openermoves );
         LOG::LogInfo(message: "BOT picked opening move: " + chosen_move.Notation); 
       end if;
@@ -130,14 +131,14 @@ within lichess_bot::components::Engine::games::'Active Game' is
 
     // look for benign move
     if (empty chosen_move)
-      select many mymoves related by myplayer->Move[R6.'considers'];
-      select many reachables related by mymoves->Square[R5.'occupies']->OpenSquare[R1];
-      select many coveredsquares related by opponent->Move[R6.'considers']->Square[R5.'occupies']->OpenSquare[R1];
+      select many mymoves related by myplayer->Move[R6.'can play'];
+      select many reachables related by mymoves->Square[R5.'targets']->OpenSquare[R1];
+      select many coveredsquares related by opponent->Move[R6.'can play']->Square[R5.'targets']->OpenSquare[R1];
       refuges = reachables - coveredsquares;
       select many tomoves related by refuges->Square[R1]->Move[R5];
       escapemoves = mymoves & tomoves;
       for each escape in escapemoves
-        select one sq related by escape->Square[R5.'occupies'];
+        select one sq related by escape->Square[R5.'targets'];
         LOG::LogInfo(message:"Random safe move to " + sq.lichess_desig);
         chosen_move = escape; 
         break;
@@ -146,12 +147,12 @@ within lichess_bot::components::Engine::games::'Active Game' is
 
     // have to do something!
     if (empty chosen_move)
-      select any chosen_move related by myplayer->Move[R6.'considers'];
+      select any chosen_move related by myplayer->Move[R6.'can play'];
       LOG::LogInfo(message: "BOT picked random move: " + chosen_move.Notation); // last resort!
     end if;
 
     select one piece related by chosen_move->Piece[R9.'is made by'];
-    select one tosq related by chosen_move->Square[R5.'occupies'];
+    select one tosq related by chosen_move->Square[R5.'targets'];
     select one fromsq related by chosen_move->OccupiedSquare[R5.'vacates']->Square[R1];
     // play the move - in lichess notation
     ourmove = ::movestr( from:fromsq, to:tosq );

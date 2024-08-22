@@ -23,13 +23,13 @@ within lichess_bot::components::Engine is
                        PieceSpecification conditionally 'defines properties of' many Piece;
 
     //! A legal move describes how a piece may move from its occupied square to another square.
-    relationship R5 is OccupiedSquare unconditionally occupies one Square,
+    relationship R5 is OccupiedSquare unconditionally targets one Square,
                        Square unconditionally vacates one OccupiedSquare
                        using one Move;
 
     //! At his turn, a player must choose one the allowed moves for one of his pieces.
-    relationship R6 is Move unconditionally 'is considered by' one Player,
-                       Player conditionally considers many Move;
+    relationship R6 is Move unconditionally 'is playable by' one Player,
+                       Player conditionally 'can play' many Move;
 
     relationship R7 is Piece unconditionally 'belongs to' one Player,
                        Player unconditionally owns many Piece;
@@ -40,6 +40,10 @@ within lichess_bot::components::Engine is
 
     relationship R9 is Move unconditionally 'is made by' one Piece,
                        Piece conditionally 'can make' many Move;
+
+    //! Hypothesizing the execution of a move may open possibilities of opponent moves otherwise not available.
+    relationship R10 is Move conditionally 'is hypothetical response to' one Move,
+                        Move conditionally engenders many Move;
 
   end package;
 
