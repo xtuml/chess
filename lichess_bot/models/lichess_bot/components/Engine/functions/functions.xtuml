@@ -31,7 +31,7 @@ within lichess_bot::components::Engine is
       end while;
 
       // ensure possible opponent moves are represented
-      ::reconcile_moves( fen:fen, moves:as_if_played, player:opponent, hypothetical: potential_move );
+      ::reconcile_moves( fen:fen, moves:as_if_played, player:opponent, trial_move: potential_move );
 
       // look for vulnerabilities
       select many vulnerables related by opponent->Move[R6.'can play']
@@ -51,16 +51,21 @@ within lichess_bot::components::Engine is
         end if;
         select one spec related by piece->PieceSpecification[R4.'is specified by'];
         select one sq related by ocsq->Square[R1];
-        //LOG::LogInfo( message:spec.Name + " vulnerable on " + sq.lichess_desig );
+        LOG::LogInfo( message:spec.Name + " vulnerable on " + sq.lichess_desig );
         cost = spec.Value;  
         if (cost > worst)
           worst = cost;
         end if;
       end for;
       potential_move.Value = potential_move.Value - worst;
-      select many response_moves related by potential_move->Move[R10.'engenders'];
-      for each response in response_moves
-        response.dispose();
+
+      // Now dispose of the responses engendered as a result of hypothesizing this potential move
+      select one eval related by potential_move->EvaluatingMove[R11];
+      select many response_moves related by eval->PotentialMove[R10.'engenders in response'];
+      for each response_move in response_moves
+        select one move related by response_move->Move[R11];
+        LOG::LogInfo(message: "Disposing of engendered response " + move.Notation);
+        move.dispose();
       end for;
       @endnoparse
     end function;
@@ -69,6 +74,8 @@ within lichess_bot::components::Engine is
     @function_num(7);
     function find_target_moves(player: in instance of Player) return set of instance of Move is
       @noparse
+      // Select those playable moves who target an opposition-held square.
+
       player = param.player;
 
       select many target_moves related by player->Move[R6.'can play']
@@ -88,6 +95,7 @@ within lichess_bot::components::Engine is
       	end for;
       end if;
       // debug/instrumentation end
+
       return target_moves;
       @endnoparse
     end function;
@@ -166,13 +174,13 @@ within lichess_bot::components::Engine is
 
     @dialect("oal");
     @function_num(6);
-    function reconcile_moves(fen: in string, moves: in sequence of string, player: in instance of Player, hypothetical: in instance of Move) is
+    function reconcile_moves(fen: in string, moves: in sequence of string, player: in instance of Player, trial_move: in instance of Move) is
       @noparse
       // match Move instances to allowable moves
       fen = param.fen;
       played_moves = param.moves;
       player = param.player;
-      hypo = param.hypothetical;
+      trial = param.trial_move;
 
       // aquire a list of legal moves to choose from
       legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: fen, moves: played_moves));
@@ -224,13 +232,17 @@ within lichess_bot::components::Engine is
         if (not found)
           create object instance m of Move;
           m.Notation = movestr;  // for debug
+          create object instance p of PotentialMove;
+          relate m to p across R11;
           relate fromocsq to tosq across R5 using m;
           relate m to piece across R9;
           relate m to player across R6.'is playable by';
-          if (not_empty hypo)
-            select one tgt related by hypo->Square[R5.'targets'];
+          if (not_empty trial)
+            select one tgt related by trial->Square[R5.'targets'];
             if (tgt == tosq)
-              relate m to hypo across R10.'is hypothetical response to';
+              select one eval related by trial->EvaluatingMove[R11];
+              relate p to eval across R10.'is hypothetical response to';
+              LOG::LogInfo(message: "Engendering response " + m.Notation);
             end if;
           end if;
           count = count + 1;

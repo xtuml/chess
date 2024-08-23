@@ -24,6 +24,19 @@ within lichess_bot::components::Engine::board is
       unrelate occupiedsquare from square across R5 using self;
       select one piece related by self->Piece[R9.'is made by'];
       unrelate self from piece across R9.'is made by';
+      select one move related by self->PotentialMove[R11];
+      if (not_empty move)
+        select one eval related by move->EvaluatingMove[R10.'is hypothetical response to'];
+        if (not_empty eval)
+          unrelate move from eval across R10.'is hypothetical response to';
+        end if;
+        unrelate self from move across R11;
+        delete object instance move;
+      else
+        select one eval related by self->EvaluatingMove[R11];
+        unrelate self from eval across R11;
+        delete object instance eval;
+      end if;
       delete object instance self;
       @endnoparse
     end operation;

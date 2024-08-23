@@ -80,7 +80,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
 
     // ensure that Move instances match allowed moves
     select any nullinstance from instances of Move where false;
-    ::reconcile_moves( fen:self.initial_fen, moves:played_moves, player:myplayer, hypothetical:nullinstance );
+    ::reconcile_moves( fen:self.initial_fen, moves:played_moves, player:myplayer, trial_move:nullinstance );
 
     // now we have bona-fide set of legal Move instances find those that end on opponent squares
     target_moves = ::find_target_moves( player:myplayer );
@@ -89,7 +89,17 @@ within lichess_bot::components::Engine::games::'Active Game' is
     for each tgtmove in target_moves
       select one spec related by tgtmove->Square[R5.'targets']->OccupiedSquare[R1]->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
       tgtmove.Value = spec.Value;
+      select one pm related by tgtmove->PotentialMove[R11];
+      unrelate tgtmove from pm across R11;
+      delete object instance pm;
+      create object instance em of EvaluatingMove;
+      relate tgtmove to em across R11;
       ::evaluate_response( move:tgtmove, fen:self.initial_fen, played_moves: played_moves );
+      select one em related by tgtmove->EvaluatingMove[R11];
+      unrelate tgtmove from em across R11;
+      delete object instance em;
+      create object instance pm of PotentialMove;
+      relate tgtmove to pm across R11;
     end for;
 
     // select the move with the best trade-off - if there is one

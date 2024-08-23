@@ -4,12 +4,14 @@ within lichess_bot::components::Engine is
 
   //! Maintains a representation of the chessboard and piece placement and movement.
   package board is
+    class EvaluatingMove;
     class Move;
     class OccupiedSquare;
     class OpenSquare;
     class Piece;
     class PieceSpecification;
     class Player;
+    class PotentialMove;
     class Square;
     //! Every square is either occupied or not.
     relationship R1 is Square is_a (OccupiedSquare, OpenSquare);
@@ -42,8 +44,10 @@ within lichess_bot::components::Engine is
                        Piece conditionally 'can make' many Move;
 
     //! Hypothesizing the execution of a move may open possibilities of opponent moves otherwise not available.
-    relationship R10 is Move conditionally 'is hypothetical response to' one Move,
-                        Move conditionally engenders many Move;
+    relationship R10 is EvaluatingMove conditionally 'engenders in response' many PotentialMove,
+                        PotentialMove conditionally 'is hypothetical response to' one EvaluatingMove;
+
+    relationship R11 is Move is_a (EvaluatingMove, PotentialMove);
 
   end package;
 

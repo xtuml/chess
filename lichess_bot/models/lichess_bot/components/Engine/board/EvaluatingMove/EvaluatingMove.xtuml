@@ -1,0 +1,11 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::board is
+
+  @key_letters("EvaluatingMove");
+  @class_num(9);
+  class EvaluatingMove is
+
+  end class;
+
+end;
