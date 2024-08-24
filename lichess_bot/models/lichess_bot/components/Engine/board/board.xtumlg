@@ -64,7 +64,7 @@ connectors :
         point : x : 2735.0 y : 1980.0
         shape : OccupiedSquare
       end :
-        point : x : 2808.0 y : 2196.0
+        point : x : 2735.0 y : 2196.0
         shape : Square
     texts :
       text :
@@ -121,7 +121,7 @@ connectors :
         point : x : 2363.0 y : 1968.0
         shape : Piece
       end :
-        point : x : 2048.0 y : 2039.0
+        point : x : 2363.0 y : 2039.0
         shape : Player
     texts :
       text :
@@ -150,7 +150,7 @@ connectors :
         point : x : 1895.0 y : 2136.0
         shape : Player
       end :
-        point : x : 1848.0 y : 2052.0
+        point : x : 1895.0 y : 2171.0
         shape : Player
     texts :
       text :
@@ -208,7 +208,7 @@ connectors :
         point : x : 2975.0 y : 1980.0
         shape : OpenSquare
       end :
-        point : x : 2892.0 y : 2027.0
+        point : x : 2975.0 y : 2027.0
         connector : R1
     texts :
   connector : R1____OccupiedSquare
@@ -225,7 +225,7 @@ connectors :
         point : x : 2807.0 y : 1980.0
         shape : OccupiedSquare
       end :
-        point : x : 2892.0 y : 2027.0
+        point : x : 2807.0 y : 2027.0
         connector : R1
     texts :
   connector : R9
@@ -297,7 +297,7 @@ connectors :
         point : x : 2604.0 y : 2280.0
         shape : PotentialMove
       end :
-        point : x : 2448.0 y : 2243.0
+        point : x : 2603.0 y : 2243.0
         connector : R11
     texts :
   connector : R11____EvaluatingMove
@@ -314,6 +314,6 @@ connectors :
         point : x : 2279.0 y : 2280.0
         shape : EvaluatingMove
       end :
-        point : x : 2448.0 y : 2243.0
+        point : x : 2279.0 y : 2243.0
         connector : R11
     texts :

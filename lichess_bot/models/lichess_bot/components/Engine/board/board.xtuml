@@ -25,8 +25,8 @@ within lichess_bot::components::Engine is
                        PieceSpecification conditionally 'defines properties of' many Piece;
 
     //! A legal move describes how a piece may move from its occupied square to another square.
-    relationship R5 is OccupiedSquare unconditionally targets one Square,
-                       Square unconditionally vacates one OccupiedSquare
+    relationship R5 is OccupiedSquare conditionally targets many Square,
+                       Square conditionally vacates many OccupiedSquare
                        using one Move;
 
     //! At his turn, a player must choose one the allowed moves for one of his pieces.
