@@ -77,17 +77,14 @@ within lichess_bot::components::Engine is
       // Select those playable moves who target an opposition-held square.
 
       player = param.player;
-      /*
-      select many moves related by player->Move[R6.'can play'];
-      select many squares related by moves->Square[R5.'targets'];
-      select many ocsqs related by squares->OccupiedSquare[R1];
-      select many tgtsqs related by ocsqs->Square[R1];
-      select many target_moves related by tgtsqs->Move[R5];
-      */
 
-      select many target_moves related by player->Move[R6.'can play']
+      // find only those moves which target opponent-occupied squares:
+      // filter all allowed moves (see reconcile_moves()) to those targetting occupied squares;
+      // navigate from each occupied square to the supertype square - which is a move target -
+      // thence back to the targetting moves. 
+      select many target_moves related by player->Move[R6.'can play']  // playable moves
                                                 ->Square[R5.'targets']
-                                                ->OccupiedSquare[R1]
+                                                ->OccupiedSquare[R1]   // targetting opponent-occupied squares
                                                 ->Square[R1]
                                                 ->Move[R5];
 
@@ -318,6 +315,12 @@ within lichess_bot::components::Engine is
       relate piece to ocsq across R2.'occupies';
       piece.clean_moves();  // all are now invalid - no longer on start square
 
+      // If this move is an opponent move, ensure there are no outstanding
+      // opponent moves still targetting this square as they may be erroneously 
+      // picked up by a subsequent move-set selection from the square.
+      // But if this 'our' side move, also dispose: if it was an open square, 
+      // any our-move to it is no longer possible; if it was occupied, it
+      // must have been by an opponent piece - which is now gone.
       select many invalids related by dest->Move[R5]; 
       for each invalid in invalids
         invalid.dispose();

@@ -24,7 +24,10 @@ within lichess_bot::components::Engine is
     relationship R4 is Piece unconditionally 'is specified by' one PieceSpecification,
                        PieceSpecification conditionally 'defines properties of' many Piece;
 
-    //! A legal move describes how a piece may move from its occupied square to another square.
+    //! A legal move defines how a piece may move from its occupied square to another square.
+    //! The 'from' square must, obviously, be occupied initially by the piece making the move.
+    //! That piece may be able to reach more than one square (multiplicity) or none! (conditionality).
+    //! A destination square, in turn, may be reachable by more than one piece - or none, also.
     relationship R5 is OccupiedSquare conditionally targets many Square,
                        Square conditionally vacates many OccupiedSquare
                        using one Move;
