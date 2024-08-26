@@ -106,6 +106,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     best = 0;
     select any chosen_move from instances of Move where false;  // decl
     for each tgtmove in target_moves
+      LOG::LogInfo( message:tgtmove.Notation + " has value " + STRING::itoa( i:tgtmove.Value ));
       if (tgtmove.Value > best)
         best = tgtmove.Value;
         chosen_move = tgtmove;

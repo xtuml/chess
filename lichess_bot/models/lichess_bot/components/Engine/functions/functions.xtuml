@@ -37,6 +37,9 @@ within lichess_bot::components::Engine is
       select many vulnerables related by opponent->Move[R6.'can play']
                                                   ->Square[R5.'targets']
                                                   ->OccupiedSquare[R1];
+      if (empty vulnerables)
+        LOG::LogInfo( message:"No risk for this move" );
+      end if;
 
       worst = 0;
       select any piece from instances of Piece where false;
@@ -159,6 +162,25 @@ within lichess_bot::components::Engine is
         select one sq related by highpiece->OccupiedSquare[R2.'occupies']->Square[R1];
         LOG::LogInfo(message:"Seeking safety for piece on " + sq.lichess_desig);
         select many coveredsquares related by opponent->Move[R6.'can play']->Square[R5.'targets']->OpenSquare[R1];
+        select many pieces related by opponent->Piece[R7.'owns'];
+        select any spec from instances of PieceSpecification
+         where (selected.Name == "Pawn");
+        select many pawns related by spec->Piece[R4.'defines properties of'];
+        opponentpawns = pieces & pawns;
+        advance = 1;
+        if (opponent.Color != Color::WHITE)
+          advance = -1;
+        end if;
+        for each oppawn in opponentpawns
+          select one square related by oppawn->OccupiedSquare[R2.'occupies']->Square[R1];
+          if (not_empty square)  // may have been taken - no longer occupies a square
+      	    select many possibles from instances of Square
+      	     where (selected.rank == square.rank + advance 
+      	      and (selected.file == square.file + 1 or selected.file == square.file - 1));
+      	    select many opensquares related by possibles->OpenSquare[R1];
+      	    coveredsquares = coveredsquares + opensquares;
+          end if;
+        end for;
         select many reachables related by highpiece->Move[R9.'can make']->Square[R5.'targets']->OpenSquare[R1];
         refuges = reachables - coveredsquares;
         select many tomoves related by refuges->Square[R1]->Move[R5];
