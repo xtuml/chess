@@ -60,6 +60,9 @@ within lichess_bot::components::Engine is
           worst = cost;
         end if;
       end for;
+      if (worst != 0)
+        LOG::LogInfo( message:potential_move.Notation + " " + STRING::itoa( i: potential_move.Value ) + " reduced by " + STRING::itoa( i:worst  ));
+      end if;
       potential_move.Value = potential_move.Value - worst;
 
       // Now dispose of the responses engendered as a result of hypothesizing this potential move
@@ -174,39 +177,34 @@ within lichess_bot::components::Engine is
       select any chosen_move from instances of Move where false; // decl
       select many threats related by opponent->Move[R6.'can play']->Square[R5.'targets']->OccupiedSquare[R1];
       coveredsquares = ::find_covered_squares( player:opponent );
-      select any highpiece from instances of Piece where false; // decl
       highestvalue = 0;
-      for each ocsq in threats
-        select one piece related by ocsq->Piece[R2.'is occupied by'];
-        select one spec related by piece->PieceSpecification[R4.'is specified by'];
-        select one sq related by ocsq->Square[R1];
-        LOG::LogInfo(message:"Threatened: " + spec.Name + " on " + sq.lichess_desig);
-        if (spec.Value > highestvalue)
-          highestvalue = spec.Value;
-          highpiece = piece;
-        end if;
-      end for;
-      if (empty highpiece)
-        select any highpiece related by threats->Piece[R2.'is occupied by'];
-      end if;
-      if (not_empty highpiece)
-        select one sq related by highpiece->OccupiedSquare[R2.'occupies']->Square[R1];
-        LOG::LogInfo(message:"Seeking safety for piece on " + sq.lichess_desig);
-        select many reachables related by highpiece->Move[R9.'can make']->Square[R5.'targets']->OpenSquare[R1];
-        refuges = reachables - coveredsquares;
-        select many tomoves related by refuges->Square[R1]->Move[R5];
-        select many frommoves related by highpiece->Move[R9.'can make'];
-        escapemoves = frommoves & tomoves;
-        for each escape in escapemoves
-          select one sq related by escape->Square[R5.'targets'];
-          LOG::LogInfo(message:"Found safe move to " + sq.lichess_desig);
-          chosen_move = escape; 
-          break;
-        end for;
-      end if;
-      if (empty chosen_move)
-        LOG::LogInfo(message:"No safe escape move found");
-      end if;
+      	for each ocsq in threats
+      	  select one piece related by ocsq->Piece[R2.'is occupied by'];
+      	  select one spec related by piece->PieceSpecification[R4.'is specified by'];
+      	  select one sq related by ocsq->Square[R1];
+      	  LOG::LogInfo(message:"Seeking safety for " + spec.Name + " on " + sq.lichess_desig);
+      	  select many reachables related by piece->Move[R9.'can make']->Square[R5.'targets']->OpenSquare[R1];
+      	  refuges = reachables - coveredsquares;
+      	  if (not_empty refuges)
+      	    if (spec.Value > highestvalue)
+      	      highestvalue = spec.Value;
+      			  select many tomoves related by refuges->Square[R1]->Move[R5];
+      			  select many frommoves related by piece->Move[R9.'can make'];
+      			  escapemoves = frommoves & tomoves;
+      			  for each escape in escapemoves
+      			    select one sq related by escape->Square[R5.'targets'];
+      			    LOG::LogInfo(message:"Found possible safe move to " + sq.lichess_desig);
+      			    chosen_move = escape; 
+      			    break;
+      			  end for;
+      		  end if;
+      		else
+      		  LOG::LogInfo( message:"No refuge for " + spec.Name + " on " + sq.lichess_desig );
+      		end if;
+      	end for;
+      	if (empty chosen_move)
+      	  LOG::LogInfo(message:"No safe escape move found");
+      	end if;
       return chosen_move;
       @endnoparse
     end function;
@@ -344,6 +342,7 @@ within lichess_bot::components::Engine is
         select any qspec from instances of PieceSpecification
          where (selected.Name == "Queen");  // always pick a Queen - why not?!
         relate piece to qspec across R4.'is specified by';
+        LOG::LogInfo( message:"PROMOTING ON " + dest.lichess_desig);
       end if;
       relate piece to ocsq across R2.'occupies';
       piece.clean_moves();  // all are now invalid - no longer on start square
