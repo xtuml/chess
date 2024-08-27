@@ -74,6 +74,36 @@ within lichess_bot::components::Engine is
     end function;
 
     @dialect("oal");
+    @function_num(9);
+    function find_covered_squares(player: in instance of Player) return set of instance of OpenSquare is
+      @noparse
+      // find the set of open squares which opponent pieces can reach
+      opponent = param.player;
+      select many coveredsquares related by opponent->Move[R6.'can play']->Square[R5.'targets']->OpenSquare[R1];
+      select many pieces related by opponent->Piece[R7.'owns'];
+      select any spec from instances of PieceSpecification
+       where (selected.Name == "Pawn");
+      select many pawns related by spec->Piece[R4.'defines properties of'];  // need special treatment
+      opponentpawns = pieces & pawns;
+      advance = 1;
+      if (opponent.Color != Color::WHITE)
+        advance = -1;
+      end if;
+      for each oppawn in opponentpawns
+        select one square related by oppawn->OccupiedSquare[R2.'occupies']->Square[R1];
+        if (not_empty square)  // may have been taken - no longer occupies a square
+          select many possibles from instances of Square
+           where (selected.rank == square.rank + advance 
+            and (selected.file == square.file + 1 or selected.file == square.file - 1));
+          select many opensquares related by possibles->OpenSquare[R1];
+          coveredsquares = coveredsquares + opensquares;
+        end if;
+      end for;
+      return coveredsquares;
+      @endnoparse
+    end function;
+
+    @dialect("oal");
     @function_num(7);
     function find_target_moves(player: in instance of Player) return set of instance of Move is
       @noparse
@@ -143,6 +173,7 @@ within lichess_bot::components::Engine is
       opponent = param.opponent;
       select any chosen_move from instances of Move where false; // decl
       select many threats related by opponent->Move[R6.'can play']->Square[R5.'targets']->OccupiedSquare[R1];
+      coveredsquares = ::find_covered_squares( player:opponent );
       select any highpiece from instances of Piece where false; // decl
       highestvalue = 0;
       for each ocsq in threats
@@ -161,26 +192,6 @@ within lichess_bot::components::Engine is
       if (not_empty highpiece)
         select one sq related by highpiece->OccupiedSquare[R2.'occupies']->Square[R1];
         LOG::LogInfo(message:"Seeking safety for piece on " + sq.lichess_desig);
-        select many coveredsquares related by opponent->Move[R6.'can play']->Square[R5.'targets']->OpenSquare[R1];
-        select many pieces related by opponent->Piece[R7.'owns'];
-        select any spec from instances of PieceSpecification
-         where (selected.Name == "Pawn");
-        select many pawns related by spec->Piece[R4.'defines properties of'];
-        opponentpawns = pieces & pawns;
-        advance = 1;
-        if (opponent.Color != Color::WHITE)
-          advance = -1;
-        end if;
-        for each oppawn in opponentpawns
-          select one square related by oppawn->OccupiedSquare[R2.'occupies']->Square[R1];
-          if (not_empty square)  // may have been taken - no longer occupies a square
-      	    select many possibles from instances of Square
-      	     where (selected.rank == square.rank + advance 
-      	      and (selected.file == square.file + 1 or selected.file == square.file - 1));
-      	    select many opensquares related by possibles->OpenSquare[R1];
-      	    coveredsquares = coveredsquares + opensquares;
-          end if;
-        end for;
         select many reachables related by highpiece->Move[R9.'can make']->Square[R5.'targets']->OpenSquare[R1];
         refuges = reachables - coveredsquares;
         select many tomoves related by refuges->Square[R1]->Move[R5];
@@ -337,12 +348,15 @@ within lichess_bot::components::Engine is
       relate piece to ocsq across R2.'occupies';
       piece.clean_moves();  // all are now invalid - no longer on start square
 
-      // If this move is an opponent move, ensure there are no outstanding
+      // If destination was an open square, now it is not; any potential move to it
+      // must be re-evaluated - b re-creation; if it was occupied, it must have been 
+      // by an opponent piece which is now gone, invalidating any moves to it.
+      // Note that if this move is an opponent move, ensure there are no outstanding
       // opponent moves still targetting this square as they may be erroneously 
-      // picked up by a subsequent move-set selection from the square.
-      // But if this 'our' side move, also dispose: if it was an open square, 
-      // any our-move to it is no longer possible; if it was occupied, it
-      // must have been by an opponent piece - which is now gone.
+      // picked up by a subsequent move-set selection from the square before
+      // any move reconcilation takes place for opponent pieces - that will not
+      // happen until response moves are being evaluated.
+
       select many invalids related by dest->Move[R5]; 
       for each invalid in invalids
         invalid.dispose();
