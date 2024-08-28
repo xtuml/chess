@@ -1,0 +1,10 @@
+// BP 7.1.6 content: SystemModel syschar: 3 persistence-version: 7.1.6
+
+@system_model(use_globals=true);
+package tournaments is
+
+  package components;
+  package system;
+
+end package;
+

@@ -1,0 +1,26 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner' is
+
+  package functions is
+    @dialect("oal");
+    @function_num(1);
+    function init() is
+      @noparse
+      // load configuration properties
+      select any bot from instances of Bot;
+      if empty bot then
+        create object instance bot of Bot;
+        bot.config = PROP::loadProperties(file_name:"lichess_bot.properties");
+      end if;
+
+      // connect to the Lichess API and start listening for events
+      send chess::connect(properties: bot.config);
+
+      LOG::LogInfo(message: "Initialization complete");
+      @endnoparse
+    end function;
+
+  end package;
+
+end;

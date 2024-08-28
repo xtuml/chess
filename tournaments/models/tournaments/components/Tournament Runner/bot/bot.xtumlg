@@ -1,0 +1,8 @@
+render : "tournaments::components::Tournament Runner::bot"
+
+shapes :
+  shape : Bot
+    render : class "tournaments::components::Tournament Runner::bot::Bot"
+    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+
+connectors :

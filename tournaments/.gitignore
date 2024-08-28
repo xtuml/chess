@@ -1,0 +1,4 @@
+*.oal_err
+src/main/resources/lichess_bot.properties
+gen/code_generation/
+target/
