@@ -19,5 +19,6 @@
     <module>pgn</module>
     <module>lichess_api</module>
     <module>lichess_bot</module>
+    <module>tournaments</module>
   </modules>
 </project>

@@ -1,0 +1,9 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within tournaments is
+
+  package components is
+    component 'Tournament Runner';
+  end package;
+
+end;

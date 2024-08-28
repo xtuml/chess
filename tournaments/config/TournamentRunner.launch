@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.xtuml.bp.debug.ui.BPApplication">
+    <stringAttribute key="bad_container_name" value="//config"/>
+    <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
+    <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+        <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+    </listAttribute>
+    <booleanAttribute key="org.xtuml.bp.debug.ui.BPApplication.activity" value="false"/>
+    <booleanAttribute key="org.xtuml.bp.debug.ui.BPApplication.deterministic" value="false"/>
+    <mapAttribute key="org.xtuml.bp.debug.ui.BPApplication.models">
+        <mapEntry key="tournaments" value="tournaments::system::lichess_bot::components::Lichess_INTERNALTOKEN_1_INTERNALTOKEN_None_INTERNALTOKEN_enabled_TOKEN_tournaments::system::tournaments::components::Tournament Runner_INTERNALTOKEN_1_INTERNALTOKEN_tournaments::components::Tournament Runner::inst::Instrumentation::init_INTERNALTOKEN_enabled_TOKEN_"/>
+    </mapAttribute>
+    <booleanAttribute key="org.xtuml.bp.debug.ui.BPApplication.simtime" value="false"/>
+    <intAttribute key="org.xtuml.bp.debug.ui.BPApplication.timeout" value="0"/>
+</launchConfiguration>
