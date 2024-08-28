@@ -272,6 +272,10 @@ within lichess_bot::components::Engine is
           create object instance p of PotentialMove;
           relate m to p across R11;
           relate fromocsq to tosq across R5.'targets' using m;
+          select many movs related by tosq->Move[R5];
+          for each mov in movs
+            generate Move3:reactivate() to mov;
+          end for;
           relate m to piece across R9;
           relate m to player across R6.'is playable by';
           if (not_empty trial)
@@ -281,6 +285,8 @@ within lichess_bot::components::Engine is
               relate p to eval across R10.'is hypothetical response to';
               LOG::LogInfo(message: trial.Notation + " engendering response " + m.Notation);
             end if;
+          else
+            LOG::LogInfo(message: "Adding legal move: " + m.Notation);
           end if;
           count = count + 1;
         end if; 

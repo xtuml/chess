@@ -1,0 +1,66 @@
+// BP 7.1.6 content: InstanceStateMachine syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine::board::Move is
+
+  @state_num(1);
+  @dialect("oal");
+  state activated;
+
+  @state_num(2);
+  @dialect("oal");
+  state evaluating;
+
+  @state_num(3);
+  @dialect("oal");
+  state dormant;
+
+  @event_num(1);
+  event evaluate(fen: in string, moves: in sequence of string, game: in instance of 'Active Game');
+
+  @event_num(2);
+  event evaluated;
+
+  @event_num(3);
+  event reactivate;
+
+  state model is
+
+    |               | evaluate      | evaluated     | reactivate    |
+    | ------------- | ------------- | ------------- | ------------- |
+    | activated     | evaluating    | cannot_happen | ignore        |
+    | evaluating    | cannot_happen | dormant       | cannot_happen |
+    | dormant       | ignore        | cannot_happen | activated     |
+
+  end state model;
+
+  state evaluating(fen: in string, moves: in sequence of string, game: in instance of 'Active Game') is
+    @noparse
+    fen = param.fen;
+    played_moves = param.moves;
+    game = param.game;
+      LOG::LogInfo(message:"move start evaluation " + self.Notation);
+
+      select one spec related by self->Square[R5.'targets']->OccupiedSquare[R1]->Piece[R2.'is occupied by']->PieceSpecification[R4.'is specified by'];
+      self.Value = spec.Value;
+      select one pm related by self->PotentialMove[R11];
+      unrelate self from pm across R11;
+      delete object instance pm;
+      create object instance em of EvaluatingMove;
+      relate self to em across R11;
+      ::evaluate_response( move:self, fen:fen, played_moves:played_moves );
+      select one em related by self->EvaluatingMove[R11];
+      unrelate self from em across R11;
+      delete object instance em;
+      create object instance pm of PotentialMove;
+      relate self to pm across R11;
+
+    select any eval from instances of EvaluatingMove;
+    if (empty eval)
+      generate ActiveGame6:consider_moves() to game;
+      LOG::LogInfo(message:"Generating ActiveGame6:consider from move " + self.Notation);
+    end if;
+    generate Move2:evaluated() to self;
+    @endnoparse
+  end state;
+
+end;
