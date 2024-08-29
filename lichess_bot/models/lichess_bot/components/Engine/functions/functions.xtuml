@@ -70,7 +70,7 @@ within lichess_bot::components::Engine is
       select many response_moves related by eval->PotentialMove[R10.'engenders in response'];
       for each response_move in response_moves
         select one move related by response_move->Move[R11];
-        LOG::LogInfo(message: "Disposing of engendered response " + move.Notation);
+        //LOG::LogInfo(message: "Disposing of engendered response " + move.Notation);
         move.dispose();
       end for;
       @endnoparse
@@ -286,13 +286,13 @@ within lichess_bot::components::Engine is
               LOG::LogInfo(message: trial.Notation + " engendering response " + m.Notation);
             end if;
           else
-            LOG::LogInfo(message: "Adding legal move: " + m.Notation);
+            //LOG::LogInfo(message: "Adding legal move: " + m.Notation);
           end if;
           count = count + 1;
         end if; 
         i = i + 1;
       end while;
-      //LOG::LogInfo( message:"new moves added: " + STRING::itoa(i:count));
+      LOG::LogInfo( message:"new legal moves added: " + STRING::itoa(i:count));
 
       // sanity check
       select many moves related by player->Move[R6.'can play'];

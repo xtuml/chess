@@ -52,6 +52,9 @@ within lichess_bot::components::Engine is
 
     relationship R11 is Move is_a (EvaluatingMove, PotentialMove);
 
+    relationship R12 is Move unconditionally evaluates one Player,
+                        Player conditionally 'waits for' many Move;
+
   end package;
 
 end;

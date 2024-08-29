@@ -103,8 +103,11 @@ within lichess_bot::components::Engine::games::'Active Game' is
     else
     	// evaluate the possible consequence of each such move - what might opponent capture?
     	for each tgtmove in target_moves
+    	  relate tgtmove to myplayer across R12.'evaluates';
     	  generate Move1:evaluate(fen:self.initial_fen, moves:played_moves, game:self) to tgtmove;
     	end for;
+    	n = cardinality target_moves;
+    	LOG::LogInfo( message:"Evaluating " + STRING::itoa( i:n ) + " target moves in state our turn");
     end if;
     @endnoparse
   end state;

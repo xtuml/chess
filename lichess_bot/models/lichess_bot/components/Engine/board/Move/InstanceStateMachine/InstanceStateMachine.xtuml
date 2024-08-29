@@ -29,7 +29,7 @@ within lichess_bot::components::Engine::board::Move is
     | ------------- | ------------- | ------------- | ------------- |
     | activated     | evaluating    | cannot_happen | ignore        |
     | evaluating    | cannot_happen | dormant       | cannot_happen |
-    | dormant       | ignore        | cannot_happen | activated     |
+    | dormant       | dormant       | cannot_happen | activated     |
 
   end state model;
 
@@ -54,12 +54,20 @@ within lichess_bot::components::Engine::board::Move is
       create object instance pm of PotentialMove;
       relate self to pm across R11;
 
-    select any eval from instances of EvaluatingMove;
-    if (empty eval)
+    generate Move2:evaluated() to self;
+    @endnoparse
+  end state;
+
+  state dormant is
+    @noparse
+    select one player related by self->Player[R12.'evaluates'];
+    unrelate self from player across R12.'evaluates';
+    select any move related by player->Move[R12.'waits for'];
+    if (empty move)
+      select one game related by player->ActiveGame[R22.'delegates to'];
       generate ActiveGame6:consider_moves() to game;
       LOG::LogInfo(message:"Generating ActiveGame6:consider from move " + self.Notation);
     end if;
-    generate Move2:evaluated() to self;
     @endnoparse
   end state;
 
