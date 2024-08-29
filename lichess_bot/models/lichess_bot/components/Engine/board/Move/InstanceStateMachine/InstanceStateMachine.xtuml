@@ -68,7 +68,14 @@ within lichess_bot::components::Engine::board::Move is
       generate ActiveGame6:consider_moves() to game;
       LOG::LogInfo(message:"Generating ActiveGame6:consider from move " + self.Notation);
     end if;
+    LOG::LogInfo(message:self.Notation + " now dormant");
     @endnoparse
   end state;
+
+  transition dormant [reactivate] => activated is
+    @noparse
+    LOG::LogInfo(message:self.Notation + " reactivating");
+    @endnoparse
+  end transition;
 
 end;
