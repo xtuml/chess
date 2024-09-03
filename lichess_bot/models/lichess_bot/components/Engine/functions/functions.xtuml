@@ -202,7 +202,7 @@ within lichess_bot::components::Engine is
       		  LOG::LogInfo( message:"No refuge for " + spec.Name + " on " + sq.lichess_desig );
       		end if;
       	end for;
-      	if (empty chosen_move)
+      	if (not_empty threats and empty chosen_move)
       	  LOG::LogInfo(message:"No safe escape move found");
       	end if;
       return chosen_move;
@@ -274,6 +274,7 @@ within lichess_bot::components::Engine is
           relate fromocsq to tosq across R5.'targets' using m;
           select many movs related by tosq->Move[R5];
           for each mov in movs
+            LOG::LogInfo( message:mov.Notation + " reactivating by to-square " + tosq.lichess_desig );
             generate Move3:reactivate() to mov;
           end for;
           relate m to piece across R9;

@@ -72,6 +72,12 @@ within lichess_bot::components::Engine::board::Move is
     @endnoparse
   end state;
 
+  transition dormant [evaluate] => dormant(fen: in string, moves: in sequence of string, game: in instance of 'Active Game') is
+    @noparse
+    LOG::LogInfo( message:self.Notation + " dormant: skipping re-evaluation" );
+    @endnoparse
+  end transition;
+
   transition dormant [reactivate] => activated is
     @noparse
     LOG::LogInfo(message:self.Notation + " reactivating");
