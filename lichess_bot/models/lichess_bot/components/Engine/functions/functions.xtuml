@@ -193,7 +193,7 @@ within lichess_bot::components::Engine is
       			  escapemoves = frommoves & tomoves;
       			  for each escape in escapemoves
       			    select one sq related by escape->Square[R5.'targets'];
-      			    LOG::LogInfo(message:"Found possible safe move to " + sq.lichess_desig);
+      			    LOG::LogInfo(message:"Found possible safe move for " + spec.Name + " to " + sq.lichess_desig);
       			    chosen_move = escape; 
       			    break;
       			  end for;
@@ -312,10 +312,12 @@ within lichess_bot::components::Engine is
       dest = param.to;     // a square - occupied? - or not?
       recorder = param.recorder;
 
+      select one piece related by start->Piece[R2.'is occupied by'];
+      select one spec related by piece->PieceSpecification[R4.'is specified by'];
       // these 3 lines are debug instrumentation
       select one sq related by start->Square[R1];
       str = ::movestr( from:sq, to:dest );
-      LOG::LogInfo( message:"recording move from " + recorder + str );
+      LOG::LogInfo( message:"recording " + spec.Name + " move from " + recorder + str );
 
       select one piece related by start->Piece[R2.'is occupied by'];
       select any ocsq from instances of OccupiedSquare where false;  // decl
@@ -355,7 +357,7 @@ within lichess_bot::components::Engine is
       piece.clean_moves();  // all are now invalid - no longer on start square
 
       // If destination was an open square, now it is not; any potential move to it
-      // must be re-evaluated - b re-creation; if it was occupied, it must have been 
+      // must be re-evaluated - by re-creation; if it was occupied, it must have been 
       // by an opponent piece which is now gone, invalidating any moves to it.
       // Note that if this move is an opponent move, ensure there are no outstanding
       // opponent moves still targetting this square as they may be erroneously 

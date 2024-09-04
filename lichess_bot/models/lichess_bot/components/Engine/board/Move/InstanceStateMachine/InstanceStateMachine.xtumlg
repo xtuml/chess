@@ -50,22 +50,6 @@ connectors :
     texts :
       text :
         bounds : x : 336.0 y : 306.0 width : 0.0 height : 0.0 where : middle
-  connector : dormant____Move3__reactivate
-    render : transition "lichess_bot::components::Engine::board::Move::Instance State Machine::dormant::Move3: reactivate"
-    polyline :
-      segment :
-        start : x : 133.0 y : 204.0
-        end :   x : 133.0 y : 150.0
-    anchors :
-      start :
-        point : x : 133.0 y : 204.0
-        shape : dormant
-      end :
-        point : x : 133.0 y : 150.0
-        shape : activated
-    texts :
-      text :
-        bounds : x : 9.0 y : 169.0 width : 0.0 height : 0.0 where : middle
   connector : dormant____Move1__evaluate
     render : transition "lichess_bot::components::Engine::board::Move::Instance State Machine::dormant::Move1: evaluate"
     polyline :
@@ -88,3 +72,19 @@ connectors :
     texts :
       text :
         bounds : x : 149.0 y : 421.0 width : 0.0 height : 0.0 where : middle
+  connector : dormant____Move3__reactivate
+    render : transition "lichess_bot::components::Engine::board::Move::Instance State Machine::dormant::Move3: reactivate"
+    polyline :
+      segment :
+        start : x : 155.0 y : 204.0
+        end :   x : 155.0 y : 150.0
+    anchors :
+      start :
+        point : x : 155.0 y : 204.0
+        shape : dormant
+      end :
+        point : x : 155.0 y : 150.0
+        shape : activated
+    texts :
+      text :
+        bounds : x : 31.0 y : 169.0 width : 0.0 height : 0.0 where : middle

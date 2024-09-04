@@ -188,6 +188,22 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     end if;
 
+    // look for benign move
+    if (empty chosen_move)
+      select many mymoves related by myplayer->Move[R6.'can play'];
+      select many reachables related by mymoves->Square[R5.'targets']->OpenSquare[R1];
+      coveredsquares = ::find_covered_squares( player:opponent );
+      refuges = reachables - coveredsquares;
+      select many tomoves related by refuges->Square[R1]->Move[R5]; 
+      escapemoves = mymoves & tomoves;
+      for each escape in escapemoves
+        select one sq related by escape->Square[R5.'targets'];
+        LOG::LogInfo(message:"BOT picked random safe move to " + sq.lichess_desig);
+        chosen_move = escape; 
+        break;
+      end for;
+    end if;  
+
     // still no clear choice of move; time for some heuristic...
     if (empty chosen_move)
       if (not_empty target_moves)
@@ -200,22 +216,6 @@ within lichess_bot::components::Engine::games::'Active Game' is
         end for;
       end if;
     end if;
-
-    // look for benign move
-    if (empty chosen_move)
-      select many mymoves related by myplayer->Move[R6.'can play'];
-      select many reachables related by mymoves->Square[R5.'targets']->OpenSquare[R1];
-      coveredsquares = ::find_covered_squares( player:opponent );
-      refuges = reachables - coveredsquares;
-      select many tomoves related by refuges->Square[R1]->Move[R5]; 
-      escapemoves = mymoves & tomoves;
-      for each escape in escapemoves
-        select one sq related by escape->Square[R5.'targets'];
-        LOG::LogInfo(message:"Random safe move to " + sq.lichess_desig);
-        chosen_move = escape; 
-        break;
-      end for;
-    end if;  
 
     // have to do something!
     if (empty chosen_move)

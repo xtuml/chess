@@ -262,19 +262,3 @@ connectors :
     texts :
       text :
         bounds : x : 5396.0 y : 3040.0 width : 0.0 height : 0.0 where : middle
-  connector : theirturn____Transition1
-    render : transition "lichess_bot::components::Engine::games::Active Game::Instance State Machine::their turn::Transition-1"
-    polyline :
-      segment :
-        start : x : 4500.0 y : 3468.0
-        end :   x : 4500.0 y : 3252.0
-    anchors :
-      start :
-        point : x : 4500.0 y : 3468.0
-        shape : theirturn
-      end :
-        point : x : 4500.0 y : 3252.0
-        shape : ourturn
-    texts :
-      text :
-        bounds : x : 4323.0 y : 3333.0 width : 0.0 height : 0.0 where : middle

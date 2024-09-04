@@ -80,7 +80,7 @@ within lichess_bot::components::Engine::board::Move is
 
   transition dormant [reactivate] => activated is
     @noparse
-    LOG::LogInfo(message:self.Notation + " reactivating");
+    //LOG::LogInfo(message:self.Notation + " reactivating");
     @endnoparse
   end transition;
 
