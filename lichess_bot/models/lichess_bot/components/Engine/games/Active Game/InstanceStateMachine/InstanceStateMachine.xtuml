@@ -161,8 +161,29 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     end for;
 
+    // find the set of safe moves: destinations not covered by opponent
+    sqs = ::find_safe_squares( player:myplayer );
+    select many tomoves related by sqs->Move[R5];
+    select many mymoves related by myplayer->Move[R6.'can play'];
+    safemoves = mymoves & tomoves;
+
+
     // consider vulnerablity avoidance
-    escape_move = ::play_safe( opponent:opponent );
+    best = 0;
+    select any escape_move from instances of Move where false;  // decl
+    select many threateneds related by opponent->Move[R6.'can play']->Square[R5.'targets']->OccupiedSquare[R1]->Piece[R2.'is occupied by'];
+    select many frommoves related by threateneds->Move[R9.'can make'];
+    escape_moves = frommoves & safemoves;
+    for each move in escape_moves
+      select one spec related by move->Piece[R9.'is made by']->PieceSpecification[R4.'is specified by'];
+      move. Value = spec.Value;
+      if (move.Value > best)
+        best = move.Value;
+        escape_move = move;
+      end if;
+    end for;
+
+    //escape_move = ::play_safe( opponent:opponent );
 
     // attack or flee?
     chosen_move = attack_move;
@@ -180,23 +201,16 @@ within lichess_bot::components::Engine::games::'Active Game' is
     if (empty chosen_move)  
       // if no move selected, may be opening stages of game; look for a move
       if (played_moves.length < 10)  // arbitrary limit on opening move search
-        select many openermoves related by myplayer->Move[R6.'can play'];
-        chosen_move = ::pick_opener_move( moves:openermoves );
+        chosen_move = ::pick_opener_move( moves:safemoves );
         if (not_empty chosen_move)
-          LOG::LogInfo(message: "BOT picked opening move: " + chosen_move.Notation);
+          LOG::LogInfo(message: "BOT picked safe opening move: " + chosen_move.Notation);
         end if;
       end if;
     end if;
 
-    // look for benign move
+    // look for any benign move
     if (empty chosen_move)
-      select many mymoves related by myplayer->Move[R6.'can play'];
-      select many reachables related by mymoves->Square[R5.'targets']->OpenSquare[R1];
-      coveredsquares = ::find_covered_squares( player:opponent );
-      refuges = reachables - coveredsquares;
-      select many tomoves related by refuges->Square[R1]->Move[R5]; 
-      escapemoves = mymoves & tomoves;
-      for each escape in escapemoves
+      for each escape in safemoves
         select one sq related by escape->Square[R5.'targets'];
         LOG::LogInfo(message:"BOT picked random safe move to " + sq.lichess_desig);
         chosen_move = escape; 

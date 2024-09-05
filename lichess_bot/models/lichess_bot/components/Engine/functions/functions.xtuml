@@ -107,6 +107,20 @@ within lichess_bot::components::Engine is
     end function;
 
     @dialect("oal");
+    @function_num(10);
+    function find_safe_squares(player: in instance of Player) return set of instance of Square is
+      @noparse
+      player = param.player;
+      select one opponent related by player->Player[R8.'opposes'];
+      coveredopensqs = ::find_covered_squares(player:opponent);
+      select many coveredsqs related by coveredopensqs->Square[R1];
+      select many reachables related by player->Move[R6.'can play']->Square[R5.'targets'];
+      opensqs = reachables - coveredsqs;
+      return opensqs;
+      @endnoparse
+    end function;
+
+    @dialect("oal");
     @function_num(7);
     function find_target_moves(player: in instance of Player) return set of instance of Move is
       @noparse
