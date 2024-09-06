@@ -150,6 +150,7 @@ within lichess_bot::components::Engine::games::'Active Game' is
     played_moves = self.game_state.moves;
     target_moves = self.save_moveset;
 
+    /*
     // select the move with the best trade-off - if there is one
     best = 0;
     select any attack_move from instances of Move where false;  // decl
@@ -160,6 +161,18 @@ within lichess_bot::components::Engine::games::'Active Game' is
         attack_move = tgtmove;
       end if;
     end for;
+    */
+
+    best = 0;
+    for each move in target_moves;
+      if (move.Value > best)
+        best = move.Value;
+        chosen_move = move;
+      end if;
+    end for;
+    if (not_empty chosen_move)
+      LOG::LogInfo(message: "BOT provisionally chose target move: " + chosen_move.Notation + " " + STRING::itoa(i:chosen_move.Value));
+    end if;
 
     // find the set of safe moves: destinations not covered by opponent
     sqs = ::find_safe_squares( player:myplayer );
@@ -174,17 +187,25 @@ within lichess_bot::components::Engine::games::'Active Game' is
     select many threateneds related by opponent->Move[R6.'can play']->Square[R5.'targets']->OccupiedSquare[R1]->Piece[R2.'is occupied by'];
     select many frommoves related by threateneds->Move[R9.'can make'];
     escape_moves = frommoves & safemoves;
+
+    // see if an escape move is more valuable
+    ovr  = false;
     for each move in escape_moves
       select one spec related by move->Piece[R9.'is made by']->PieceSpecification[R4.'is specified by'];
       move. Value = spec.Value;
       if (move.Value > best)
         best = move.Value;
-        escape_move = move;
+        chosen_move = move;
+        ovr = true;
       end if;
     end for;
+    if (ovr)
+      LOG::LogInfo(message: "BOT prefers escape move: " + chosen_move.Notation + " " + STRING::itoa(i:chosen_move.Value));
+    end if;
 
     //escape_move = ::play_safe( opponent:opponent );
 
+    /*
     // attack or flee?
     chosen_move = attack_move;
     if (not_empty attack_move) 
@@ -196,7 +217,20 @@ within lichess_bot::components::Engine::games::'Active Game' is
       end if;
     else
       chosen_move = escape_move;
-    end if;  
+    end if; 
+    */
+
+    /*
+    avail_moves = target_moves + escape_moves;
+    best = 0;
+    for each move in avail_moves;
+      if (move.Value > best)
+        best = move.Value;
+        chosen_move = move;
+      end if;
+    end for;
+    */
+
 
     if (empty chosen_move)  
       // if no move selected, may be opening stages of game; look for a move
@@ -258,12 +292,16 @@ within lichess_bot::components::Engine::games::'Active Game' is
     if (not found)
       LOG::LogFailure( message:"illegal move" );
     end if;
+    // debug
+
+    // Pawn promotion?
     if (tosq.rank == 1 or tosq.rank == 8)
       select one spec related by piece->PieceSpecification[R4.'is specified by'];
       if (spec.Name == "Pawn")
         ourmove = ourmove + "q";  // request promotion to Queen
       end if;
     end if;
+
     //LOG::LogInfo(message: "BOT selected: " + ourmove); 
     create event instance e of ActiveGame3:'play move'(move: ourmove) to self;
     // zero-timer prevents event prioritization by event-to-self acceleration.
