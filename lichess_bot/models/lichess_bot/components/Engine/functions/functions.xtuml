@@ -58,7 +58,7 @@ within lichess_bot::components::Engine is
         end if;
       end for;
       if (worst != 0)
-        LOG::LogInfo( message:potential_move.Notation + " " + STRING::itoa( i: potential_move.Value ) + " reduced by " + STRING::itoa( i:worst  ));
+        LOG::LogInfo( message:potential_move.Notation + " " + STRING::itoa( i: potential_move.Value ) + " value reduced by " + STRING::itoa( i:worst  ));
       end if;
       potential_move.Value = potential_move.Value - worst;
 
@@ -136,15 +136,11 @@ within lichess_bot::components::Engine is
                                                 ->Move[R5];
 
       // debug/instrumentation start
-      ctxt = "White";
-      if (player.Color == Color::BLACK)
-        ctxt = "Black";
-      end if;
       if (empty target_moves)
-        LOG::LogInfo( message:ctxt + " has no potential targets!" );
+        LOG::LogInfo( message:"BOT has no potential targets!" );
       else
       	for each move in target_moves
-      	  LOG::LogInfo( message:ctxt + " target move " + move.Notation );
+      	  LOG::LogInfo( message:"BOT target move " + move.Notation );
       	end for;
       end if;
       // debug/instrumentation end
@@ -175,48 +171,6 @@ within lichess_bot::components::Engine is
       send chess::connect(properties: bot.config);
 
       LOG::LogInfo(message: "Initialization complete");
-      @endnoparse
-    end function;
-
-    @dialect("oal");
-    @function_num(8);
-    function play_safe(opponent: in instance of Player) return instance of Move is
-      @noparse
-      // look for pieces under threat from given opponent
-      // explore escape moves for highest (or any) threatened piece.
-      opponent = param.opponent;
-      select any chosen_move from instances of Move where false; // decl
-      select many threats related by opponent->Move[R6.'can play']->Square[R5.'targets']->OccupiedSquare[R1];
-      coveredsquares = ::find_covered_squares( player:opponent );
-      highestvalue = 0;
-      	for each ocsq in threats
-      	  select one piece related by ocsq->Piece[R2.'is occupied by'];
-      	  select one spec related by piece->PieceSpecification[R4.'is specified by'];
-      	  select one sq related by ocsq->Square[R1];
-      	  LOG::LogInfo(message:"Seeking safety for " + spec.Name + " on " + sq.lichess_desig);
-      	  select many reachables related by piece->Move[R9.'can make']->Square[R5.'targets']->OpenSquare[R1];
-      	  refuges = reachables - coveredsquares;
-      	  if (not_empty refuges)
-      	    if (spec.Value > highestvalue)
-      	      highestvalue = spec.Value;
-      			  select many tomoves related by refuges->Square[R1]->Move[R5];
-      			  select many frommoves related by piece->Move[R9.'can make'];
-      			  escapemoves = frommoves & tomoves;
-      			  for each escape in escapemoves
-      			    select one sq related by escape->Square[R5.'targets'];
-      			    LOG::LogInfo(message:"Found possible safe move for " + spec.Name + " to " + sq.lichess_desig);
-      			    chosen_move = escape; 
-      			    break;
-      			  end for;
-      		  end if;
-      		else
-      		  LOG::LogInfo( message:"No refuge for " + spec.Name + " on " + sq.lichess_desig );
-      		end if;
-      	end for;
-      	if (not_empty threats and empty chosen_move)
-      	  LOG::LogInfo(message:"No safe escape move found");
-      	end if;
-      return chosen_move;
       @endnoparse
     end function;
 

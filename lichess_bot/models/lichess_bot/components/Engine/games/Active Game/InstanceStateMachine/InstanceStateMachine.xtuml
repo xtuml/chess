@@ -150,19 +150,6 @@ within lichess_bot::components::Engine::games::'Active Game' is
     played_moves = self.game_state.moves;
     target_moves = self.save_moveset;
 
-    /*
-    // select the move with the best trade-off - if there is one
-    best = 0;
-    select any attack_move from instances of Move where false;  // decl
-    for each tgtmove in target_moves
-      LOG::LogInfo( message:tgtmove.Notation + " has value " + STRING::itoa( i:tgtmove.Value ));
-      if (tgtmove.Value > best)
-        best = tgtmove.Value;
-        attack_move = tgtmove;
-      end if;
-    end for;
-    */
-
     best = 0;
     for each move in target_moves;
       if (move.Value > best)
@@ -180,7 +167,6 @@ within lichess_bot::components::Engine::games::'Active Game' is
     select many mymoves related by myplayer->Move[R6.'can play'];
     safemoves = mymoves & tomoves;
 
-
     // consider vulnerablity avoidance
     best = 0;
     select any escape_move from instances of Move where false;  // decl
@@ -188,11 +174,11 @@ within lichess_bot::components::Engine::games::'Active Game' is
     select many frommoves related by threateneds->Move[R9.'can make'];
     escape_moves = frommoves & safemoves;
 
-    // see if an escape move is more valuable
+    // see if an escape move is more valuable than any target move
     ovr  = false;
     for each move in escape_moves
       select one spec related by move->Piece[R9.'is made by']->PieceSpecification[R4.'is specified by'];
-      move. Value = spec.Value;
+      move.Value = spec.Value;  // saving this piece...
       if (move.Value > best)
         best = move.Value;
         chosen_move = move;
@@ -202,35 +188,6 @@ within lichess_bot::components::Engine::games::'Active Game' is
     if (ovr)
       LOG::LogInfo(message: "BOT prefers escape move: " + chosen_move.Notation + " " + STRING::itoa(i:chosen_move.Value));
     end if;
-
-    //escape_move = ::play_safe( opponent:opponent );
-
-    /*
-    // attack or flee?
-    chosen_move = attack_move;
-    if (not_empty attack_move) 
-      chosen_move = attack_move;
-      if (not_empty escape_move)
-        if (escape_move.Value > attack_move.Value)
-          chosen_move = escape_move;
-        end if;
-      end if;
-    else
-      chosen_move = escape_move;
-    end if; 
-    */
-
-    /*
-    avail_moves = target_moves + escape_moves;
-    best = 0;
-    for each move in avail_moves;
-      if (move.Value > best)
-        best = move.Value;
-        chosen_move = move;
-      end if;
-    end for;
-    */
-
 
     if (empty chosen_move)  
       // if no move selected, may be opening stages of game; look for a move
