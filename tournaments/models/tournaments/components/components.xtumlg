@@ -3,34 +3,36 @@ render : "tournaments::components"
 shapes :
   shape : TournamentRunner
     render : component "tournaments::components::Tournament Runner"
-    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : 180.0 y : 60.0 width : 200.0 height : 150.0
 
 connectors :
-  connector : TournamentRunner____Port1____LichessAPI
-    render : required_interface "tournaments::components::Tournament Runner::Port1::LichessAPI"
+  connector : TournamentRunner____inst____Instrumentation
+    render : provided_interface "tournaments::components::Tournament Runner::inst::Instrumentation"
     polyline :
       segment :
-        start : x : 200.0 y : 71.0
-        end :   x : 275.0 y : 71.0
+        start : x : 264.0 y : 210.0
+        end :   x : 264.0 y : 288.0
     anchors :
       start :
-        point : x : 200.0 y : 71.0
+        point : x : 264.0 y : 210.0
         shape : TournamentRunner
       end :
-        point : x : 275.0 y : 71.0
+        point : x : 264.0 y : 288.0
     texts :
       text :
-        bounds : x : 187.0 y : 33.0 width : 0.0 height : 0.0 where : middle
-  connector : TournamentRunner____Port2____UnnamedInterface
-    render : provided_interface "tournaments::components::Tournament Runner::Port2::Unnamed Interface"
+        bounds : x : 275.0 y : 231.0 width : 0.0 height : 0.0 where : middle
+  connector : TournamentRunner____chess____LichessAPI
+    render : required_interface "tournaments::components::Tournament Runner::chess::LichessAPI"
     polyline :
       segment :
-        start : x : 83.0 y : 150.0
-        end :   x : 83.0 y : 179.0
+        start : x : 180.0 y : 132.0
+        end :   x : 72.0 y : 132.0
     anchors :
       start :
-        point : x : 83.0 y : 150.0
+        point : x : 180.0 y : 132.0
         shape : TournamentRunner
       end :
-        point : x : 83.0 y : 179.0
+        point : x : 72.0 y : 132.0
     texts :
+      text :
+        bounds : x : 97.0 y : 94.0 width : 0.0 height : 0.0 where : middle

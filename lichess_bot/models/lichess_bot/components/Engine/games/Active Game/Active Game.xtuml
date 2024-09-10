@@ -63,7 +63,7 @@ within lichess_bot::components::Engine::games is
     operation update_game_state(game_state: in GameState) is
       @noparse
       self.game_state = param.game_state;
-      
+
       // check if the game is over
       if not (self.game_state.status == GameStatus::CREATED or self.game_state.status == GameStatus::STARTED) then
           generate ActiveGame2:'game over'(status: self.game_state.status) to self;
@@ -84,7 +84,7 @@ within lichess_bot::components::Engine::games is
       // create the game
       create object instance game of ActiveGame;
       game.id = param.id;
-      
+
       return game;
       @endnoparse
     end operation;

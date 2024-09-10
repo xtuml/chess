@@ -15,9 +15,29 @@ within tournaments::components::'Tournament Runner' is
       end if;
 
       // connect to the Lichess API and start listening for events
-      send chess::connect(properties: bot.config);
+      r = chess::initialize(properties: bot.config);
 
       LOG::LogInfo(message: "Initialization complete");
+      @endnoparse
+    end function;
+
+    @dialect("oal");
+    @function_num(2);
+    function start_new_game() is
+      @noparse
+      r = chess::bulkPairing(
+        players: "lip_QGajGLyzHNoAx9z6wuOI:lip_JJXmUIpfSAoXAu4gWPtc",
+        clock_limit: 600,
+        clock_increment: 5,
+        days: -1,
+        pair_at: -1,
+        start_clocks_at: -1,
+        rated: false,
+        variant: Variant::STANDARD,
+        fen: "",
+        msg: "",
+        rules: ""
+      );
       @endnoparse
     end function;
 

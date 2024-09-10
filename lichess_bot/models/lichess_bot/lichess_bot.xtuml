@@ -2,11 +2,11 @@
 
 @system_model(use_globals=true);
 package lichess_bot is
-  
+
   package EEs;
   package components;
   package system;
   package types;
-  
+
 end package;
 

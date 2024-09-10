@@ -1,6 +1,5 @@
 package lichess.types.adapters;
 
-import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -22,7 +21,7 @@ public class LichessTypeAdapterFactory implements TypeAdapterFactory {
 		if (type.getRawType().equals(GameStatus.class)) {
 			return (TypeAdapter<T>) new GameStatusAdapter();
 		}
-		if (type.getRawType().equals(List.class)) {
+		if ("java.util.List<java.lang.String>".equals(type.getType().getTypeName())) {
 			return (TypeAdapter<T>) new MovesAdapter();
 		}
 		

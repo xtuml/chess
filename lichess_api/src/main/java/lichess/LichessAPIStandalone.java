@@ -69,7 +69,7 @@ public class LichessAPIStandalone {
 
 		// create API connection
 		sub = new Subscriber();
-		lichess = new LichessAPIConnection(System.out, System.err, sub, props);
+		lichess = new LichessAPIConnection(System.out, System.err, sub);
 	}
 
 	void run() {
@@ -77,7 +77,7 @@ public class LichessAPIStandalone {
 		sub.sendMessage("account", Map.of("user", lichess.account()));
 
 		// initialize the Lichess connection
-		lichess.initialize();
+		lichess.initialize(props);
 
 		// loop and wait for commands
 		while (true) {
@@ -210,11 +210,6 @@ public class LichessAPIStandalone {
 		@Override
 		public void error(LichessAPIProvider provider, APIException error) {
 			sendMessage("error", Map.of("error", error));
-		}
-
-		@Override
-		public void connected(LichessAPIProvider provider) {
-			sendMessage("connected", Map.of());
 		}
 
 	}

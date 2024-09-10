@@ -27,6 +27,4 @@ public interface LichessAPISubscriber {
 	
 	void error(LichessAPIProvider provider, APIException error);
 
-	void connected(LichessAPIProvider provider);
-
 }
