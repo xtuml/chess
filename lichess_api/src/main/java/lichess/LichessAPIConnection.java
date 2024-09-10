@@ -15,8 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -24,6 +24,7 @@ import com.google.gson.GsonBuilder;
 
 import lichess.types.APIException;
 import lichess.types.BotEvent;
+import lichess.types.BulkPairing;
 import lichess.types.ChatLine;
 import lichess.types.Color;
 import lichess.types.DeclineReason;
@@ -39,39 +40,31 @@ import lichess.types.adapters.LichessTypeAdapterFactory;
 
 public class LichessAPIConnection implements LichessAPIProvider {
 
-	private final String baseUrl;
-	private final String accessToken;
 	private final HttpClient client;
 	private final Gson gson;
+
+	private String baseUrl;
+	private String accessToken;
 	private PrintStream out;
 	private PrintStream err;
 	private LichessAPISubscriber peer;
 	private User user;
 
-	public LichessAPIConnection(PrintStream out, PrintStream err, LichessAPISubscriber peer, Properties props) {
+	public LichessAPIConnection(PrintStream out, PrintStream err, LichessAPISubscriber peer) {
+		this(() -> out, () -> err, peer);
+	}
+
+	public LichessAPIConnection(Supplier<PrintStream> outSupplier, Supplier<PrintStream> errSupplier, LichessAPISubscriber peer) {
 		this.peer = peer;
-		
+
 		// set up gson serialization
 		final var builder = new GsonBuilder();
 		builder.registerTypeAdapterFactory(new LichessTypeAdapterFactory());
 		gson = builder.create();
 
-		// load configuration
-		this.baseUrl = props.getProperty("api_base_url");
-		this.accessToken = props.getProperty("access_token");
-		
-		// set up debug logging
-		final var nullOutputStream = new OutputStream() {
-			@Override
-			public void write(int b) throws IOException {
-			}
-		};
-		this.out = new PrintStream(nullOutputStream);
-		this.err = new PrintStream(nullOutputStream);
-		if (Boolean.parseBoolean(props.getProperty("enable_debug_logging", "false"))) {
-			this.out = out;
-			this.err = err;
-		}
+		// set up logging
+		this.out = new DynamicPrintStream(outSupplier);
+		this.err = new DynamicPrintStream(errSupplier);
 
 		// create the HTTP client
 		client = HttpClient.newBuilder().followRedirects(Redirect.NORMAL).connectTimeout(Duration.ofSeconds(20))
@@ -79,16 +72,24 @@ public class LichessAPIConnection implements LichessAPIProvider {
 
 	}
 
-	public void initialize() {
-		// check if the account is a bot and upgrade if necessary
-		if (user == null) {
-			upgradeAccount();
+	@Override
+	public boolean initialize(Properties props) {
+		// load configuration
+		this.baseUrl = props.getProperty("api_base_url");
+		this.accessToken = props.getProperty("access_token");
+
+		// set up debug logging
+		if (!Boolean.parseBoolean(props.getProperty("enable_debug_logging", "false"))) {
+			final var nullOutputStream = new OutputStream() {
+				@Override
+				public void write(int b) throws IOException {
+				}
+			};
+			out = new PrintStream(nullOutputStream);
+			err = new PrintStream(nullOutputStream);
 		}
 
-		// wait for incoming events
-		handleBotEvents();
-		
-		peer.connected(this);
+    return true;
 	}
 
 	@Override
@@ -135,13 +136,26 @@ public class LichessAPIConnection implements LichessAPIProvider {
 
 	@Override
 	public User account() {
-		return Optional.ofNullable(user).orElseGet(() -> {
-			if (upgradeAccount()) {
-				return user;
-			} else {
-				return new User();
+		final var url = String.format("%s/api/account", baseUrl);
+		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
+				.header("Content-Type", "application/json")
+				.header("Authorization", String.format("Bearer %s", accessToken)).GET().build();
+		try {
+			final var response = client.send(request, BodyHandlers.ofString());
+			switch (response.statusCode()) {
+			case 200:
+				user = gson.fromJson(response.body(), User.class);
+				break;
+			case 401:
+				peer.error(this, new APIException(url, response.statusCode(), response.body()));
+				break;
+			default:
+				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
 			}
-		});
+		} catch (IOException | InterruptedException e) {
+			peer.error(this, new APIException(e));
+		}
+		return user;
 	}
 
 	@Override
@@ -163,11 +177,44 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	@Override
+	public boolean bulkPairing(String players, int clockLimit, int clockIncrement, int days, int pairAt,
+			int startClocksAt, boolean rated, Variant variant, String fen, String message, String rules) {
+		final var params = new HashMap<String, String>();
+		params.put("players", players);
+		if (clockLimit >= 0 && clockIncrement >= 0) {
+			params.put("clock.limit", Integer.toString(clockLimit));
+			params.put("clock.increment", Integer.toString(clockIncrement));
+		}
+		if (days >= 0) {
+			params.put("days", Integer.toString(days));
+		}
+		if (pairAt >= 0) {
+			params.put("pairAt", Integer.toString(pairAt));
+		}
+		if (startClocksAt >= 0) {
+			params.put("startClocksAt", Integer.toString(startClocksAt));
+		}
+		params.put("rated", Boolean.toString(rated));
+		params.put("variant", variant.getValue());
+		if (fen != null && !fen.isEmpty()) {
+			params.put("fen", fen);
+		}
+		if (message != null && !message.isEmpty()) {
+			params.put("message", message);
+		}
+		if (rules != null && !rules.isEmpty()) {
+			params.put("rules", rules);
+		}
+		return postRequest(String.format("%s/api/bulk-pairing", baseUrl), "application/x-www-form-urlencoded", params);
+	}
+
+	@Override
 	public boolean claimVictory(String gameId) {
 		return postRequest(String.format("%s/api/bot/game/%s/claim-victory", baseUrl, gameId));
 	}
 
-	private boolean upgradeAccount() {
+	@Override
+	public User upgradeToBot() {
 		out.println("Upgrading to bot account...");
 		final var url = String.format("%s/api/account", baseUrl);
 		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
@@ -183,25 +230,24 @@ public class LichessAPIConnection implements LichessAPIProvider {
 					if (result) {
 						out.printf("Congrats, %s! you are now a bot.\n", user.getUsername());
 					}
-					return result;
 				} else {
 					out.printf("User '%s' is already a bot.\n", user.getUsername());
-					return true;
 				}
+				break;
 			case 401:
 				peer.error(this, new APIException(url, response.statusCode(), response.body()));
-				return false;
+				break;
 			default:
 				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
-				return false;
 			}
 		} catch (IOException | InterruptedException e) {
 			peer.error(this, new APIException(e));
-			return false;
 		}
+		return user;
 	}
 
-	private void handleBotEvents() {
+	@Override
+	public void handleBotEvents() {
 		out.println("Waiting for incoming events...");
 		final var url = String.format("%s/api/stream/event", baseUrl);
 		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
@@ -231,7 +277,6 @@ public class LichessAPIConnection implements LichessAPIProvider {
 							break;
 						default:
 							err.printf("Unrecognized event type: %s", event.getType());
-							break;
 						}
 					}
 				});
@@ -247,7 +292,8 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		});
 	}
 
-	private void handleGameEvents(String gameId) {
+	@Override
+	public void handleBotGameEvents(String gameId) {
 		out.printf("Handling events for game: %s\n", gameId);
 		final var url = String.format("%s/api/bot/game/stream/%s", baseUrl, gameId);
 		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
@@ -277,7 +323,6 @@ public class LichessAPIConnection implements LichessAPIProvider {
 							break;
 						default:
 							err.printf("Unrecognized event type: %s", event.getType());
-							break;
 						}
 					}
 				});
@@ -290,6 +335,12 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
 			}
 		});
+	}
+
+	@Override
+	public void handleGameEvents(String gameId) {
+		// TODO Auto-generated method stub
+
 	}
 
 	private boolean postRequest(String url) {
@@ -307,8 +358,16 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		requestBuilder = requestBuilder.POST(bodyPublisher);
 		try {
 			final var response = client.send(requestBuilder.build(), BodyHandlers.ofString());
+			out.println(response.body());
 			switch (response.statusCode()) {
 			case 200:
+				// TODO this should not be here
+				if (url.contains("bulk-pairing")) {
+					final var bulkPairing = gson.fromJson(response.body(), BulkPairing.class);
+					for (final var game : bulkPairing.getGames()) {
+						handleGameEvents(game.getId());
+					}
+				}
 				return true;
 			case 400:
 			case 401:
@@ -333,6 +392,18 @@ public class LichessAPIConnection implements LichessAPIProvider {
 				throw new RuntimeException(e);
 			}
 		}).collect(Collectors.joining("&"));
+	}
+	
+	private static class DynamicPrintStream extends PrintStream {
+		
+		public DynamicPrintStream(Supplier<? extends OutputStream> osSupplier) {
+			super(new OutputStream() {
+				@Override
+				public void write(int b) throws IOException {
+					osSupplier.get().write(b);
+				}
+			});
+		}
 	}
 
 }

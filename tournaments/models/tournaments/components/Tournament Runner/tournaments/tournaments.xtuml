@@ -3,6 +3,7 @@
 within tournaments::components::'Tournament Runner' is
 
   package tournaments is
+    class 'Tournament Game';
   end package;
 
 end;

@@ -1,0 +1,15 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("Game");
+  @class_num(1);
+  class 'Tournament Game' is
+
+    id: string;
+
+    preferred identifier is (id);
+
+  end class;
+
+end;

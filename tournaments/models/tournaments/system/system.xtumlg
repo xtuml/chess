@@ -10,7 +10,7 @@ shapes :
 
 connectors :
   connector : tournaments____components____TournamentRunner____inst____Instrumentation
-    render : imported_provided_interface "tournaments::system::tournaments::components::Tournament Runner::inst::Instrumentation"
+    render : provided_interface "tournaments::system::tournaments::components::Tournament Runner::inst::Instrumentation"
     polyline :
       segment :
         start : x : 480.0 y : 174.0
@@ -25,7 +25,7 @@ connectors :
       text :
         bounds : x : 372.0 y : 204.0 width : 0.0 height : 0.0 where : middle
   connector : lichess_bot____components____Lichess____API____LichessAPI
-    render : imported_provided_interface "tournaments::system::lichess_bot::components::Lichess::API::LichessAPI"
+    render : provided_interface "tournaments::system::lichess_bot::components::Lichess::API::LichessAPI"
     polyline :
       segment :
         start : x : 224.0 y : 96.0
@@ -40,7 +40,7 @@ connectors :
       text :
         bounds : x : 269.0 y : 58.0 width : 0.0 height : 0.0 where : middle
   connector : tournaments____components____TournamentRunner____chess____LichessAPI
-    render : imported_required_interface "tournaments::system::tournaments::components::Tournament Runner::chess::LichessAPI"
+    render : required_interface "tournaments::system::tournaments::components::Tournament Runner::chess::LichessAPI"
     polyline :
       segment :
         start : x : 396.0 y : 95.0

@@ -29,6 +29,4 @@ public interface ILichessAPIFromProvider {
 
 	void error(ComponentInstance_c senderReceiver, APIException error);
 
-	void connected(ComponentInstance_c senderReceiver);
-
 }

@@ -1,5 +1,7 @@
 package lichess;
 
+import java.util.Properties;
+
 import lichess.types.Color;
 import lichess.types.DeclineReason;
 import lichess.types.Room;
@@ -39,5 +41,21 @@ public interface LichessAPIProvider {
 	
 	@ParameterNames(names= {"game_id"})
 	boolean claimVictory(String gameId);
+
+  @ParameterNames(names= {"players", "clock_limit", "clock_increment", "days", "pair_at", "start_clocks_at", "rated", "variant", "fen", "msg", "rules"})
+  boolean bulkPairing(String players, int clockLimit, int clockIncrement, int days, int pairAt, int startClocksAt, boolean rated, Variant variant, String fen, String message, String rules);
+
+	@ParameterNames(names= {"properties"})
+  boolean initialize(Properties properties);
+
+  User upgradeToBot();
+
+  void handleBotEvents();
+
+	@ParameterNames(names= {"game_id"})
+  void handleBotGameEvents(String gameId);
+
+	@ParameterNames(names= {"game_id"})
+  void handleGameEvents(String gameId);
 
 }

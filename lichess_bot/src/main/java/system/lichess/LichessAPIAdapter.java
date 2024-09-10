@@ -27,18 +27,16 @@ import types.lichess.Variant;
 
 public class LichessAPIAdapter extends LichessAPI {
 
-	private LichessAPIConnection lichess;
+	private final LichessAPIConnection lichess;
 
 	public LichessAPIAdapter(Lichess context, IPort<?> peer) {
 		super(context, peer);
+		lichess = new LichessAPIConnection(System.out, System.err, new LichessAPIHandler());
 	}
 
 	@Override
-	public void connect(final Properties properties) throws XtumlException {
-		if (lichess == null) {
-			lichess = new LichessAPIConnection(System.out, System.err, new LichessAPIHandler(), properties);
-			lichess.initialize();
-		}
+	public boolean initialize(final Properties properties) throws XtumlException {
+		return lichess.initialize(properties);
 	}
 
 	@Override
@@ -97,7 +95,37 @@ public class LichessAPIAdapter extends LichessAPI {
 	public boolean createChallenge(final String p_user, final boolean p_rated, final int p_clock_limit,
 			final int p_clock_increment, final Color p_color, final Variant p_variant, final String p_fen)
 			throws XtumlException {
-		return lichess.createChallenge(p_user, p_rated, p_clock_limit, p_clock_increment, EnumAdapter.adapt(p_color, lichess.types.Color.class), EnumAdapter.adapt(p_variant, lichess.types.Variant.class), p_fen);
+		return lichess.createChallenge(p_user, p_rated, p_clock_limit, p_clock_increment,
+				EnumAdapter.adapt(p_color, lichess.types.Color.class),
+				EnumAdapter.adapt(p_variant, lichess.types.Variant.class), p_fen);
+	}
+
+	@Override
+	public boolean bulkPairing(String p_players, int p_clock_limit, int p_clock_increment, int p_days, int p_pair_at,
+			int p_start_clocks_at, boolean p_rated, Variant p_variant, String p_fen, String p_msg, String p_rules)
+			throws XtumlException {
+		return lichess.bulkPairing(p_players, p_clock_limit, p_clock_increment, p_days, p_pair_at, p_start_clocks_at,
+				p_rated, EnumAdapter.adapt(p_variant, lichess.types.Variant.class), p_fen, p_msg, p_rules);
+	}
+
+	@Override
+	public void handleBotEvents() throws XtumlException {
+		lichess.handleBotEvents();
+	}
+
+	@Override
+	public void handleBotGameEvents(String p_game_id) throws XtumlException {
+		lichess.handleBotGameEvents(p_game_id);
+	}
+
+	@Override
+	public void handleGameEvents(String p_game_id) throws XtumlException {
+		lichess.handleGameEvents(p_game_id);
+	}
+
+	@Override
+	public User upgradeToBot() throws XtumlException {
+		return new UserAdapter(lichess.upgradeToBot());
 	}
 
 	private class LichessAPIHandler implements LichessAPISubscriber {
@@ -160,7 +188,8 @@ public class LichessAPIAdapter extends LichessAPI {
 		public void chatLine(LichessAPIProvider provider, String gameId, String username, String text,
 				lichess.types.Room room) {
 			try {
-				LichessAPIAdapter.this.chatLine(gameId, username, text, EnumAdapter.adapt(room, types.lichess.Room.class));
+				LichessAPIAdapter.this.chatLine(gameId, username, text,
+						EnumAdapter.adapt(room, types.lichess.Room.class));
 			} catch (XtumlException e) {
 				throw new RuntimeException(e);
 			}
@@ -179,15 +208,6 @@ public class LichessAPIAdapter extends LichessAPI {
 		public void error(LichessAPIProvider provider, APIException error) {
 			try {
 				LichessAPIAdapter.this.error(new APIExceptionAdapter(error));
-			} catch (XtumlException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		
-		@Override
-		public void connected(LichessAPIProvider provider) {
-			try {
-				LichessAPIAdapter.this.connected();
 			} catch (XtumlException e) {
 				throw new RuntimeException(e);
 			}

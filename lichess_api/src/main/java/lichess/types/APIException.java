@@ -3,12 +3,9 @@ package lichess.types;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import com.google.gson.Gson;
-
 public class APIException extends Exception {
 
 	private static final long serialVersionUID = 1L;
-	private static final Gson gson = new Gson();
 	
 	private int status = -1;
 
@@ -18,7 +15,7 @@ public class APIException extends Exception {
 	}
 
 	public APIException(String url, int statusCode, String responseBody) {
-		super(String.format("%s: %d: %s", url, statusCode, gson.fromJson(responseBody, APIError.class).error));
+		super(String.format("%s: %d: %s", url, statusCode, responseBody));
 		status = statusCode;
 	}
 	
@@ -35,10 +32,6 @@ public class APIException extends Exception {
 		final var baos = new ByteArrayOutputStream();
 		printStackTrace(new PrintStream(baos));
 		return baos.toString();
-	}
-
-	private static final class APIError {
-		private String error;
 	}
 
 }
