@@ -1,0 +1,106 @@
+-- BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+INSERT INTO O_OBJ
+	VALUES ("2ce988e6-4d50-40f5-85f1-483471e498b7",
+	'Mobility',
+	15,
+	'Mobility',
+	'',
+	"00000000-0000-0000-0000-000000000000");
+INSERT INTO O_REF
+	VALUES ("2ce988e6-4d50-40f5-85f1-483471e498b7",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	0,
+	"845fcd23-3101-4ccc-99aa-d448f4bbefa4",
+	"a0ca811a-e885-4bfa-9939-1fbca77df76e",
+	"185c3e81-3b56-401c-8bae-663b14c11671",
+	"4890ea4f-4f6b-4eb8-853a-91673031e24a",
+	"0987898f-848b-4965-b553-5a01d957351c",
+	"738fd8ed-3443-4cfd-8d8e-a5093d73c6e9",
+	"00000000-0000-0000-0000-000000000000",
+	0,
+	'',
+	'EvaluationCriterion',
+	'evaluationId',
+	'R17');
+INSERT INTO R_RGO_PROXY
+	VALUES ("2ce988e6-4d50-40f5-85f1-483471e498b7",
+	"a0ca811a-e885-4bfa-9939-1fbca77df76e",
+	"185c3e81-3b56-401c-8bae-663b14c11671",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RTIDA_PROXY
+	VALUES ("845fcd23-3101-4ccc-99aa-d448f4bbefa4",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	0,
+	"a0ca811a-e885-4bfa-9939-1fbca77df76e",
+	"4890ea4f-4f6b-4eb8-853a-91673031e24a",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RATTR
+	VALUES ("0987898f-848b-4965-b553-5a01d957351c",
+	"2ce988e6-4d50-40f5-85f1-483471e498b7",
+	"845fcd23-3101-4ccc-99aa-d448f4bbefa4",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	1,
+	'evaluationId');
+INSERT INTO O_BATTR_PROXY
+	VALUES ("845fcd23-3101-4ccc-99aa-d448f4bbefa4",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	'../EvaluationCriterion/EvaluationCriterion.xtuml');
+INSERT INTO O_ATTR
+	VALUES ("0987898f-848b-4965-b553-5a01d957351c",
+	"2ce988e6-4d50-40f5-85f1-483471e498b7",
+	"00000000-0000-0000-0000-000000000000",
+	'evaluationId',
+	'',
+	'',
+	'evaluationId',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000007",
+	'',
+	'');
+INSERT INTO O_NBATTR
+	VALUES ("ea83bbdd-55e7-4fef-9ea0-1ee8cc9449e2",
+	"2ce988e6-4d50-40f5-85f1-483471e498b7");
+INSERT INTO O_BATTR
+	VALUES ("ea83bbdd-55e7-4fef-9ea0-1ee8cc9449e2",
+	"2ce988e6-4d50-40f5-85f1-483471e498b7");
+INSERT INTO O_ATTR
+	VALUES ("ea83bbdd-55e7-4fef-9ea0-1ee8cc9449e2",
+	"2ce988e6-4d50-40f5-85f1-483471e498b7",
+	"0987898f-848b-4965-b553-5a01d957351c",
+	'mobilityScore',
+	'',
+	'',
+	'mobilityScore',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000002",
+	'',
+	'');
+INSERT INTO O_ID
+	VALUES (0,
+	"2ce988e6-4d50-40f5-85f1-483471e498b7");
+INSERT INTO O_OIDA
+	VALUES ("0987898f-848b-4965-b553-5a01d957351c",
+	"2ce988e6-4d50-40f5-85f1-483471e498b7",
+	0,
+	'evaluationId');
+INSERT INTO O_ID
+	VALUES (1,
+	"2ce988e6-4d50-40f5-85f1-483471e498b7");
+INSERT INTO O_ID
+	VALUES (2,
+	"2ce988e6-4d50-40f5-85f1-483471e498b7");
+INSERT INTO PE_PE
+	VALUES ("2ce988e6-4d50-40f5-85f1-483471e498b7",
+	1,
+	"f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"00000000-0000-0000-0000-000000000000",
+	4);
+INSERT INTO EP_PKG_PROXY
+	VALUES ("f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	'Chess Starter',
+	'',
+	0,
+	'../Chess Starter.xtuml');

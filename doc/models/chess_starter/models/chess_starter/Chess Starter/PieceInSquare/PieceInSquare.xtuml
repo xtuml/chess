@@ -1,0 +1,157 @@
+-- BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+INSERT INTO O_OBJ
+	VALUES ("dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	'PieceInSquare',
+	5,
+	'PieceInSquare',
+	'',
+	"00000000-0000-0000-0000-000000000000");
+INSERT INTO O_REF
+	VALUES ("dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	"cedcecfb-ea00-4fa6-9a41-7231fe378034",
+	0,
+	"b0d2fdbd-8bcb-4f16-ae4b-3951480cc163",
+	"42a40846-b467-4ce8-8278-262d744d4c5c",
+	"44489300-5ac6-47ef-9f2f-bf8548c33575",
+	"25a4c785-23eb-4fbb-8093-d88c3a20f4d0",
+	"35f57d68-402d-434b-8532-447aefceb4ca",
+	"4b9e5e8e-401d-43d2-9d23-4aad5a116313",
+	"00000000-0000-0000-0000-000000000000",
+	0,
+	'',
+	'Piece',
+	'pieceId',
+	'R1.''is_occupied_by''');
+INSERT INTO R_RGO_PROXY
+	VALUES ("dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	"42a40846-b467-4ce8-8278-262d744d4c5c",
+	"44489300-5ac6-47ef-9f2f-bf8548c33575",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RTIDA_PROXY
+	VALUES ("b0d2fdbd-8bcb-4f16-ae4b-3951480cc163",
+	"cedcecfb-ea00-4fa6-9a41-7231fe378034",
+	0,
+	"42a40846-b467-4ce8-8278-262d744d4c5c",
+	"25a4c785-23eb-4fbb-8093-d88c3a20f4d0",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RATTR
+	VALUES ("35f57d68-402d-434b-8532-447aefceb4ca",
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	"b0d2fdbd-8bcb-4f16-ae4b-3951480cc163",
+	"cedcecfb-ea00-4fa6-9a41-7231fe378034",
+	1,
+	'pieceId');
+INSERT INTO O_BATTR_PROXY
+	VALUES ("b0d2fdbd-8bcb-4f16-ae4b-3951480cc163",
+	"cedcecfb-ea00-4fa6-9a41-7231fe378034",
+	'../Piece/Piece.xtuml');
+INSERT INTO O_ATTR
+	VALUES ("35f57d68-402d-434b-8532-447aefceb4ca",
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	"00000000-0000-0000-0000-000000000000",
+	'pieceId',
+	'',
+	'',
+	'pieceId',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000007",
+	'',
+	'');
+INSERT INTO O_REF
+	VALUES ("dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e",
+	0,
+	"8d3ad905-9250-4842-95b9-758b593bdd53",
+	"42a40846-b467-4ce8-8278-262d744d4c5c",
+	"44489300-5ac6-47ef-9f2f-bf8548c33575",
+	"2b7c60ad-78b2-4783-af0d-8a811f3a385e",
+	"8151fa88-306c-4a98-89dc-0392c12c1449",
+	"1728aad5-7be3-448c-8707-141e0e9e15d0",
+	"00000000-0000-0000-0000-000000000000",
+	0,
+	'',
+	'Square',
+	'position',
+	'R1.''currently_occupies''');
+INSERT INTO O_RTIDA_PROXY
+	VALUES ("8d3ad905-9250-4842-95b9-758b593bdd53",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e",
+	0,
+	"42a40846-b467-4ce8-8278-262d744d4c5c",
+	"2b7c60ad-78b2-4783-af0d-8a811f3a385e",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RATTR
+	VALUES ("8151fa88-306c-4a98-89dc-0392c12c1449",
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	"8d3ad905-9250-4842-95b9-758b593bdd53",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e",
+	1,
+	'position');
+INSERT INTO O_BATTR_PROXY
+	VALUES ("8d3ad905-9250-4842-95b9-758b593bdd53",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e",
+	'../Square/Square.xtuml');
+INSERT INTO O_ATTR
+	VALUES ("8151fa88-306c-4a98-89dc-0392c12c1449",
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	"35f57d68-402d-434b-8532-447aefceb4ca",
+	'position',
+	'',
+	'',
+	'position',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000007",
+	'',
+	'');
+INSERT INTO O_NBATTR
+	VALUES ("889de08b-c7e9-48af-a6eb-99dd5aa789c1",
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7");
+INSERT INTO O_BATTR
+	VALUES ("889de08b-c7e9-48af-a6eb-99dd5aa789c1",
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7");
+INSERT INTO O_ATTR
+	VALUES ("889de08b-c7e9-48af-a6eb-99dd5aa789c1",
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	"8151fa88-306c-4a98-89dc-0392c12c1449",
+	'score',
+	'',
+	'',
+	'score',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000002",
+	'',
+	'');
+INSERT INTO O_ID
+	VALUES (0,
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7");
+INSERT INTO O_OIDA
+	VALUES ("35f57d68-402d-434b-8532-447aefceb4ca",
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	0,
+	'pieceId');
+INSERT INTO O_OIDA
+	VALUES ("8151fa88-306c-4a98-89dc-0392c12c1449",
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	0,
+	'position');
+INSERT INTO O_ID
+	VALUES (1,
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7");
+INSERT INTO O_ID
+	VALUES (2,
+	"dde5feb9-a7d9-472c-ad59-e08c006bf1b7");
+INSERT INTO PE_PE
+	VALUES ("dde5feb9-a7d9-472c-ad59-e08c006bf1b7",
+	1,
+	"f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"00000000-0000-0000-0000-000000000000",
+	4);
+INSERT INTO EP_PKG_PROXY
+	VALUES ("f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	'Chess Starter',
+	'',
+	0,
+	'../Chess Starter.xtuml');
