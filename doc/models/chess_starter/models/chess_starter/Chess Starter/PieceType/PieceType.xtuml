@@ -1,0 +1,55 @@
+-- BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+INSERT INTO O_OBJ
+	VALUES ("83660732-0b8c-4d9e-85d1-c70d6d347dfb",
+	'PieceType',
+	3,
+	'PieceType',
+	'',
+	"00000000-0000-0000-0000-000000000000");
+INSERT INTO O_NBATTR
+	VALUES ("90e3415a-617c-4706-bc28-5837d88d5fd8",
+	"83660732-0b8c-4d9e-85d1-c70d6d347dfb");
+INSERT INTO O_BATTR
+	VALUES ("90e3415a-617c-4706-bc28-5837d88d5fd8",
+	"83660732-0b8c-4d9e-85d1-c70d6d347dfb");
+INSERT INTO O_ATTR
+	VALUES ("90e3415a-617c-4706-bc28-5837d88d5fd8",
+	"83660732-0b8c-4d9e-85d1-c70d6d347dfb",
+	"00000000-0000-0000-0000-000000000000",
+	'pieceName',
+	'',
+	'',
+	'pieceName',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000004",
+	'',
+	'');
+INSERT INTO O_ID
+	VALUES (0,
+	"83660732-0b8c-4d9e-85d1-c70d6d347dfb");
+INSERT INTO O_OIDA
+	VALUES ("90e3415a-617c-4706-bc28-5837d88d5fd8",
+	"83660732-0b8c-4d9e-85d1-c70d6d347dfb",
+	0,
+	'pieceName');
+INSERT INTO O_ID
+	VALUES (1,
+	"83660732-0b8c-4d9e-85d1-c70d6d347dfb");
+INSERT INTO O_ID
+	VALUES (2,
+	"83660732-0b8c-4d9e-85d1-c70d6d347dfb");
+INSERT INTO PE_PE
+	VALUES ("83660732-0b8c-4d9e-85d1-c70d6d347dfb",
+	1,
+	"f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"00000000-0000-0000-0000-000000000000",
+	4);
+INSERT INTO EP_PKG_PROXY
+	VALUES ("f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	'Chess Starter',
+	'',
+	0,
+	'../Chess Starter.xtuml');

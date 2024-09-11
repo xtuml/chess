@@ -1,0 +1,73 @@
+-- BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+INSERT INTO O_OBJ
+	VALUES ("70cbebd9-80af-4201-8b21-e8157d36c23e",
+	'Square',
+	4,
+	'Square',
+	'',
+	"00000000-0000-0000-0000-000000000000");
+INSERT INTO O_NBATTR
+	VALUES ("8d3ad905-9250-4842-95b9-758b593bdd53",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e");
+INSERT INTO O_BATTR
+	VALUES ("8d3ad905-9250-4842-95b9-758b593bdd53",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e");
+INSERT INTO O_ATTR
+	VALUES ("8d3ad905-9250-4842-95b9-758b593bdd53",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e",
+	"00000000-0000-0000-0000-000000000000",
+	'position',
+	'',
+	'',
+	'position',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000004",
+	'',
+	'');
+INSERT INTO O_NBATTR
+	VALUES ("3ad1b01f-8617-4b21-a8c8-ae3983bb5c6e",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e");
+INSERT INTO O_BATTR
+	VALUES ("3ad1b01f-8617-4b21-a8c8-ae3983bb5c6e",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e");
+INSERT INTO O_ATTR
+	VALUES ("3ad1b01f-8617-4b21-a8c8-ae3983bb5c6e",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e",
+	"8d3ad905-9250-4842-95b9-758b593bdd53",
+	'column',
+	'',
+	'',
+	'column',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000002",
+	'',
+	'');
+INSERT INTO O_ID
+	VALUES (0,
+	"70cbebd9-80af-4201-8b21-e8157d36c23e");
+INSERT INTO O_OIDA
+	VALUES ("8d3ad905-9250-4842-95b9-758b593bdd53",
+	"70cbebd9-80af-4201-8b21-e8157d36c23e",
+	0,
+	'position');
+INSERT INTO O_ID
+	VALUES (1,
+	"70cbebd9-80af-4201-8b21-e8157d36c23e");
+INSERT INTO O_ID
+	VALUES (2,
+	"70cbebd9-80af-4201-8b21-e8157d36c23e");
+INSERT INTO PE_PE
+	VALUES ("70cbebd9-80af-4201-8b21-e8157d36c23e",
+	1,
+	"f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"00000000-0000-0000-0000-000000000000",
+	4);
+INSERT INTO EP_PKG_PROXY
+	VALUES ("f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	'Chess Starter',
+	'',
+	0,
+	'../Chess Starter.xtuml');

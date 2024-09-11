@@ -1,0 +1,211 @@
+-- BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+INSERT INTO O_OBJ
+	VALUES ("bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	'Colour',
+	2,
+	'Colour',
+	'',
+	"00000000-0000-0000-0000-000000000000");
+INSERT INTO O_NBATTR
+	VALUES ("bea47843-c442-47e6-b750-820653fc14c1",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_BATTR
+	VALUES ("bea47843-c442-47e6-b750-820653fc14c1",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_ATTR
+	VALUES ("bea47843-c442-47e6-b750-820653fc14c1",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"00000000-0000-0000-0000-000000000000",
+	'colourValue',
+	'',
+	'',
+	'colourValue',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000004",
+	'',
+	'');
+INSERT INTO O_NBATTR
+	VALUES ("f81e7f6a-1a1b-4c49-b55b-578883f58374",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_BATTR
+	VALUES ("f81e7f6a-1a1b-4c49-b55b-578883f58374",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_ATTR
+	VALUES ("f81e7f6a-1a1b-4c49-b55b-578883f58374",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"bea47843-c442-47e6-b750-820653fc14c1",
+	'materialBalance',
+	'',
+	'',
+	'materialBalance',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000002",
+	'',
+	'');
+INSERT INTO O_REF
+	VALUES ("bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"b1a6b769-cbd7-4c01-9f35-df2c4deabdd5",
+	0,
+	"a2c81796-6cd8-47f3-8664-2d6eff794e8f",
+	"b45f702b-32b4-4ffe-ab54-496b59b01550",
+	"7df9dd2e-7e30-4185-96a5-7711b5fa2b4e",
+	"8ed522f8-b23b-4870-bb73-57f427c040ec",
+	"30c65967-01c7-42b4-8754-d82d6a9cc189",
+	"6f782912-e273-4037-a4a8-e4111123a243",
+	"00000000-0000-0000-0000-000000000000",
+	0,
+	'',
+	'Game',
+	'gameId',
+	'R6.''takes_part_in''');
+INSERT INTO R_RGO_PROXY
+	VALUES ("bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"b45f702b-32b4-4ffe-ab54-496b59b01550",
+	"7df9dd2e-7e30-4185-96a5-7711b5fa2b4e",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RTIDA_PROXY
+	VALUES ("a2c81796-6cd8-47f3-8664-2d6eff794e8f",
+	"b1a6b769-cbd7-4c01-9f35-df2c4deabdd5",
+	0,
+	"b45f702b-32b4-4ffe-ab54-496b59b01550",
+	"8ed522f8-b23b-4870-bb73-57f427c040ec",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RATTR
+	VALUES ("30c65967-01c7-42b4-8754-d82d6a9cc189",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"a2c81796-6cd8-47f3-8664-2d6eff794e8f",
+	"b1a6b769-cbd7-4c01-9f35-df2c4deabdd5",
+	1,
+	'gameId');
+INSERT INTO O_BATTR_PROXY
+	VALUES ("a2c81796-6cd8-47f3-8664-2d6eff794e8f",
+	"b1a6b769-cbd7-4c01-9f35-df2c4deabdd5",
+	'../Game/Game.xtuml');
+INSERT INTO O_ATTR
+	VALUES ("30c65967-01c7-42b4-8754-d82d6a9cc189",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"f81e7f6a-1a1b-4c49-b55b-578883f58374",
+	'gameId',
+	'',
+	'',
+	'gameId',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000007",
+	'',
+	'');
+INSERT INTO O_NBATTR
+	VALUES ("9ee8f6c0-cc9e-4a93-b15f-23e571853371",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_BATTR
+	VALUES ("9ee8f6c0-cc9e-4a93-b15f-23e571853371",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_ATTR
+	VALUES ("9ee8f6c0-cc9e-4a93-b15f-23e571853371",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"30c65967-01c7-42b4-8754-d82d6a9cc189",
+	'centipawnScore',
+	'',
+	'',
+	'centipawnScore',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000002",
+	'',
+	'');
+INSERT INTO O_NBATTR
+	VALUES ("20a0d687-7459-4b33-90bb-0a0c771619b5",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_BATTR
+	VALUES ("20a0d687-7459-4b33-90bb-0a0c771619b5",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_ATTR
+	VALUES ("20a0d687-7459-4b33-90bb-0a0c771619b5",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"9ee8f6c0-cc9e-4a93-b15f-23e571853371",
+	'centipawnAdvantage',
+	'',
+	'',
+	'centipawnAdvantage',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000002",
+	'',
+	'');
+INSERT INTO O_REF
+	VALUES ("bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"d0aa60fa-f752-4607-8e30-b798b7b79836",
+	0,
+	"fe606132-9a1f-44ec-9e17-839f3f03513b",
+	"32a7e0ed-5184-4b00-af1a-06a55400e8c6",
+	"88c98c95-365e-40c8-bef6-60123a9ce5c8",
+	"aa5ef558-35fe-4580-809e-839772923412",
+	"e80c2fd0-0e24-4074-afe4-ff44a7075afd",
+	"2dc242fa-2e6b-4a13-93c5-370974d59341",
+	"00000000-0000-0000-0000-000000000000",
+	0,
+	'',
+	'Player',
+	'playerId',
+	'R10.''is_played_by''');
+INSERT INTO R_RGO_PROXY
+	VALUES ("bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"32a7e0ed-5184-4b00-af1a-06a55400e8c6",
+	"88c98c95-365e-40c8-bef6-60123a9ce5c8",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RTIDA_PROXY
+	VALUES ("fe606132-9a1f-44ec-9e17-839f3f03513b",
+	"d0aa60fa-f752-4607-8e30-b798b7b79836",
+	0,
+	"32a7e0ed-5184-4b00-af1a-06a55400e8c6",
+	"aa5ef558-35fe-4580-809e-839772923412",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RATTR
+	VALUES ("e80c2fd0-0e24-4074-afe4-ff44a7075afd",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"fe606132-9a1f-44ec-9e17-839f3f03513b",
+	"d0aa60fa-f752-4607-8e30-b798b7b79836",
+	1,
+	'playerId');
+INSERT INTO O_BATTR_PROXY
+	VALUES ("fe606132-9a1f-44ec-9e17-839f3f03513b",
+	"d0aa60fa-f752-4607-8e30-b798b7b79836",
+	'../Player/Player.xtuml');
+INSERT INTO O_ATTR
+	VALUES ("e80c2fd0-0e24-4074-afe4-ff44a7075afd",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	"20a0d687-7459-4b33-90bb-0a0c771619b5",
+	'playerId',
+	'',
+	'',
+	'playerId',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000007",
+	'',
+	'');
+INSERT INTO O_ID
+	VALUES (0,
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_OIDA
+	VALUES ("bea47843-c442-47e6-b750-820653fc14c1",
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	0,
+	'colourValue');
+INSERT INTO O_ID
+	VALUES (1,
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO O_ID
+	VALUES (2,
+	"bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6");
+INSERT INTO PE_PE
+	VALUES ("bbe4f7fa-ddb4-4fb1-ae3e-afacef61b9b6",
+	1,
+	"f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"00000000-0000-0000-0000-000000000000",
+	4);
+INSERT INTO EP_PKG_PROXY
+	VALUES ("f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	'Chess Starter',
+	'',
+	0,
+	'../Chess Starter.xtuml');

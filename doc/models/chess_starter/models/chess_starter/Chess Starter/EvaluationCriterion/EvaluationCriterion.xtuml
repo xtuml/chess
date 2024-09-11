@@ -1,0 +1,204 @@
+-- BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+INSERT INTO O_OBJ
+	VALUES ("78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	'EvaluationCriterion',
+	12,
+	'EvaluationCriterion',
+	'This allows for optional additional factors to be evaluated in a position in the game.
+Candidates are listed as subtypes.
+
+Still debating whether to have two instances of this class for each potential state of game
+so that black and white can be scored separately. There is a practice of using positive
+scores for white and negative scores for black in some evaluation techniques so that a
+single value is sufficient.',
+	"00000000-0000-0000-0000-000000000000");
+INSERT INTO O_REF
+	VALUES ("78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"a316131a-fb6b-4cec-9b82-7ba38c6b352c",
+	0,
+	"ae19e84b-7139-4799-b44a-666a9c81cd2a",
+	"e4f6eb26-b0b4-4e9c-9ba4-473ff335db87",
+	"0bffedb3-b16f-45bd-9f3c-cb94be28f069",
+	"2746c1c1-b819-45dd-861a-7dd0b3a86f2d",
+	"a8558b68-087d-4655-b697-f6ef9d092a76",
+	"acf3fc44-dc62-45a6-888f-f41fd5faa888",
+	"00000000-0000-0000-0000-000000000000",
+	0,
+	'',
+	'PotentialStateOfGame',
+	'turnId',
+	'R16.''contributes_to''');
+INSERT INTO R_RGO_PROXY
+	VALUES ("78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"e4f6eb26-b0b4-4e9c-9ba4-473ff335db87",
+	"0bffedb3-b16f-45bd-9f3c-cb94be28f069",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RTIDA_PROXY
+	VALUES ("ae19e84b-7139-4799-b44a-666a9c81cd2a",
+	"a316131a-fb6b-4cec-9b82-7ba38c6b352c",
+	0,
+	"e4f6eb26-b0b4-4e9c-9ba4-473ff335db87",
+	"2746c1c1-b819-45dd-861a-7dd0b3a86f2d",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RATTR
+	VALUES ("a8558b68-087d-4655-b697-f6ef9d092a76",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"2fa3ed25-8249-4983-b88b-bb9a56f9f9b6",
+	"dee0f7e2-c193-4a65-b44c-13f83e9eb7ab",
+	1,
+	'turnId');
+INSERT INTO O_BATTR_PROXY
+	VALUES ("2fa3ed25-8249-4983-b88b-bb9a56f9f9b6",
+	"dee0f7e2-c193-4a65-b44c-13f83e9eb7ab",
+	'../PossibleMove/PossibleMove.xtuml');
+INSERT INTO O_ATTR
+	VALUES ("a8558b68-087d-4655-b697-f6ef9d092a76",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"00000000-0000-0000-0000-000000000000",
+	'turnId',
+	'',
+	'',
+	'turnId',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000007",
+	'',
+	'');
+INSERT INTO O_REF
+	VALUES ("78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"a316131a-fb6b-4cec-9b82-7ba38c6b352c",
+	0,
+	"38e4a46c-fc7d-47ca-a684-dbe220c24a14",
+	"e4f6eb26-b0b4-4e9c-9ba4-473ff335db87",
+	"0bffedb3-b16f-45bd-9f3c-cb94be28f069",
+	"2746c1c1-b819-45dd-861a-7dd0b3a86f2d",
+	"a98116f5-bd8d-4661-9a31-8f8266c9985e",
+	"0b50c144-a73e-45a5-a287-2aaa43b815b6",
+	"00000000-0000-0000-0000-000000000000",
+	0,
+	'',
+	'PotentialStateOfGame',
+	'possibilityNumber',
+	'R16.''contributes_to''');
+INSERT INTO O_RTIDA_PROXY
+	VALUES ("38e4a46c-fc7d-47ca-a684-dbe220c24a14",
+	"a316131a-fb6b-4cec-9b82-7ba38c6b352c",
+	0,
+	"e4f6eb26-b0b4-4e9c-9ba4-473ff335db87",
+	"2746c1c1-b819-45dd-861a-7dd0b3a86f2d",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RATTR
+	VALUES ("a98116f5-bd8d-4661-9a31-8f8266c9985e",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"f4f527dd-22cd-4df0-b79f-777c16153b9f",
+	"dee0f7e2-c193-4a65-b44c-13f83e9eb7ab",
+	1,
+	'possibilityNumber');
+INSERT INTO O_BATTR_PROXY
+	VALUES ("f4f527dd-22cd-4df0-b79f-777c16153b9f",
+	"dee0f7e2-c193-4a65-b44c-13f83e9eb7ab",
+	'../PossibleMove/PossibleMove.xtuml');
+INSERT INTO O_ATTR
+	VALUES ("a98116f5-bd8d-4661-9a31-8f8266c9985e",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"a8558b68-087d-4655-b697-f6ef9d092a76",
+	'possibilityNumber',
+	'',
+	'',
+	'possibilityNumber',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000007",
+	'',
+	'');
+INSERT INTO O_REF
+	VALUES ("78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"a316131a-fb6b-4cec-9b82-7ba38c6b352c",
+	0,
+	"c0ab88fc-746a-4def-a8a1-0e52d3a6989f",
+	"e4f6eb26-b0b4-4e9c-9ba4-473ff335db87",
+	"0bffedb3-b16f-45bd-9f3c-cb94be28f069",
+	"2746c1c1-b819-45dd-861a-7dd0b3a86f2d",
+	"59289d56-722d-4e8c-99ea-7c8176c6c5c7",
+	"7559297b-58a0-4ce6-b93c-1766f09d1c50",
+	"00000000-0000-0000-0000-000000000000",
+	0,
+	'',
+	'PotentialStateOfGame',
+	'gameId',
+	'R16.''contributes_to''');
+INSERT INTO O_RTIDA_PROXY
+	VALUES ("c0ab88fc-746a-4def-a8a1-0e52d3a6989f",
+	"a316131a-fb6b-4cec-9b82-7ba38c6b352c",
+	0,
+	"e4f6eb26-b0b4-4e9c-9ba4-473ff335db87",
+	"2746c1c1-b819-45dd-861a-7dd0b3a86f2d",
+	'../Chess Starter.xtuml');
+INSERT INTO O_RATTR
+	VALUES ("59289d56-722d-4e8c-99ea-7c8176c6c5c7",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"a2c81796-6cd8-47f3-8664-2d6eff794e8f",
+	"b1a6b769-cbd7-4c01-9f35-df2c4deabdd5",
+	1,
+	'gameId');
+INSERT INTO O_BATTR_PROXY
+	VALUES ("a2c81796-6cd8-47f3-8664-2d6eff794e8f",
+	"b1a6b769-cbd7-4c01-9f35-df2c4deabdd5",
+	'../Game/Game.xtuml');
+INSERT INTO O_ATTR
+	VALUES ("59289d56-722d-4e8c-99ea-7c8176c6c5c7",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"a98116f5-bd8d-4661-9a31-8f8266c9985e",
+	'gameId',
+	'',
+	'',
+	'gameId',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000007",
+	'',
+	'');
+INSERT INTO O_NBATTR
+	VALUES ("845fcd23-3101-4ccc-99aa-d448f4bbefa4",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378");
+INSERT INTO O_BATTR
+	VALUES ("845fcd23-3101-4ccc-99aa-d448f4bbefa4",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378");
+INSERT INTO O_ATTR
+	VALUES ("845fcd23-3101-4ccc-99aa-d448f4bbefa4",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	"59289d56-722d-4e8c-99ea-7c8176c6c5c7",
+	'evaluationId',
+	'',
+	'',
+	'evaluationId',
+	0,
+	"ba5eda7a-def5-0000-0000-000000000002",
+	'',
+	'');
+INSERT INTO O_ID
+	VALUES (0,
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378");
+INSERT INTO O_OIDA
+	VALUES ("845fcd23-3101-4ccc-99aa-d448f4bbefa4",
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	0,
+	'evaluationId');
+INSERT INTO O_ID
+	VALUES (1,
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378");
+INSERT INTO O_ID
+	VALUES (2,
+	"78ea7f8f-22b8-4fc9-aa79-8af84efed378");
+INSERT INTO PE_PE
+	VALUES ("78ea7f8f-22b8-4fc9-aa79-8af84efed378",
+	1,
+	"f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"00000000-0000-0000-0000-000000000000",
+	4);
+INSERT INTO EP_PKG_PROXY
+	VALUES ("f353ff1f-0f67-4899-9007-0ab734facfd8",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	"8c0b38cf-85a9-457f-a896-c70572c872c4",
+	'Chess Starter',
+	'',
+	0,
+	'../Chess Starter.xtuml');
