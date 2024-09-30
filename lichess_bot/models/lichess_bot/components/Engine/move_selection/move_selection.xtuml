@@ -1,0 +1,42 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within lichess_bot::components::Engine is
+
+  package move_selection is
+    @dialect("oal");
+    @function_num(1);
+    function simple_max_advance(legal_moves: in sequence of string, move_count: in integer, color: in Color) return string is
+      @noparse
+      move_count = param.move_count;
+      
+      // Loop through legal moves.  Find the move that maximises file increase.
+      i = 0; max_index = 0; max_advance = 0; advance = 0;
+      while ( i < move_count )
+        rank_start = STRING::atoi(s:STRING::substr(s:param.legal_moves[i], begin:1, end:2)) - 1;
+        rank_end = STRING::atoi(s:STRING::substr(s:param.legal_moves[i], begin:3, end:4)) - 1;
+        if ( param.color == Color::WHITE ) then
+          advance = rank_end - rank_start;
+        else
+          advance = rank_start - rank_end;
+        end if;
+        if ( advance > max_advance ) then
+          max_advance = advance;
+          max_index = i;
+        end if;
+        i = i + 1;
+      end while;
+      
+      move = param.legal_moves[max_index];
+      if ( max_advance == 0 ) then
+        // select a random legal move
+        i = TIM::current_clock() % move_count;
+        move = param.legal_moves[i];
+      end if;
+      
+      return move;
+      @endnoparse
+    end function;
+
+  end package;
+
+end;
