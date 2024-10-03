@@ -10,10 +10,13 @@ import lichess.types.Challenge;
 import lichess.types.DeclineReason;
 import lichess.types.Game;
 import lichess.types.GameEventInfo;
+import lichess.types.GameOverview;
 import lichess.types.GameState;
+import lichess.types.GameUpdate;
 import lichess.types.Room;
 import system.Lichess;
 import system.lichess.adapters.APIExceptionAdapter;
+import system.lichess.adapters.BulkPairingAdapter;
 import system.lichess.adapters.ChallengeAdapter;
 import system.lichess.adapters.EnumAdapter;
 import system.lichess.adapters.GameAdapter;
@@ -21,6 +24,7 @@ import system.lichess.adapters.GameEventInfoAdapter;
 import system.lichess.adapters.GameStateAdapter;
 import system.lichess.adapters.UserAdapter;
 import types.Properties;
+import types.lichess.BulkPairing;
 import types.lichess.Color;
 import types.lichess.User;
 import types.lichess.Variant;
@@ -101,11 +105,11 @@ public class LichessAPIAdapter extends LichessAPI {
 	}
 
 	@Override
-	public boolean bulkPairing(String p_players, int p_clock_limit, int p_clock_increment, int p_days, int p_pair_at,
+	public BulkPairing bulkPairing(String p_players, int p_clock_limit, int p_clock_increment, int p_days, int p_pair_at,
 			int p_start_clocks_at, boolean p_rated, Variant p_variant, String p_fen, String p_msg, String p_rules)
 			throws XtumlException {
-		return lichess.bulkPairing(p_players, p_clock_limit, p_clock_increment, p_days, p_pair_at, p_start_clocks_at,
-				p_rated, EnumAdapter.adapt(p_variant, lichess.types.Variant.class), p_fen, p_msg, p_rules);
+		return new BulkPairingAdapter(lichess.bulkPairing(p_players, p_clock_limit, p_clock_increment, p_days, p_pair_at, p_start_clocks_at,
+				p_rated, EnumAdapter.adapt(p_variant, lichess.types.Variant.class), p_fen, p_msg, p_rules));
 	}
 
 	@Override
@@ -211,6 +215,16 @@ public class LichessAPIAdapter extends LichessAPI {
 			} catch (XtumlException e) {
 				throw new RuntimeException(e);
 			}
+		}
+
+		@Override
+		public void gameOverview(LichessAPIProvider provider, String gameId, GameOverview gameOverview) {
+			throw new UnsupportedOperationException("TODO API operation not implemented for Ciera");
+		}
+
+		@Override
+		public void gameUpdate(LichessAPIProvider provider, String gameId, GameUpdate gameUpdate) {
+			throw new UnsupportedOperationException("TODO API operation not implemented for Ciera");
 		}
 
 	}

@@ -19,7 +19,7 @@ within tournaments::components is
       @dialect("oal");
       message account() return User to provider;
 
-      message bulkPairing(players: in string, clock_limit: in integer, clock_increment: in integer, days: in integer, pair_at: in integer, start_clocks_at: in integer, rated: in boolean, variant: in Variant, fen: in string, msg: in string, rules: in string) return boolean to provider;
+      message bulkPairing(players: in string, clock_limit: in integer, clock_increment: in integer, days: in integer, pair_at: in integer, start_clocks_at: in integer, rated: in boolean, variant: in Variant, fen: in string, msg: in string, rules: in string) return BulkPairing to provider;
 
       @dialect("oal");
       message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
@@ -37,6 +37,9 @@ within tournaments::components is
       message draw(game_id: in string, accept: in boolean) return boolean to provider;
 
       @dialect("oal");
+      message initialize(properties: in Properties) return boolean to provider;
+
+      @dialect("oal");
       message move(game_id: in string, move: in string) return boolean to provider;
 
       @dialect("oal");
@@ -44,6 +47,9 @@ within tournaments::components is
 
       @dialect("oal");
       message takeback(game_id: in string, accept: in boolean) return boolean to provider;
+
+      @dialect("oal");
+      message upgradeToBot() return User to provider;
 
       @dialect("oal");
       message challenge(challenge: in Challenge) from provider;
@@ -55,10 +61,51 @@ within tournaments::components is
       message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
 
       @dialect("oal");
-      message initialize(properties: in Properties) return boolean to provider;
+      message error(error: in APIException) from provider is
+        @noparse
+        route = "/api/stream/game/";
+        route_index = STRING::indexof(haystack: param.error.error, needle: route);
+        if param.error.status == 404 and route_index != -1 then
+          game_id = STRING::substr(s: param.error.error, begin: route_index + STRING::strlen(s: route), end: route_index + STRING::strlen(s: route) + 8);
+          select any game from instances of Game where selected.id == game_id;
+          if not empty game then
+            LOG::LogInfo(message: "Game not created yet. Trying again: " + game_id);
+            create event instance evt of Game2:'handle game' to game;
+            t = TIM::timer_start(event_inst: evt, microseconds: 1000000);
+          else
+            LOG::LogFailure(message:"API error: " +  param.error.error);
+          end if;
+        else
+          LOG::LogFailure(message:"API error: " +  param.error.error);
+        end if;
+        @endnoparse
+      end message;
 
       @dialect("oal");
-      message upgradeToBot() return User to provider;
+      message gameFinish(game_event: in GameEventInfo) from provider;
+
+      @dialect("oal");
+      message gameFull(game: in Game) from provider;
+
+      @dialect("oal");
+      message gameOverview(game_id: in string, game_overview: in GameOverview) from provider is
+        @noparse
+        LOG::LogInfo(message:"Game overview: " + param.game_id);
+        @endnoparse
+      end message;
+
+      @dialect("oal");
+      message gameStart(game_event: in GameEventInfo) from provider;
+
+      @dialect("oal");
+      message gameState(game_id: in string, game_state: in GameState) from provider;
+
+      @dialect("oal");
+      message gameUpdate(game_id: in string, game_update: in GameUpdate) from provider is
+        @noparse
+        LOG::LogInfo(message:"Game update: " + param.game_id + " FEN: " + param.game_update.fen);
+        @endnoparse
+      end message;
 
       @dialect("oal");
       message handleBotEvents() to provider;
@@ -68,47 +115,6 @@ within tournaments::components is
 
       @dialect("oal");
       message handleGameEvents(game_id: in string) to provider;
-
-      @dialect("oal");
-      message error(error: in APIException) from provider;
-
-      @dialect("oal");
-      message gameFinish(game_event: in GameEventInfo) from provider;
-
-      @dialect("oal");
-      message gameFull(game: in Game) from provider is
-        @noparse
-        LOG::LogInfo(message:"Game full: " + param.game.id);
-        g = param.game;
-
-        // find/create the game
-        select any game from instances of Game where selected.id == g.id;
-        if empty game then
-          create object instance game of Game;
-        end if;
-        @endnoparse
-      end message;
-
-      @dialect("oal");
-      message gameStart(game_event: in GameEventInfo) from provider;
-
-      @dialect("oal");
-      message gameState(game_id: in string, game_state: in GameState) from provider is
-        @noparse
-        LOG::LogInfo(message:"Game state: " + param.game_id);
-        select any game from instances of Game where selected.id == param.game_id;
-        if not empty game then
-          // if the game is over start a new game
-          if not (param.game_state.status == GameStatus::CREATED or param.game_state.status == GameStatus::STARTED) then
-            // only play 10 games
-            select many games from instances of Game;
-            if cardinality games < 10 then
-              ::start_new_game();
-            end if;
-          end if;
-        end if;
-        @endnoparse
-      end message;
 
       @dialect("oal");
       message opponentGone(game_id: in string, gone: in boolean, claim_win_in_seconds: in integer) from provider;

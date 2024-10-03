@@ -9,12 +9,15 @@ import lichess.LichessAPIConnection;
 import lichess.LichessAPIProvider;
 import lichess.LichessAPISubscriber;
 import lichess.types.APIException;
+import lichess.types.BulkPairing;
 import lichess.types.Challenge;
 import lichess.types.Color;
 import lichess.types.DeclineReason;
 import lichess.types.Game;
 import lichess.types.GameEventInfo;
+import lichess.types.GameOverview;
 import lichess.types.GameState;
+import lichess.types.GameUpdate;
 import lichess.types.Room;
 import lichess.types.User;
 import lichess.types.Variant;
@@ -91,7 +94,7 @@ public class Lichess implements ILichessAPIToProvider {
 	}
 
 	@Override
-	public boolean bulkPairing(ComponentInstance_c senderReceiver, String players, int clock_limit, int clock_increment,
+	public BulkPairing bulkPairing(ComponentInstance_c senderReceiver, String players, int clock_limit, int clock_increment,
 			int days, int pair_at, int start_clocks_at, Boolean rated, Variant variant, String fen, String msg,
 			String rules) {
 		return lichess.bulkPairing(players, clock_limit, clock_increment, days, pair_at, start_clocks_at, rated, variant, fen, msg, rules);
@@ -162,6 +165,17 @@ public class Lichess implements ILichessAPIToProvider {
 		@Override
 		public void error(LichessAPIProvider provider, APIException error) {
 			engine.error(null, error);
+		}
+
+		@Override
+		public void gameOverview(LichessAPIProvider provider, String gameId, GameOverview gameOverview) {
+			engine.gameOverview(null, gameId, gameOverview);
+		}
+
+		@Override
+		public void gameUpdate(LichessAPIProvider provider, String gameId, GameUpdate gameUpdate) {
+			engine.gameUpdate(null, gameId, gameUpdate);
+			
 		}
 	
 	}

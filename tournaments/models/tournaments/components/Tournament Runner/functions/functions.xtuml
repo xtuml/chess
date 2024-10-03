@@ -4,6 +4,14 @@ within tournaments::components::'Tournament Runner' is
 
   package functions is
     @dialect("oal");
+    @function_num(3);
+    function get_game() is
+      @noparse
+      send chess::handleGameEvents(game_id: "Yrbgn7tsdfa");
+      @endnoparse
+    end function;
+
+    @dialect("oal");
     @function_num(1);
     function init() is
       @noparse
@@ -25,10 +33,11 @@ within tournaments::components::'Tournament Runner' is
     @function_num(2);
     function start_new_game() is
       @noparse
+      // start the game
       r = chess::bulkPairing(
         players: "lip_QGajGLyzHNoAx9z6wuOI:lip_JJXmUIpfSAoXAu4gWPtc",
-        clock_limit: 600,
-        clock_increment: 5,
+        clock_limit: 60,
+        clock_increment: 0,
         days: -1,
         pair_at: -1,
         start_clocks_at: -1,
@@ -38,6 +47,15 @@ within tournaments::components::'Tournament Runner' is
         msg: "",
         rules: ""
       );
+
+      // start handling events for each of the created games
+      i = 0;
+      while i < r.games.length loop
+        create object instance game of Game;
+        game.id = r.games[i].id;
+        generate Game2:'handle game' to game;
+        i = i + 1;
+      end while;
       @endnoparse
     end function;
 

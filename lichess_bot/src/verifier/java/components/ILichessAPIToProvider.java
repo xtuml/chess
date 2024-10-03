@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import org.xtuml.bp.core.ComponentInstance_c;
 
+import lichess.types.BulkPairing;
 import lichess.types.Color;
 import lichess.types.DeclineReason;
 import lichess.types.Room;
@@ -34,7 +35,7 @@ public interface ILichessAPIToProvider {
 
 	boolean claimVictory(ComponentInstance_c senderReceiver, String gameId);
 
-  boolean bulkPairing(ComponentInstance_c senderReceiver, String players, int clock_limit, int clock_increment, int days, int pair_at, int start_clocks_at, Boolean rated, Variant variant, String fen, String msg, String rules);
+  BulkPairing bulkPairing(ComponentInstance_c senderReceiver, String players, int clock_limit, int clock_increment, int days, int pair_at, int start_clocks_at, Boolean rated, Variant variant, String fen, String msg, String rules);
 
   boolean initialize(ComponentInstance_c senderReceiver, Properties properties);
 
