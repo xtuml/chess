@@ -62,7 +62,7 @@ public class BulkPairing {
 		this.pairedAt = pairedAt;
 	}
 
-	public boolean isRated() {
+	public boolean getRated() {
 		return rated;
 	}
 

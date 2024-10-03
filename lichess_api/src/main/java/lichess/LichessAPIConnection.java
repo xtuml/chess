@@ -10,12 +10,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -30,7 +33,10 @@ import lichess.types.Color;
 import lichess.types.DeclineReason;
 import lichess.types.Game;
 import lichess.types.GameEvent;
+import lichess.types.GameOverview;
 import lichess.types.GameState;
+import lichess.types.GameStreamItem;
+import lichess.types.GameUpdate;
 import lichess.types.OpponentGone;
 import lichess.types.Room;
 import lichess.types.User;
@@ -59,8 +65,10 @@ public class LichessAPIConnection implements LichessAPIProvider {
 
 		// set up gson serialization
 		final var builder = new GsonBuilder();
-		builder.registerTypeAdapterFactory(new LichessTypeAdapterFactory());
+		final var adapterFactory = new LichessTypeAdapterFactory();
+		builder.registerTypeAdapterFactory(adapterFactory);
 		gson = builder.create();
+		adapterFactory.setGson(gson);
 
 		// set up logging
 		this.out = new DynamicPrintStream(outSupplier);
@@ -89,7 +97,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 			err = new PrintStream(nullOutputStream);
 		}
 
-    return true;
+		return true;
 	}
 
 	@Override
@@ -177,7 +185,7 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	@Override
-	public boolean bulkPairing(String players, int clockLimit, int clockIncrement, int days, int pairAt,
+	public BulkPairing bulkPairing(String players, int clockLimit, int clockIncrement, int days, int pairAt,
 			int startClocksAt, boolean rated, Variant variant, String fen, String message, String rules) {
 		final var params = new HashMap<String, String>();
 		params.put("players", players);
@@ -205,7 +213,10 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		if (rules != null && !rules.isEmpty()) {
 			params.put("rules", rules);
 		}
-		return postRequest(String.format("%s/api/bulk-pairing", baseUrl), "application/x-www-form-urlencoded", params);
+		return postRequest(String.format("%s/api/bulk-pairing", baseUrl),
+				response -> gson.fromJson(response.body(), BulkPairing.class)
+				, "application/x-www-form-urlencoded",
+				params).orElse(new BulkPairing());
 	}
 
 	@Override
@@ -262,8 +273,6 @@ public class LichessAPIConnection implements LichessAPIProvider {
 						final var event = gson.fromJson(line, BotEvent.class);
 						switch (event.getType()) {
 						case GAMESTART:
-							// start handling events for this game
-							handleGameEvents(event.getGame().getId());
 							peer.gameStart(this, event.getGame());
 							break;
 						case GAMEFINISH:
@@ -331,6 +340,10 @@ public class LichessAPIConnection implements LichessAPIProvider {
 			case 401:
 				peer.error(this, new APIException(url, response.statusCode(),
 						response.body().collect(Collectors.joining("\n"))));
+				break;
+			case 404:
+				peer.error(this, new APIException(url, response.statusCode(), "Game does not exist"));
+				break;
 			default:
 				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
 			}
@@ -339,8 +352,40 @@ public class LichessAPIConnection implements LichessAPIProvider {
 
 	@Override
 	public void handleGameEvents(String gameId) {
-		// TODO Auto-generated method stub
-
+		out.printf("Handling events for game: %s\n", gameId);
+		final var url = String.format("%s/api/stream/game/%s", baseUrl, gameId);
+		final var request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
+				.header("Content-Type", "application/x-ndjson")
+				.header("Authorization", String.format("Bearer %s", accessToken)).GET().build();
+		client.sendAsync(request, BodyHandlers.ofLines()).thenAccept(response -> {
+			switch (response.statusCode()) {
+			case 200:
+				response.body().forEach(line -> {
+					if (!line.isEmpty()) {
+						out.println(line);
+						final var event = gson.fromJson(line, GameStreamItem.class);
+						if (event instanceof GameOverview) {
+							peer.gameOverview(this, gameId, (GameOverview) event);
+						} else if (event instanceof GameUpdate) {
+							peer.gameUpdate(this, gameId, (GameUpdate) event);
+						} else {
+							err.printf("Unrecognized event type: %s", event.getClass().getName());
+						}
+					}
+				});
+				break;
+			case 400:
+			case 401:
+				peer.error(this, new APIException(url, response.statusCode(),
+						response.body().collect(Collectors.joining("\n"))));
+				break;
+			case 404:
+				peer.error(this, new APIException(url, response.statusCode(), "Game does not exist"));
+				break;
+			default:
+				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
+			}
+		});
 	}
 
 	private boolean postRequest(String url) {
@@ -348,6 +393,10 @@ public class LichessAPIConnection implements LichessAPIProvider {
 	}
 
 	private boolean postRequest(String url, String contentType, Map<String, String> formParameters) {
+		return postRequest(url, res -> true, contentType, formParameters).isPresent();
+	}
+
+	private <T> Optional<T> postRequest(String url, Function<HttpResponse<String>, T> responseParser, String contentType, Map<String, String> formParameters) {
 		var requestBuilder = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMinutes(2))
 				.header("Authorization", String.format("Bearer %s", accessToken));
 		if (contentType != null) {
@@ -358,28 +407,20 @@ public class LichessAPIConnection implements LichessAPIProvider {
 		requestBuilder = requestBuilder.POST(bodyPublisher);
 		try {
 			final var response = client.send(requestBuilder.build(), BodyHandlers.ofString());
-			out.println(response.body());
 			switch (response.statusCode()) {
 			case 200:
-				// TODO this should not be here
-				if (url.contains("bulk-pairing")) {
-					final var bulkPairing = gson.fromJson(response.body(), BulkPairing.class);
-					for (final var game : bulkPairing.getGames()) {
-						handleGameEvents(game.getId());
-					}
-				}
-				return true;
+				return Optional.of(responseParser.apply(response));
 			case 400:
 			case 401:
 				peer.error(this, new APIException(url, response.statusCode(), response.body()));
-				return false;
+				return Optional.empty();
 			default:
 				peer.error(this, new APIException(url, response.statusCode(), "Unexpected response code"));
-				return false;
+				return Optional.empty();
 			}
 		} catch (IOException | InterruptedException e) {
 			peer.error(this, new APIException(e));
-			return false;
+			return Optional.empty();
 		}
 	}
 

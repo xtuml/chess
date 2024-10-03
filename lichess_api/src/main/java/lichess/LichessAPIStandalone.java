@@ -22,7 +22,9 @@ import lichess.types.APIException;
 import lichess.types.Challenge;
 import lichess.types.Game;
 import lichess.types.GameEventInfo;
+import lichess.types.GameOverview;
 import lichess.types.GameState;
+import lichess.types.GameUpdate;
 import lichess.types.Room;
 import lichess.types.adapters.LichessTypeAdapterFactory;
 
@@ -210,6 +212,16 @@ public class LichessAPIStandalone {
 		@Override
 		public void error(LichessAPIProvider provider, APIException error) {
 			sendMessage("error", Map.of("error", error));
+		}
+
+		@Override
+		public void gameOverview(LichessAPIProvider provider, String gameId, GameOverview gameOverview) {
+			sendMessage("gameOverview", Map.of("game_id", gameId, "game_overview", gameOverview));
+		}
+
+		@Override
+		public void gameUpdate(LichessAPIProvider provider, String gameId, GameUpdate gameUpdate) {
+			sendMessage("gameUpdate", Map.of("game_id", gameId, "game_update", gameUpdate));
 		}
 
 	}
