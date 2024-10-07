@@ -1,0 +1,13 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("WaitInLobby");
+  @class_num(6);
+  class 'Wait In Lobby' is
+
+    start_time: timestamp;
+
+  end class;
+
+end;

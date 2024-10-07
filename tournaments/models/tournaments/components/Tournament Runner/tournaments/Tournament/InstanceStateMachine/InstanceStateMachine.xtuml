@@ -1,0 +1,45 @@
+// BP 7.1.6 content: InstanceStateMachine syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments::Tournament is
+
+  @state_num(1);
+  @dialect("oal");
+  state created;
+
+  @state_num(3);
+  @dialect("oal");
+  state completed;
+
+  @event_num(2);
+  event completed;
+
+  @event_num(3);
+  event 'game over';
+
+  state model is
+
+    |               | completed     | 'game over'   |
+    | ------------- | ------------- | ------------- |
+    | created       | completed     | created       |
+    | completed     | cannot_happen | cannot_happen |
+
+  end state model;
+
+  state completed is
+    @noparse
+    self.output_results();
+    self.dispose();
+    @endnoparse
+  end state;
+
+  transition created ['game over'] => created is
+    @noparse
+    // TODO this should be a polymorphic event, but for now it is just 'forwarded'
+    select one arena related by self->ArenaTournament[R4];
+    if not empty arena then
+      generate ArenaTournament2:'check lobby' to arena;
+    end if;
+    @endnoparse
+  end transition;
+
+end;

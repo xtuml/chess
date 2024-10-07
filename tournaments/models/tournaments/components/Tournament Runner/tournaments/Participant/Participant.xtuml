@@ -1,0 +1,35 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("Participant");
+  @class_num(3);
+  class Participant is
+
+    user_id: string;
+
+    access_token: string;
+
+    @dialect("oal");
+    score: real is
+      @noparse
+      // TODO handle draws
+      select many won_as_white_games related by self->Game[R3] where selected.completed and selected.winner == Color::WHITE;
+      select many won_as_black_games related by self->Game[R7] where selected.completed and selected.winner == Color::BLACK;
+      self.score = cardinality won_as_white_games + cardinality won_as_black_games;
+      @endnoparse
+    end;
+
+    preferred identifier is (user_id);
+
+    @dialect("oal");
+    @operation_num(1);
+    operation dispose() is
+      @noparse
+      // TODO
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

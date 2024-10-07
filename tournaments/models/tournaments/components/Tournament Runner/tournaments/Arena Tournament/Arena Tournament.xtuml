@@ -1,0 +1,23 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("ArenaTournament");
+  @class_num(4);
+  class 'Arena Tournament' is
+
+    start_time: timestamp;
+
+    duration: timestamp;
+
+    @dialect("oal");
+    @operation_num(1);
+    operation dispose() is
+      @noparse
+      // TODO
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

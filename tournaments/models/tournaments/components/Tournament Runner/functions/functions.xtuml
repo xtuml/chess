@@ -4,28 +4,51 @@ within tournaments::components::'Tournament Runner' is
 
   package functions is
     @dialect("oal");
-    @function_num(3);
-    function get_game() is
-      @noparse
-      send chess::handleGameEvents(game_id: "Yrbgn7tsdfa");
-      @endnoparse
-    end function;
-
-    @dialect("oal");
     @function_num(1);
     function init() is
       @noparse
       // load configuration properties
-      select any bot from instances of Bot;
-      if empty bot then
-        create object instance bot of Bot;
-        bot.config = PROP::loadProperties(file_name:"lichess_bot.properties");
+      select any mgr from instances of Manager;
+      if empty mgr then
+        create object instance bot of Manager;
+        mgr.config = PROP::loadProperties(file_name:"lichess_bot.properties");
       end if;
 
       // connect to the Lichess API and start listening for events
-      r = chess::initialize(properties: bot.config);
+      r = chess::initialize(properties: mgr.config);
+
+      //::new_arena_tournament();  // TODO
 
       LOG::LogInfo(message: "Initialization complete");
+      @endnoparse
+    end function;
+
+    @dialect("oal");
+    @function_num(3);
+    function new_arena_tournament() is
+      @noparse
+      // TODO parameterize this function
+
+      // set up the instance population
+      create object instance tournament of Tournament;
+      tournament.id = 1;
+      create object instance arena of ArenaTournament;
+      arena.duration = 300 * 1000000; // 5 min
+      relate arena to tournament across R4;
+      create object instance lobby of Lobby;
+      relate lobby to arena across R5;
+
+      create object instance levifish of Participant;
+      levifish.user_id = "levifish";
+      levifish.access_token = "lip_QGajGLyzHNoAx9z6wuOI";
+      relate levifish to tournament across R2;
+
+      create object instance levifish_dev of Participant;
+      levifish_dev.user_id = "levifish-dev";
+      levifish_dev.access_token = "lip_JJXmUIpfSAoXAu4gWPtc";
+      relate levifish_dev to tournament across R2;
+
+      generate ArenaTournament1:'start' to arena;
       @endnoparse
     end function;
 

@@ -1,0 +1,90 @@
+render : "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine"
+
+shapes :
+  shape : created
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::created"
+    bounds : x : 96.0 y : 96.0 width : 200.0 height : 150.0
+  shape : settingupparticipants
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::setting up participants"
+    bounds : x : 456.0 y : 96.0 width : 200.0 height : 150.0
+  shape : servicinglobby
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::servicing lobby"
+    bounds : x : 876.0 y : 132.0 width : 264.0 height : 204.0
+  shape : timeisup
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::time is up"
+    bounds : x : 899.0 y : 491.0 width : 193.0 height : 145.0
+
+connectors :
+  connector : created____ArenaTournament1__start
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::created::ArenaTournament1: start"
+    polyline :
+      segment :
+        start : x : 296.0 y : 174.0
+        end :   x : 456.0 y : 174.0
+    anchors :
+      start :
+        point : x : 296.0 y : 174.0
+        shape : created
+      end :
+        point : x : 456.0 y : 174.0
+        shape : settingupparticipants
+    texts :
+      text :
+        bounds : x : 307.0 y : 140.0 width : 0.0 height : 0.0 where : middle
+  connector : settingupparticipants____ArenaTournament2__checklobby
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::setting up participants::ArenaTournament2: check lobby"
+    polyline :
+      segment :
+        start : x : 656.0 y : 179.0
+        end :   x : 876.0 y : 188.0
+    anchors :
+      start :
+        point : x : 656.0 y : 179.0
+        shape : settingupparticipants
+      end :
+        point : x : 876.0 y : 188.0
+        shape : servicinglobby
+    texts :
+      text :
+        bounds : x : 717.0 y : 145.0 width : 0.0 height : 0.0 where : middle
+  connector : servicinglobby____ArenaTournament2__checklobby
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::servicing lobby::ArenaTournament2: check lobby"
+    polyline :
+      segment :
+        start : x : 1139.0 y : 179.0
+        end :   x : 1190.0 y : 179.0
+      segment :
+        start : x : 1190.0 y : 179.0
+        end :   x : 1190.0 y : 81.0
+      segment :
+        start : x : 1190.0 y : 81.0
+        end :   x : 1066.0 y : 81.0
+      segment :
+        start : x : 1066.0 y : 81.0
+        end :   x : 1066.0 y : 131.0
+    anchors :
+      start :
+        point : x : 1139.0 y : 179.0
+        shape : servicinglobby
+      end :
+        point : x : 1066.0 y : 131.0
+        shape : servicinglobby
+    texts :
+      text :
+        bounds : x : 1067.0 y : 47.0 width : 0.0 height : 0.0 where : middle
+  connector : servicinglobby____ArenaTournament3__outoftime
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::servicing lobby::ArenaTournament3: out of time"
+    polyline :
+      segment :
+        start : x : 995.0 y : 336.0
+        end :   x : 995.0 y : 491.0
+    anchors :
+      start :
+        point : x : 995.0 y : 336.0
+        shape : servicinglobby
+      end :
+        point : x : 995.0 y : 491.0
+        shape : timeisup
+    texts :
+      text :
+        bounds : x : 871.0 y : 407.0 width : 0.0 height : 0.0 where : middle

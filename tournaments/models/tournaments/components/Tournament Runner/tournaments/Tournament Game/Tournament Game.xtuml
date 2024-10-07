@@ -8,7 +8,28 @@ within tournaments::components::'Tournament Runner'::tournaments is
 
     id: string;
 
+    status: GameStatus;
+
+    @dialect("oal");
+    completed: boolean is
+      @noparse
+      self.completed = not (self.status == GameStatus::CREATED or self.status == GameStatus::STARTED);
+      @endnoparse
+    end;
+
+    cancelled: boolean;
+
+    winner: Color;
+
     preferred identifier is (id);
+
+    @dialect("oal");
+    @operation_num(1);
+    operation dispose() is
+      @noparse
+      // TODO
+      @endnoparse
+    end operation;
 
   end class;
 

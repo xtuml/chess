@@ -1,0 +1,122 @@
+// BP 7.1.6 content: InstanceStateMachine syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments::'Arena Tournament' is
+
+  @state_num(1);
+  @dialect("oal");
+  state created;
+
+  @state_num(2);
+  @dialect("oal");
+  state 'setting up participants';
+
+  @state_num(3);
+  @dialect("oal");
+  state 'servicing lobby';
+
+  @state_num(4);
+  @dialect("oal");
+  state 'time is up';
+
+  @event_num(1);
+  event start;
+
+  @event_num(2);
+  event 'check lobby';
+
+  @event_num(3);
+  event 'out of time';
+
+  state model is
+
+    |                           | start                     | 'check lobby'             | 'out of time'             |
+    | ------------------------- | ------------------------- | ------------------------- | ------------------------- |
+    | created                   | 'setting up participants' | cannot_happen             | cannot_happen             |
+    | 'setting up participants' | cannot_happen             | 'servicing lobby'         | cannot_happen             |
+    | 'servicing lobby'         | cannot_happen             | 'servicing lobby'         | 'time is up'              |
+    | 'time is up'              | cannot_happen             | cannot_happen             | cannot_happen             |
+
+  end state model;
+
+  state 'setting up participants' is
+    @noparse
+    // put all participants in the lobby
+    select one lobby related by self->Lobby[R5];
+    select many participants related by self->Tournament[R4]->Participant[R2];
+    for each participant in participants loop
+      create object instance wait_time of WaitInLobby;
+      wait_time.start_time = TIM::current_clock();
+      relate participant to lobby across R6 using wait_time;
+    end for;
+
+    // set the start time
+    self.start_time = TIM::current_clock();
+
+    // schedule the end of the tournament
+    create event instance evt of ArenaTournament3:'out of time' to self;
+    t = TIM::timer_start(event_inst: evt, microseconds: self.duration);
+
+    generate ArenaTournament2:'check lobby' to self;
+    @endnoparse
+  end state;
+
+  state 'servicing lobby' is
+    @noparse
+    select one lobby related by self->Lobby[R5];
+
+    // check for completed games to put participants back in the lobby
+    select many completed_games related by self->Tournament[R4]->Game[R1] where selected.completed;
+    select many done_participants related by completed_games->Participant[R8];
+    for each participant in done_participants loop
+      select one game related by participant->Game[R8];
+      unrelate participant from game across R8;
+      create object instance wait_time of WaitInLobby;
+      wait_time.start_time = TIM::current_clock();
+      relate participant to lobby across R6 using wait_time;
+    end for;
+
+    // select two participants for a new game
+    // TODO the logic here could be more complex
+    select many waiting_participants related by lobby->Participant[R6];
+    select any white_player related by lobby->Participant[R6];
+    select any black_player related by lobby->Participant[R6] where not empty white_player and selected.user_id == white_player.user_id;
+    if not empty white_player and not empty black_player then
+
+      // remove participants from the lobby
+      select one white_wait related by white_player->WaitInLobby[R6];
+      unrelate white_player from lobby across R6 using white_wait;
+      delete object instance white_wait;
+      select one black_wait related by black_player->WaitInLobby[R6];
+      unrelate black_player from lobby across R6 using black_wait;
+      delete object instance black_wait;
+
+      // create the matchup
+      select one tournament related by self->Tournament[R4];
+      tournament.create_matchup(white: white_player.user_id, black: black_player.user_id);
+
+    end if;
+
+    // if there are more participants, then pair again
+    select any waiting_player related by lobby->Participant[R6];
+    if not empty waiting_player then
+      generate ArenaTournament2:'check lobby' to self;
+      // TODO consider whether or not this causes events to potentially pile up
+    end if;
+    @endnoparse
+  end state;
+
+  state 'time is up' is
+    @noparse
+    // cancel all currently in progress games
+    select many in_progress_games related by self->Tournament[R4]->Game[R1] where not selected.completed and not selected.cancelled;
+    for each game in in_progress_games loop
+      generate Game4:'game cancelled' to game;
+    end for;
+
+    // generate completed event to supertype
+    select one tournament related by self->Tournament[R4];
+    generate Tournament2:'completed' to tournament;
+    @endnoparse
+  end state;
+
+end;

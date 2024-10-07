@@ -4,7 +4,6 @@ within tournaments::components is
 
   component 'Tournament Runner' is
 
-    package bot;
     package functions;
     package tournaments;
 
@@ -91,6 +90,18 @@ within tournaments::components is
       message gameOverview(game_id: in string, game_overview: in GameOverview) from provider is
         @noparse
         LOG::LogInfo(message:"Game overview: " + param.game_id);
+
+        // check if the game is over
+        select any game from instances of Game where selected.id == param.game_id;
+        if not empty game then
+          game.status = param.game_overview.status;
+          if game.status == GameStatus::STARTED then
+            generate Game1:'game started' to game;
+          elif not (game.status == GameStatus::CREATED or game.status == GameStatus::STARTED) then
+            game.winner = param.game_overview.winner;
+            generate Game3:'game over' to game;
+          end if;
+        end if;
         @endnoparse
       end message;
 

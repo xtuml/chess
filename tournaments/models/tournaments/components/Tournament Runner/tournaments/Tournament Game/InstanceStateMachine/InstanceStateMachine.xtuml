@@ -10,24 +10,53 @@ within tournaments::components::'Tournament Runner'::tournaments::'Tournament Ga
   @dialect("oal");
   state 'in progress';
 
+  @state_num(3);
+  @dialect("oal");
+  state completed;
+
+  @state_num(4);
+  @dialect("oal");
+  state cancelled;
+
   @event_num(1);
   event 'game started';
 
   @event_num(2);
   event 'handle game';
 
+  @event_num(3);
+  event 'game over';
+
+  @event_num(4);
+  event 'game cancelled';
+
   state model is
 
-    |                | 'game started' | 'handle game'  |
-    | -------------- | -------------- | -------------- |
-    | created        | 'in progress'  | created        |
-    | 'in progress'  | cannot_happen  | cannot_happen  |
+    |                  | 'game started'   | 'handle game'    | 'game over'      | 'game cancelled' |
+    | ---------------- | ---------------- | ---------------- | ---------------- | ---------------- |
+    | created          | 'in progress'    | created          | cannot_happen    | cannot_happen    |
+    | 'in progress'    | cannot_happen    | cannot_happen    | completed        | cancelled        |
+    | completed        | cannot_happen    | cannot_happen    | cannot_happen    | cannot_happen    |
+    | cancelled        | cannot_happen    | cannot_happen    | cannot_happen    | cannot_happen    |
 
   end state model;
 
   state created is
     @noparse
     send chess::handleGameEvents(game_id: self.id);
+    @endnoparse
+  end state;
+
+  state completed is
+    @noparse
+    select one tournament related by self->Tournament[R1];
+    generate Tournament3:'game over' to tournament;  // TODO this should be a polymorphic event, but for now it is just 'forwarded'
+    @endnoparse
+  end state;
+
+  state cancelled is
+    @noparse
+    self.cancelled = true;
     @endnoparse
   end state;
 

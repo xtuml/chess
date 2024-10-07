@@ -1,0 +1,73 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("Tournament");
+  @class_num(2);
+  class Tournament is
+
+    id: integer;
+
+    preferred identifier is (id);
+
+    @dialect("oal");
+    @operation_num(1);
+    operation output_results() is
+      @noparse
+      // TODO deferred operation
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(2);
+    operation dispose() is
+      @noparse
+      // TODO
+      delete object instance self;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(3);
+    operation create_matchup(white: in string, black: in string) is
+      @noparse
+      // TODO this should be parameterized
+
+      select any white_player related by self->Participant[R2] where selected.user_id == param.white;
+      select any black_player related by self->Participant[R2] where selected.user_id == param.black;
+
+      // start the game
+      r = chess::bulkPairing(
+        players: white_player.access_token + ":" + black_player.access_token,
+        clock_limit: 60,
+        clock_increment: 0,
+        days: -1,
+        pair_at: -1,
+        start_clocks_at: -1,
+        rated: false,
+        variant: Variant::STANDARD,
+        fen: "",
+        msg: "",
+        rules: ""
+      );
+
+      // start handling events for each of the created games
+      i = 0;
+      while i < r.games.length loop
+        create object instance game of Game;
+        game.id = r.games[i].id;
+        game.winner = Color::RANDOM;  // This just means "not black" and "not white" for scoring purposes
+        relate game to self across R1;
+        relate white_player to game across R3;
+        relate white_player to game across R8;
+        relate black_player to game across R7;
+        relate black_player to game across R8;
+        generate Game2:'handle game' to game;
+        i = i + 1;
+      end while;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;
