@@ -1,0 +1,195 @@
+// BP 7.1.6 content: InstanceStateMachine syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments::'Arena Tournament' is
+
+  @state_num(1);
+  @dialect("oal");
+  state created;
+
+  @state_num(2);
+  @dialect("oal");
+  state 'setting up participants';
+
+  @state_num(3);
+  @dialect("oal");
+  state 'servicing lobby';
+
+  @state_num(4);
+  @dialect("oal");
+  state 'time is up';
+
+  @state_num(5);
+  @dialect("oal");
+  state 'waiting on games';
+
+  @state_num(6);
+  @dialect("oal");
+  state completed;
+
+  @event_num(1);
+  event start;
+
+  @event_num(2);
+  event 'participants in lobby';
+
+  @event_num(3);
+  event 'out of time';
+
+  @event_num(4);
+  event 'lobby empty';
+
+  @event_num(5);
+  event 'game over';
+
+  @event_num(6);
+  event 'all games complete';
+
+  state model is
+
+    |                           | start                     | 'participants in lobby'   | 'out of time'             | 'lobby empty'             | 'game over'               | 'all games complete'      |
+    | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- |
+    | created                   | 'setting up participants' | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             |
+    | 'setting up participants' | cannot_happen             | 'servicing lobby'         | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             |
+    | 'servicing lobby'         | cannot_happen             | 'servicing lobby'         | 'time is up'              | 'waiting on games'        | cannot_happen             | cannot_happen             |
+    | 'time is up'              | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             | 'time is up'              | completed                 |
+    | 'waiting on games'        | cannot_happen             | cannot_happen             | 'time is up'              | cannot_happen             | 'servicing lobby'         | cannot_happen             |
+    | completed                 | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             |
+
+  end state model;
+
+  state 'setting up participants' is
+    @noparse
+    // put all participants in the lobby
+    select one lobby related by self->Lobby[R5];
+    select many participants related by self->Tournament[R4]->Participant[R2];
+    for each participant in participants loop
+      create object instance wait_time of WaitInLobby;
+      wait_time.start_time = TIM::current_clock();
+      relate participant to lobby across R6 using wait_time;
+    end for;
+
+    // set the start time
+    self.start_time = TIM::current_clock();
+
+    // schedule the end of the tournament
+    create event instance evt of ArenaTournament3:'out of time' to self;
+    self.timeout = TIM::timer_start(event_inst: evt, microseconds: self.duration);
+
+    generate ArenaTournament2:'participants in lobby' to self;
+    @endnoparse
+  end state;
+
+  state 'servicing lobby' is
+    @noparse
+    select one lobby related by self->Lobby[R5];
+
+    // check for completed games to put participants back in the lobby
+    select many completed_games related by self->Tournament[R4]->Game[R1] where selected.completed;
+    select many done_participations related by completed_games->Participation[R9] where selected.active;
+    for each participation in done_participations loop
+      participation.active = false;
+      select one participant related by participation->Participant[R9];
+      select one game related by participation->Game[R9];
+      create object instance wait_time of WaitInLobby;
+      wait_time.start_time = TIM::current_clock();
+      relate participant to lobby across R6 using wait_time;
+    end for;
+
+    // select two participants for a new game
+    // - unless there are only two participants, participants cannot play each other back to back
+    // - the longest waiting participant is given priority
+    // - once matched, colors are selected based on previously played games
+
+    match_made = false;
+
+    // get the longest waiting player
+    select any player1 related by lobby->Participant[R6];
+    select many players related by lobby->Participant[R6];
+    two_players = cardinality players == 2;
+    for each player in players loop
+      select one wait_in_lobby related by player->WaitInLobby[R6];
+      select one longest_wait related by player1->WaitInLobby[R6];
+      if wait_in_lobby.start_time < longest_wait.start_time then
+        player1 = player;
+      end if;
+    end for;
+
+    // get the opponent
+    if not empty player1 then
+      most_recent_opponent_id = "";
+      select any most_recent_opponent related by player1->Participation[R11]->Game[R9]->Participant[R9] where selected.user_id != player1.user_id;
+      if not empty most_recent_opponent then
+        most_recent_opponent_id = most_recent_opponent.user_id;
+      end if;
+    	select any player2 related by lobby->Participant[R6] where selected.user_id != player1.user_id and (two_players or selected.user_id != most_recent_opponent_id);
+    	select many players related by lobby->Participant[R6] where selected.user_id != player1.user_id and (two_players or selected.user_id != most_recent_opponent_id);
+    	for each player in players loop
+    		select one wait_in_lobby related by player->WaitInLobby[R6];
+    		select one longest_wait related by player1->WaitInLobby[R6];
+    		if wait_in_lobby.start_time < longest_wait.start_time then
+    			player2 = player;
+    		end if;
+    	end for;
+
+      if not empty player1 and not empty player2 then
+
+        // figure out who is white and who is black
+        select any white_player from instances of Participant where false;
+        select any black_player from instances of Participant where false;
+        select many player1_white_games related by player1->Game[R3];
+        select many player2_white_games related by player2->Game[R3];
+        if cardinality player1_white_games <= cardinality player2_white_games then
+          white_player = player1;
+          black_player = player2;
+        else
+          white_player = player2;
+          black_player = player1;
+        end if;
+
+    		// remove participants from the lobby
+    		select one white_wait related by white_player->WaitInLobby[R6];
+    		unrelate white_player from lobby across R6 using white_wait;
+    		delete object instance white_wait;
+    		select one black_wait related by black_player->WaitInLobby[R6];
+    		unrelate black_player from lobby across R6 using black_wait;
+    		delete object instance black_wait;
+
+    		// create the matchup
+    		select one tournament related by self->Tournament[R4];
+    		games = tournament.create_matchup(white: white_player, black: black_player);
+    		match_made = true;
+
+      end if;
+
+    end if;
+
+    // if a match was made, then pair again
+    if match_made then
+      create event instance evt of ArenaTournament2:'participants in lobby' to self;
+      t = TIM::timer_start(event_inst: evt, microseconds: 0);
+    else
+      generate ArenaTournament4:'lobby empty' to self;
+    end if;
+    @endnoparse
+  end state;
+
+  state 'time is up' is
+    @noparse
+    // cancel all currently in progress games
+    select many in_progress_games related by self->Tournament[R4]->Game[R1] where not selected.completed;
+    if empty in_progress_games then
+      generate ArenaTournament6:'all games complete' to self;
+    end if;
+    @endnoparse
+  end state;
+
+  state completed is
+    @noparse
+    // output results
+    select one tournament related by self->Tournament[R4];
+    tournament.output_results();
+    //tournament.dispose();
+    @endnoparse
+  end state;
+
+end;

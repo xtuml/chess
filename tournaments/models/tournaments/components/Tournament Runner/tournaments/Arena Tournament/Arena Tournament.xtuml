@@ -1,0 +1,201 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("ArenaTournament");
+  @class_num(4);
+  class 'Arena Tournament' is
+
+    start_time: timestamp;
+
+    duration: timestamp;
+
+    timeout: timer;
+
+    @dialect("oal");
+    @operation_num(1);
+    operation dispose() is
+      @noparse
+      select one tournament related by self->Tournament[R4];
+      if not empty tournament then
+        unrelate tournament from self across R4;
+        tournament.dispose();
+      end if;
+
+      select one lobby related by self->Lobby[R5];
+      if not empty lobby then
+        unrelate self from lobby across R5;
+        lobby.dispose();
+      end if;
+
+      delete object instance self;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(2);
+    class operation create_new(clock_limit: in integer, clock_increment: in integer, duration: in integer) return instance of Tournament is
+      @noparse
+      // set up the instance population
+      create object instance tournament of Tournament;
+      tournament.clock_limit = param.clock_limit;
+      tournament.clock_increment = param.clock_increment;
+      create object instance arena of ArenaTournament;
+      arena.duration = param.duration * 1000000;
+      relate arena to tournament across R4;
+      create object instance lobby of Lobby;
+      relate lobby to arena across R5;
+      return tournament;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(3);
+    operation output_results() is
+      @noparse
+      blank_20 = "        ";
+
+      // calculate scores
+      select many participants related by self->Tournament[R4]->Participant[R2];
+      for each participant in participants loop
+      	select many won_as_white_games related by participant->Game[R3] where selected.completed and selected.winner == Color::WHITE;
+      	select many drew_as_white_games related by participant->Game[R3] where selected.completed and selected.winner == Color::RANDOM;
+      	select many won_as_black_games related by participant->Game[R7] where selected.completed and selected.winner == Color::BLACK;
+      	select many drew_as_black_games related by participant->Game[R7] where selected.completed and selected.winner == Color::RANDOM;
+      	participant.score = cardinality won_as_white_games + cardinality won_as_black_games + (cardinality drew_as_white_games + cardinality drew_as_black_games) * 0.5;
+      end for;
+
+      // calculate ranks
+      rank = 1;
+      select many unranked_participants related by self->Tournament[R4]->Participant[R2];
+      while not empty unranked_participants loop
+        select any best_participant from instances of Participant where false;
+        for each participant in unranked_participants loop
+          if empty best_participant then
+            best_participant = participant;
+          elif participant.score > best_participant.score then
+            best_participant = participant;
+          end if;
+        end for;
+        best_participant.rank = rank;
+        rank = rank + 1;
+        unranked_participants = unranked_participants - best_participant;
+      end while;
+
+      // print score
+      LOG::LogInfo(message: "");
+      LOG::LogInfo(message: "Leaderboard:");
+      LOG::LogInfo(message: "------------");
+      i = 0;
+      while i < cardinality participants loop
+        select any participant related by self->Tournament[R4]->Participant[R2] where selected.rank == i + 1;
+        line = STRING::itoa(i: i + 1) + ". " + participant.user_id + STRING::substr(s: blank_20, begin: STRING::strlen(s: participant.user_id), end: -1) + ": ";
+        score = STRING::itoa(i: participant.score * 10);
+        len = STRING::strlen(s: score);
+        if len < 2 then
+          score = "0" + score;
+          len = len + 1;
+        end if;
+        line = line + STRING::substr(s: score, begin: 0, end: len - 1) + "." + STRING::substr(s: score, begin: len - 1, end: len);
+        LOG::LogInfo(message: line);
+        i = i + 1;
+      end while;
+
+      // print cross table
+      LOG::LogInfo(message: "");
+      LOG::LogInfo(message: "Cross Table:");
+      LOG::LogInfo(message: "-------------");
+      header = "   ";
+      i = 0;
+      while i < cardinality participants loop
+        header = header + STRING::itoa(i: i + 1) + ".  ";
+        i = i + 1;
+      end while;
+      LOG::LogInfo(message: header);
+      i = 0;
+      while i < cardinality participants loop
+        select any partA related by self->Tournament[R4]->Participant[R2] where selected.rank == i + 1;
+      	select many won_as_white_games related by partA->Game[R3] where selected.completed and selected.winner == Color::WHITE;
+      	select many drew_as_white_games related by partA->Game[R3] where selected.completed and selected.winner == Color::RANDOM;
+      	select many won_as_black_games related by partA->Game[R7] where selected.completed and selected.winner == Color::BLACK;
+      	select many drew_as_black_games related by partA->Game[R7] where selected.completed and selected.winner == Color::RANDOM;
+      	won_games = won_as_white_games | won_as_black_games;
+      	drew_games = drew_as_white_games | drew_as_black_games;
+        line = STRING::itoa(i: i + 1) + ". ";
+        j = 0;
+        while j < cardinality participants loop
+          if j == i then
+            line = line + "    ";  // blank cell for self matchup
+          else
+      			select any partB related by self->Tournament[R4]->Participant[R2] where selected.rank == j + 1;
+      			select many partB_white_games related by partB->Game[R3];
+      			select many partB_black_games related by partB->Game[R7];
+      			won_against_partB_games = (won_as_white_games | won_as_black_games) & (partB_white_games | partB_black_games);
+      			drew_against_partB_games = (drew_as_white_games | drew_as_black_games) & (partB_white_games | partB_black_games);
+      			score_against_partB = cardinality won_against_partB_games + (cardinality drew_against_partB_games) * 0.5;
+      			score = STRING::itoa(i: score_against_partB * 10);
+      			len = STRING::strlen(s: score);
+      			if len < 2 then
+      				score = "0" + score;
+      				len = len + 1;
+      			end if;
+      			line = line + STRING::substr(s: score, begin: 0, end: len - 1) + "." + STRING::substr(s: score, begin: len - 1, end: len) + " ";
+      		end if;
+          j = j + 1;
+        end while;
+        LOG::LogInfo(message: line);
+        i = i + 1;
+      end while;
+
+      // print game summary
+      LOG::LogInfo(message: "");
+      LOG::LogInfo(message: "Game Summary:");
+      LOG::LogInfo(message: "-------------");
+      select many games related by self->Tournament[R4]->Game[R1];
+      while not empty games loop
+        select any first_game from instances of Game where false;
+      	for each game in games loop
+      	  if empty first_game then
+      	    first_game = game;
+      	  elif game.start_time < first_game.start_time then
+      	    first_game = game;
+      	  end if;
+        end for;
+      	line = "https://lichess.org/" + first_game.id + " ";
+      	select one white_player related by first_game->Participant[R3];
+      	select one black_player related by first_game->Participant[R7];
+      	line = line + white_player.user_id + STRING::substr(s: blank_20, begin: STRING::strlen(s: white_player.user_id), end: -1) + " vs. " + black_player.user_id + STRING::substr(s: blank_20, begin: STRING::strlen(s: white_player.user_id), end: -1) + " ";
+      	if first_game.winner == Color::WHITE then
+      		line = line + "W";
+      	elif first_game.winner == Color::BLACK then
+      		line = line + "B";
+      	else
+      		line = line + "-";
+      	end if;
+      	games = games - first_game;
+      	LOG::LogInfo(message: line);
+      end while;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(4);
+    operation print_time_remaining() is
+      @noparse
+      seconds_remaining = TIM::timer_remaining_time(timer_inst_ref: self.timeout) / 1000000;
+      time_string = "";
+      if seconds_remaining < 60 then
+        time_string = "0";
+      end if;
+      mins = STRING::itoa(i: seconds_remaining / 60);
+      secs = STRING::itoa(i: seconds_remaining % 60);
+      if STRING::strlen(s: secs) < 2 then
+        secs = "0" + secs;
+      end if;
+      LOG::LogInfo(message: "Time remaining: " + mins + ":" + secs);
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

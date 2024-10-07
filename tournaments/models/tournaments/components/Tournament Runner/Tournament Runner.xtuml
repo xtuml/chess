@@ -4,7 +4,6 @@ within tournaments::components is
 
   component 'Tournament Runner' is
 
-    package bot;
     package functions;
     package tournaments;
 
@@ -71,7 +70,7 @@ within tournaments::components is
           if not empty game then
             LOG::LogInfo(message: "Game not created yet. Trying again: " + game_id);
             create event instance evt of Game2:'handle game' to game;
-            t = TIM::timer_start(event_inst: evt, microseconds: 1000000);
+            t = TIM::timer_start(event_inst: evt, microseconds: game.timeout_ms * 1000);
           else
             LOG::LogFailure(message:"API error: " +  param.error.error);
           end if;
@@ -91,6 +90,19 @@ within tournaments::components is
       message gameOverview(game_id: in string, game_overview: in GameOverview) from provider is
         @noparse
         LOG::LogInfo(message:"Game overview: " + param.game_id);
+
+        // check if the game is over
+        select any game from instances of Game where selected.id == param.game_id;
+        if not empty game then
+          game.status = param.game_overview.status;
+          game.completed = not (game.status == GameStatus::CREATED or game.status == GameStatus::STARTED);
+          if game.status == GameStatus::STARTED then
+            generate Game1:'game started' to game;
+          elif not (game.status == GameStatus::CREATED or game.status == GameStatus::STARTED) then
+            game.winner = param.game_overview.winner;
+            generate Game3:'game over' to game;
+          end if;
+        end if;
         @endnoparse
       end message;
 
@@ -103,7 +115,7 @@ within tournaments::components is
       @dialect("oal");
       message gameUpdate(game_id: in string, game_update: in GameUpdate) from provider is
         @noparse
-        LOG::LogInfo(message:"Game update: " + param.game_id + " FEN: " + param.game_update.fen);
+        //LOG::LogInfo(message:"Game update: " + param.game_id + " FEN: " + param.game_update.fen);
         @endnoparse
       end message;
 

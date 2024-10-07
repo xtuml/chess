@@ -1,0 +1,63 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("Participation");
+  @class_num(7);
+  class Participation is
+
+    @ref_mode("referred_to");
+    @use_prefix(prefix="player_");
+    player_user_id: referential (R9.Participant.user_id, R10.precedes.Participation.player_user_id) string;
+
+    @ref_mode("referred_to");
+    @use_prefix(prefix="game_");
+    game_id: referential (R9.'Tournament Game'.id) string;
+
+    @ref_mode("referred_to");
+    @use_prefix(prefix="next_game_");
+    next_game_id: referential (R10.precedes.Participation.game_id) string;
+
+    active: boolean;
+
+    preferred identifier is (player_user_id, game_id);
+
+    @dialect("oal");
+    @operation_num(1);
+    operation dispose() is
+      @noparse
+      select one participant related by self->Participant[R9];
+      select one game related by self->Game[R9];
+      if not empty participant and not empty game then
+        unrelate game from participant across R9 using self;
+      end if;
+
+      select one previous_participation related by self->Participation[R10.'follows'];
+      if not empty previous_participation then
+        unrelate self from previous_participation across R10.'follows';
+      end if;
+
+      select one next_participation related by self->Participation[R10.'precedes'];
+      if not empty next_participation then
+        unrelate self from next_participation across R10.'precedes';
+      end if;
+
+      if not empty previous_participation and not empty next_participation then
+        relate previous_participation to next_participation across R10.'precedes';
+      end if;
+
+      select one recent_participant related by self->Participant[R11];
+      if not empty recent_participant then
+        unrelate self from recent_participant across R11;
+        if not empty previous_participation then
+          relate previous_participation to recent_participant across R11;
+        end if;
+      end if;
+
+      delete object instance self;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

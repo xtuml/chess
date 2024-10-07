@@ -40,9 +40,6 @@ shapes :
   shape : ChatLine
     render : structured_data_type "lichess_bot::types::lichess::ChatLine"
     bounds : x : 6460.0 y : 0.0 width : 200.0 height : 150.0
-  shape : StructuredDataType6
-    render : structured_data_type "StructuredDataType6"
-    bounds : x : 6710.0 y : 0.0 width : 200.0 height : 150.0
   shape : GameEventInfo
     render : structured_data_type "lichess_bot::types::lichess::GameEventInfo"
     bounds : x : 6960.0 y : 0.0 width : 200.0 height : 150.0
@@ -70,5 +67,8 @@ shapes :
   shape : GameOverview
     render : structured_data_type "lichess_bot::types::lichess::GameOverview"
     bounds : x : 8870.0 y : 0.0 width : 200.0 height : 150.0
+  shape : Game
+    render : structured_data_type "lichess_bot::types::lichess::Game"
+    bounds : x : 9090.0 y : 0.0 width : 200.0 height : 150.0
 
 connectors :

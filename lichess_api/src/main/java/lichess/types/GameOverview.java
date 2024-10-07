@@ -4,7 +4,7 @@ public class GameOverview extends GameStreamItem {
 	
 	private String id;
 	private GameStatus status;
-	private Color winner;
+	private Color winner = Color.RANDOM;  // RANDOM here denotes no winner
 	private Player white;
 	private Player black;
 	

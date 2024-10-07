@@ -10,9 +10,6 @@ shapes :
   shape : functions
     render : package "tournaments::components::Tournament Runner::functions"
     bounds : x : 5140.0 y : 3100.0 width : 200.0 height : 150.0
-  shape : bot
-    render : package "tournaments::components::Tournament Runner::bot"
-    bounds : x : 5360.0 y : 3100.0 width : 200.0 height : 150.0
 
 connectors :
   connector : chess____LichessAPI
