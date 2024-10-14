@@ -33,10 +33,26 @@ within lichess_bot::components::Engine is
       // ensure possible opponent moves are represented
       ::reconcile_moves( fen:fen, moves:as_if_played, player:opponent, trial_move:potential_move );
 
-      // look for vulnerabilities
+      // look for vulnerabilities - occupied squares that the opponent can hit.
+      // if working in a concurrent environment, take care to only look at moves that are valid for this hypothetical play.
+      // in particular, only include engendered moves that belong to this evaluation.
+      /*
       select many vulnerables related by opponent->Move[R6.'can play']
                                                   ->Square[R5.'targets']
                                                   ->OccupiedSquare[R1];
+      */
+      select many opmoves related by opponent->Move[R6.'can play'];
+      select one eval related by potential_move->EvaluatingMove[R11];
+      select many invalids related by eval->Move[R13.'invalidates'];
+      opmoves = opmoves - invalids;
+      select many falsemoves related by opmoves->PotentialMove[R11]
+                                                ->EvaluatingMove[R10.'is hypothetical response to']
+                                                ->PotentialMove[R10.'engenders in response']
+                                                ->Move[R11];
+      opmoves = opmoves - falsemoves;
+      select many addedmoves related by eval->PotentialMove[R10.'engenders in response']->Move[R11];
+      opmoves = opmoves + addedmoves;
+      select many vulnerables related by opmoves->Square[R5.'targets']->OccupiedSquare[R1];
 
       worst = 0;
       select any piece from instances of Piece where false;
@@ -69,6 +85,10 @@ within lichess_bot::components::Engine is
         select one move related by response_move->Move[R11];
         //LOG::LogInfo(message: "Disposing of engendered response " + move.Notation);
         move.dispose();
+      end for;
+      select many invalids related by eval->Move[R13.'invalidates'];
+      for each invalid in invalids
+        unrelate invalid from eval across R13.'is invalidated by';
       end for;
       @endnoparse
     end function;
@@ -137,7 +157,7 @@ within lichess_bot::components::Engine is
 
       // debug/instrumentation start
       if (empty target_moves)
-        LOG::LogInfo( message:"BOT has no potential targets!" );
+      //  LOG::LogInfo( message:"BOT has no potential targets!" );
       else
       	for each move in target_moves
       	  LOG::LogInfo( message:"BOT target move " + move.Notation );
@@ -188,7 +208,7 @@ within lichess_bot::components::Engine is
       legal_moves = ChessLib::legalMoves(fen: ChessLib::movesToFEN(initialFen: fen, moves: played_moves));
       nlegals = legal_moves.length;
 
-      // clean any move instances that are now no longer legal
+      // eliminate from consideration any move instances that are now no longer legal
       // (consider, for instance, check may vastly reduce legal moves)
       count = 0;
       select many potentialmoves related by player->Move[R6.'can play'];
@@ -208,7 +228,13 @@ within lichess_bot::components::Engine is
         if (not matched)
           count = count + 1;
           //LOG::LogInfo(message: "Disposing non-legal move: " + movestr);
-          potentialmove.dispose();
+          if (empty trial)
+            potentialmove.dispose();  // no longer a possible move
+          else
+            // just ignore this move when evaluating a hypothetical move.
+            select one eval related by trial->EvaluatingMove[R11];
+            relate potentialmove to eval across R13.'is invalidated by';
+          end if;
         end if;
       end for;
       //LOG::LogInfo( message:"old moves disposed: " + STRING::itoa(i:count));

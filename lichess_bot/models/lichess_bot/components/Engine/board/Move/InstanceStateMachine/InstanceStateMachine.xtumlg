@@ -3,88 +3,88 @@ render : "lichess_bot::components::Engine::board::Move::Instance State Machine"
 shapes :
   shape : activated
     render : state "lichess_bot::components::Engine::board::Move::Instance State Machine::activated"
-    bounds : x : 108.0 y : 0.0 width : 200.0 height : 150.0
+    bounds : x : 108.0 y : 36.0 width : 200.0 height : 150.0
   shape : evaluating
     render : state "lichess_bot::components::Engine::board::Move::Instance State Machine::evaluating"
-    bounds : x : 384.0 y : 108.0 width : 200.0 height : 150.0
+    bounds : x : 384.0 y : 144.0 width : 200.0 height : 150.0
   shape : dormant
     render : state "lichess_bot::components::Engine::board::Move::Instance State Machine::dormant"
-    bounds : x : 108.0 y : 204.0 width : 200.0 height : 150.0
+    bounds : x : 108.0 y : 240.0 width : 200.0 height : 150.0
 
 connectors :
   connector : activated____Move1__evaluate
     render : transition "lichess_bot::components::Engine::board::Move::Instance State Machine::activated::Move1: evaluate"
     polyline :
       segment :
-        start : x : 308.0 y : 60.0
-        end :   x : 449.0 y : 60.0
+        start : x : 308.0 y : 96.0
+        end :   x : 449.0 y : 96.0
       segment :
-        start : x : 449.0 y : 60.0
-        end :   x : 449.0 y : 108.0
+        start : x : 449.0 y : 96.0
+        end :   x : 450.0 y : 144.0
     anchors :
       start :
-        point : x : 308.0 y : 60.0
+        point : x : 308.0 y : 96.0
         shape : activated
       end :
-        point : x : 449.0 y : 60.0
+        point : x : 450.0 y : 96.0
         shape : evaluating
     texts :
       text :
-        bounds : x : 330.0 y : 19.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : 330.0 y : 55.0 width : 0.0 height : 0.0 where : middle
   connector : evaluating____Move2__evaluated
     render : transition "lichess_bot::components::Engine::board::Move::Instance State Machine::evaluating::Move2: evaluated"
     polyline :
       segment :
-        start : x : 455.0 y : 258.0
-        end :   x : 455.0 y : 300.0
+        start : x : 456.0 y : 294.0
+        end :   x : 456.0 y : 336.0
       segment :
-        start : x : 455.0 y : 300.0
-        end :   x : 308.0 y : 300.0
+        start : x : 456.0 y : 336.0
+        end :   x : 308.0 y : 336.0
     anchors :
       start :
-        point : x : 455.0 y : 258.0
+        point : x : 456.0 y : 294.0
         shape : evaluating
       end :
-        point : x : 455.0 y : 300.0
+        point : x : 455.0 y : 336.0
         shape : dormant
     texts :
       text :
-        bounds : x : 336.0 y : 306.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : 336.0 y : 342.0 width : 0.0 height : 0.0 where : middle
   connector : dormant____Move1__evaluate
     render : transition "lichess_bot::components::Engine::board::Move::Instance State Machine::dormant::Move1: evaluate"
     polyline :
       segment :
-        start : x : 251.0 y : 352.0
-        end :   x : 251.0 y : 403.0
+        start : x : 251.0 y : 390.0
+        end :   x : 251.0 y : 441.0
       segment :
-        start : x : 251.0 y : 403.0
-        end :   x : 154.0 y : 403.0
+        start : x : 251.0 y : 441.0
+        end :   x : 154.0 y : 441.0
       segment :
-        start : x : 154.0 y : 403.0
-        end :   x : 154.0 y : 352.0
+        start : x : 154.0 y : 441.0
+        end :   x : 154.0 y : 390.0
     anchors :
       start :
-        point : x : 251.0 y : 352.0
+        point : x : 251.0 y : 390.0
         shape : dormant
       end :
-        point : x : 251.0 y : 403.0
+        point : x : 251.0 y : 441.0
         shape : dormant
     texts :
       text :
-        bounds : x : 149.0 y : 421.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : 149.0 y : 459.0 width : 0.0 height : 0.0 where : middle
   connector : dormant____Move3__reactivate
     render : transition "lichess_bot::components::Engine::board::Move::Instance State Machine::dormant::Move3: reactivate"
     polyline :
       segment :
-        start : x : 155.0 y : 204.0
-        end :   x : 155.0 y : 150.0
+        start : x : 156.0 y : 240.0
+        end :   x : 156.0 y : 186.0
     anchors :
       start :
-        point : x : 155.0 y : 204.0
+        point : x : 156.0 y : 240.0
         shape : dormant
       end :
-        point : x : 155.0 y : 150.0
+        point : x : 156.0 y : 186.0
         shape : activated
     texts :
       text :
-        bounds : x : 31.0 y : 169.0 width : 0.0 height : 0.0 where : middle
+        bounds : x : 32.0 y : 205.0 width : 0.0 height : 0.0 where : middle

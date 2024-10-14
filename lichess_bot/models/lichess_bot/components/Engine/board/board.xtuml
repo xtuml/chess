@@ -47,6 +47,9 @@ within lichess_bot::components::Engine is
                        Piece conditionally 'can make' many Move;
 
     //! Hypothesizing the execution of a move may open possibilities of opponent moves otherwise not available.
+    //! Such moves are only valid in the context of the hypothesized move and must be removed at the end of evalution.
+    //! Additionally, if concurrent evaluation of moves is supported, care must be taken that these moves do not
+    //! participate in any evaluation other than the one which engendered them.
     relationship R10 is EvaluatingMove conditionally 'engenders in response' many PotentialMove,
                         PotentialMove conditionally 'is hypothetical response to' one EvaluatingMove;
 
@@ -54,6 +57,12 @@ within lichess_bot::components::Engine is
 
     relationship R12 is Move unconditionally evaluates one Player,
                         Player conditionally 'waits for' many Move;
+
+    //! To support possible concurrent evaluation of proposed moves, it is necessary to ensure that only those
+    //! moves which remain valid in the context of a specific evaluation participate. This association marks
+    //! those moves which, while retained as shared ground truth, should not be included in the evaluation.
+    relationship R13 is EvaluatingMove conditionally invalidates many Move,
+                        Move conditionally 'is invalidated by' one EvaluatingMove;
 
   end package;
 

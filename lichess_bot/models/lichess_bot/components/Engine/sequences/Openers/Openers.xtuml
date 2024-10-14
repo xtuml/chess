@@ -17,7 +17,7 @@ within lichess_bot::components::Engine::sequences is
       create object instance o of Openers;
       temp[17] = "";
       o.opening_moves = temp;  // Ciera work-around
-      
+
       o.opening_moves[0] = "e7e5";
       o.opening_moves[1] = "e2e4";
       o.opening_moves[2] = "g8f6";
