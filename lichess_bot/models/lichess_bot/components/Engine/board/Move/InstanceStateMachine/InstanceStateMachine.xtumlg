@@ -26,7 +26,7 @@ connectors :
         point : x : 308.0 y : 96.0
         shape : activated
       end :
-        point : x : 450.0 y : 96.0
+        point : x : 449.0 y : 96.0
         shape : evaluating
     texts :
       text :
@@ -45,7 +45,7 @@ connectors :
         point : x : 456.0 y : 294.0
         shape : evaluating
       end :
-        point : x : 455.0 y : 336.0
+        point : x : 456.0 y : 336.0
         shape : dormant
     texts :
       text :

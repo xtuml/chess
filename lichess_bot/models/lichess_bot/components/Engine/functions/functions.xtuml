@@ -238,6 +238,7 @@ within lichess_bot::components::Engine is
         end if;
       end for;
       //LOG::LogInfo( message:"old moves disposed: " + STRING::itoa(i:count));
+
       // start: a simplistic attempt to choose a move based on high-value target.
       select any chosen_move from instances of Move where false;  // decl
 
@@ -284,13 +285,15 @@ within lichess_bot::components::Engine is
         end if; 
         i = i + 1;
       end while;
-      LOG::LogInfo( message:"new legal moves added: " + STRING::itoa(i:count));
+      //LOG::LogInfo( message:"new legal moves added: " + STRING::itoa(i:count));
 
-      // sanity check
+      /*
+      // sanity check - no longer valid!
       select many moves related by player->Move[R6.'can play'];
       if (cardinality moves != nlegals)
         LOG::LogInfo(message: "Oops - non matched moves");
       end if;
+      */
       @endnoparse
     end function;
 
@@ -420,6 +423,12 @@ within lichess_bot::components::Engine is
       	variant: Variant::STANDARD,
       	fen: ""
       );
+      LOG::LogInfo( message:"Challenge sent");
+      if (r)
+        LOG::LogSuccess( message:"accepted" );
+      else
+        LOG::LogFailure( message:"failed" );
+      end if;
       @endnoparse
     end function;
 

@@ -140,7 +140,7 @@ within lichess_bot::components is
         @noparse
         select any bot from instances of Bot;
         bot.user = chess::account();
-        //::send_challenge();
+        ::send_challenge();
         @endnoparse
       end message;
 
