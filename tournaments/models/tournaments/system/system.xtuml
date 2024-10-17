@@ -1,0 +1,11 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within tournaments is
+
+  package system is
+    component Lichess is lichess_bot::components::Lichess;
+    component 'Tournament Runner' is tournaments::components::'Tournament Runner';
+    satisfaction is 'Tournament Runner'::chess -(o- Lichess::API;
+  end package;
+
+end;

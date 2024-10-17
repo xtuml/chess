@@ -6,7 +6,9 @@ import lichess.types.APIException;
 import lichess.types.Challenge;
 import lichess.types.Game;
 import lichess.types.GameEventInfo;
+import lichess.types.GameOverview;
 import lichess.types.GameState;
+import lichess.types.GameUpdate;
 import lichess.types.Room;
 
 public interface ILichessAPIFromProvider {
@@ -29,6 +31,8 @@ public interface ILichessAPIFromProvider {
 
 	void error(ComponentInstance_c senderReceiver, APIException error);
 
-	void connected(ComponentInstance_c senderReceiver);
+	void gameOverview(ComponentInstance_c senderReceiver, String gameId, GameOverview gameOverview);
+
+	void gameUpdate(ComponentInstance_c senderReceiver, String gameId, GameUpdate gameUpdate);
 
 }

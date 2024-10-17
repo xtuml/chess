@@ -13,10 +13,16 @@ within lichess_bot::components::Engine is
         create object instance bot of Bot;
         bot.config = PROP::loadProperties(file_name:"lichess_bot.properties");
       end if;
-      
-      // connect to the Lichess API and start listening for events
-      send chess::connect(properties: bot.config);
-      
+
+      // initialize the Lichess API
+      r = chess::initialize(properties: bot.config);
+
+      // upgrade to a bot account
+      bot.user = chess::upgradeToBot();
+
+      // start listening for bot events
+      send chess::handleBotEvents();
+
       LOG::LogInfo(message: "Initialization complete");
       @endnoparse
     end function;

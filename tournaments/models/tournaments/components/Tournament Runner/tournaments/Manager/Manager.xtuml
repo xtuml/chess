@@ -1,0 +1,42 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("Manager");
+  @class_num(1);
+  class Manager is
+
+    user: User;
+
+    config: Properties;
+
+    @dialect("oal");
+    @operation_num(1);
+    class operation getInteger(name: in string, default_value: in integer) return integer is
+      @noparse
+      select any mgr from instances of Manager;
+      return PROP::getInteger(properties: mgr.config, name: param.name, default_value: param.default_value);
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(2);
+    class operation getBoolean(name: in string, default_value: in boolean) return boolean is
+      @noparse
+      select any mgr from instances of Manager;
+      return PROP::getBoolean(properties: mgr.config, name: param.name, default_value: param.default_value);
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(1);
+    class operation getString(name: in string, default_value: in string) return string is
+      @noparse
+      select any mgr from instances of Manager;
+      return PROP::getString(properties: mgr.config, name: param.name, default_value: param.default_value);
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

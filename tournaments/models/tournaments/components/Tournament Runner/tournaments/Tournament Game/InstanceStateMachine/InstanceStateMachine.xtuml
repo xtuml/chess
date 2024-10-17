@@ -1,0 +1,58 @@
+// BP 7.1.6 content: InstanceStateMachine syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments::'Tournament Game' is
+
+  @state_num(1);
+  @dialect("oal");
+  state created;
+
+  @state_num(2);
+  @dialect("oal");
+  state 'in progress';
+
+  @state_num(3);
+  @dialect("oal");
+  state completed;
+
+  @event_num(1);
+  event 'game started';
+
+  @event_num(2);
+  event 'handle game';
+
+  @event_num(3);
+  event 'game over';
+
+  @event_num(4);
+  event 'game cancelled';
+
+  state model is
+
+    |                  | 'game started'   | 'handle game'    | 'game over'      | 'game cancelled' |
+    | ---------------- | ---------------- | ---------------- | ---------------- | ---------------- |
+    | created          | 'in progress'    | created          | cannot_happen    | cannot_happen    |
+    | 'in progress'    | cannot_happen    | cannot_happen    | completed        | cannot_happen    |
+    | completed        | cannot_happen    | cannot_happen    | cannot_happen    | cannot_happen    |
+
+  end state model;
+
+  state created is
+    @noparse
+    send chess::handleGameEvents(game_id: self.id);
+    @endnoparse
+  end state;
+
+  state 'in progress' is
+    @noparse
+    self.start_time = TIM::current_clock();
+    @endnoparse
+  end state;
+
+  state completed is
+    @noparse
+    select one arena related by self->Tournament[R1]->ArenaTournament[R4];
+    generate ArenaTournament5:'game over' to arena;
+    @endnoparse
+  end state;
+
+end;

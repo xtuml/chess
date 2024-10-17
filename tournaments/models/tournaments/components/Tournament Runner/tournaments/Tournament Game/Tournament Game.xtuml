@@ -1,0 +1,54 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("Game");
+  @class_num(1);
+  class 'Tournament Game' is
+
+    id: string;
+
+    status: GameStatus;
+
+    completed: boolean;
+
+    winner: Color;
+
+    start_time: timestamp;
+
+    timeout_ms: integer = 5000;
+
+    preferred identifier is (id);
+
+    @dialect("oal");
+    @operation_num(1);
+    operation dispose() is
+      @noparse
+      select one tournament related by self->Tournament[R1];
+      if not empty tournament then
+        unrelate self from tournament across R1;
+      end if;
+
+      select one white_participant related by self->Participant[R3];
+      if not empty white_participant then
+        unrelate white_participant from self across R3;
+      end if;
+
+      select one black_participant related by self->Participant[R7];
+      if not empty black_participant then
+        unrelate black_participant from self across R7;
+      end if;
+
+      select any participation related by self->Participation[R9];
+      while not empty participation loop
+        participation.dispose();
+        select any participation related by self->Participation[R9];
+      end while;
+
+      delete object instance self;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

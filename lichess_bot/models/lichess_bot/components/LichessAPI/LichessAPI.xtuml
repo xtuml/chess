@@ -5,7 +5,7 @@ within lichess_bot::components is
   //! This interface is based on the Lichess public API. More information on
   //! individual messages can be found at https://lichess.org/api
   interface LichessAPI is
-    
+
     message move(game_id: in string, move: in string) return boolean to provider;
     message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
     message abort(game_id: in string) return boolean to provider;
@@ -17,9 +17,13 @@ within lichess_bot::components is
     message account() return User to provider;
     message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return boolean to provider;
     message claimVictory(game_id: in string) return boolean to provider;
-    
-    message connect(properties: in Properties) to provider;
-    message connected() from provider;
+    message bulkPairing(players: in string, clock_limit: in integer, clock_increment: in integer, days: in integer, pair_at: in integer, start_clocks_at: in integer, rated: in boolean, variant: in Variant, fen: in string, msg: in string, rules: in string) return BulkPairing to provider;
+    message initialize(properties: in Properties) return boolean to provider;
+    message upgradeToBot() return User to provider;
+
+    message handleBotEvents() to provider;
+    message handleBotGameEvents(game_id: in string) to provider;
+    message handleGameEvents(game_id: in string) to provider;
     message gameStart(game_event: in GameEventInfo) from provider;
     message gameFinish(game_event: in GameEventInfo) from provider;
     message challenge(challenge: in Challenge) from provider;
@@ -29,7 +33,9 @@ within lichess_bot::components is
     message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
     message opponentGone(game_id: in string, gone: in boolean, claim_win_in_seconds: in integer) from provider;
     message error(error: in APIException) from provider;
-    
+    message gameOverview(game_id: in string, game_overview: in GameOverview) from provider;
+    message gameUpdate(game_id: in string, game_update: in GameUpdate) from provider;
+
   end interface;
 
 end;

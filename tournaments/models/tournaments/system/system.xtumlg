@@ -1,0 +1,57 @@
+render : "tournaments::system"
+
+shapes :
+  shape : tournaments____components____TournamentRunner
+    render : component_reference "tournaments::system::tournaments::components::Tournament Runner"
+    bounds : x : 396.0 y : 24.0 width : 200.0 height : 150.0
+  shape : lichess_bot____components____Lichess
+    render : component_reference "tournaments::system::lichess_bot::components::Lichess"
+    bounds : x : 24.0 y : 24.0 width : 200.0 height : 150.0
+
+connectors :
+  connector : tournaments____components____TournamentRunner____inst____Instrumentation
+    render : provided_interface "tournaments::system::tournaments::components::Tournament Runner::inst::Instrumentation"
+    polyline :
+      segment :
+        start : x : 480.0 y : 174.0
+        end :   x : 479.0 y : 246.0
+    anchors :
+      start :
+        point : x : 480.0 y : 174.0
+        shape : tournaments____components____TournamentRunner
+      end :
+        point : x : 479.0 y : 246.0
+    texts :
+      text :
+        bounds : x : 372.0 y : 204.0 width : 0.0 height : 0.0 where : middle
+  connector : lichess_bot____components____Lichess____API____LichessAPI
+    render : provided_interface "tournaments::system::lichess_bot::components::Lichess::API::LichessAPI"
+    polyline :
+      segment :
+        start : x : 224.0 y : 96.0
+        end :   x : 299.0 y : 96.0
+    anchors :
+      start :
+        point : x : 224.0 y : 96.0
+        shape : lichess_bot____components____Lichess
+      end :
+        point : x : 299.0 y : 96.0
+    texts :
+      text :
+        bounds : x : 269.0 y : 58.0 width : 0.0 height : 0.0 where : middle
+  connector : tournaments____components____TournamentRunner____chess____LichessAPI
+    render : required_interface "tournaments::system::tournaments::components::Tournament Runner::chess::LichessAPI"
+    polyline :
+      segment :
+        start : x : 396.0 y : 95.0
+        end :   x : 299.0 y : 96.0
+    anchors :
+      start :
+        point : x : 396.0 y : 95.0
+        shape : tournaments____components____TournamentRunner
+      end :
+        point : x : 299.0 y : 96.0
+        connector : lichess_bot____components____Lichess____API____LichessAPI
+    texts :
+      text :
+        bounds : x : 318.0 y : 57.0 width : 0.0 height : 0.0 where : middle

@@ -1,0 +1,27 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("WaitInLobby");
+  @class_num(6);
+  class 'Wait In Lobby' is
+
+    start_time: timestamp;
+
+    @dialect("oal");
+    @operation_num(1);
+    operation dispose() is
+      @noparse
+      select one lobby related by self->Lobby[R6];
+      select one participant related by self->Participant[R6];
+      if not empty lobby and not empty participant then
+        unrelate participant from lobby across R6 using self;
+      end if;
+
+      delete object instance self;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

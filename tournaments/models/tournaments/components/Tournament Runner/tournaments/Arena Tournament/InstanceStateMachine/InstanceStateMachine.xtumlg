@@ -1,0 +1,188 @@
+render : "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine"
+
+shapes :
+  shape : created
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::created"
+    bounds : x : 96.0 y : 96.0 width : 200.0 height : 150.0
+  shape : settingupparticipants
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::setting up participants"
+    bounds : x : 456.0 y : 96.0 width : 200.0 height : 150.0
+  shape : servicinglobby
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::servicing lobby"
+    bounds : x : 876.0 y : 132.0 width : 264.0 height : 204.0
+  shape : timeisup
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::time is up"
+    bounds : x : 899.0 y : 491.0 width : 193.0 height : 145.0
+  shape : waitingongames
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::waiting on games"
+    bounds : x : 1320.0 y : 168.0 width : 205.0 height : 157.0
+  shape : completed
+    render : state "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::completed"
+    bounds : x : 900.0 y : 756.0 width : 182.0 height : 134.0
+
+connectors :
+  connector : created____ArenaTournament1__start
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::created::ArenaTournament1: start"
+    polyline :
+      segment :
+        start : x : 296.0 y : 174.0
+        end :   x : 456.0 y : 174.0
+    anchors :
+      start :
+        point : x : 296.0 y : 174.0
+        shape : created
+      end :
+        point : x : 456.0 y : 174.0
+        shape : settingupparticipants
+    texts :
+      text :
+        bounds : x : 307.0 y : 140.0 width : 0.0 height : 0.0 where : middle
+  connector : settingupparticipants____ArenaTournament2__participantsinlobby
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::setting up participants::ArenaTournament2: participants in lobby"
+    polyline :
+      segment :
+        start : x : 656.0 y : 179.0
+        end :   x : 876.0 y : 179.0
+    anchors :
+      start :
+        point : x : 656.0 y : 179.0
+        shape : settingupparticipants
+      end :
+        point : x : 876.0 y : 179.0
+        shape : servicinglobby
+    texts :
+      text :
+        bounds : x : 694.0 y : 139.0 width : 117.0 height : 36.0 where : middle
+  connector : servicinglobby____ArenaTournament2__participantsinlobby
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::servicing lobby::ArenaTournament2: participants in lobby"
+    polyline :
+      segment :
+        start : x : 1139.0 y : 179.0
+        end :   x : 1190.0 y : 179.0
+      segment :
+        start : x : 1190.0 y : 179.0
+        end :   x : 1190.0 y : 81.0
+      segment :
+        start : x : 1190.0 y : 81.0
+        end :   x : 1066.0 y : 81.0
+      segment :
+        start : x : 1066.0 y : 81.0
+        end :   x : 1066.0 y : 131.0
+    anchors :
+      start :
+        point : x : 1139.0 y : 179.0
+        shape : servicinglobby
+      end :
+        point : x : 1190.0 y : 179.0
+        shape : servicinglobby
+    texts :
+      text :
+        bounds : x : 1068.0 y : 38.0 width : 117.0 height : 36.0 where : middle
+  connector : servicinglobby____ArenaTournament3__outoftime
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::servicing lobby::ArenaTournament3: out of time"
+    polyline :
+      segment :
+        start : x : 995.0 y : 336.0
+        end :   x : 995.0 y : 491.0
+    anchors :
+      start :
+        point : x : 995.0 y : 336.0
+        shape : servicinglobby
+      end :
+        point : x : 995.0 y : 491.0
+        shape : timeisup
+    texts :
+      text :
+        bounds : x : 876.0 y : 396.0 width : 113.0 height : 36.0 where : middle
+  connector : servicinglobby____ArenaTournament4__lobbyempty
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::servicing lobby::ArenaTournament4: lobby empty"
+    polyline :
+      segment :
+        start : x : 1140.0 y : 300.0
+        end :   x : 1320.0 y : 300.0
+    anchors :
+      start :
+        point : x : 1140.0 y : 300.0
+        shape : servicinglobby
+      end :
+        point : x : 1320.0 y : 300.0
+        shape : waitingongames
+    texts :
+      text :
+        bounds : x : 1183.0 y : 300.0 width : 113.0 height : 36.0 where : middle
+  connector : waitingongames____ArenaTournament5__gameover
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::waiting on games::ArenaTournament5: game over"
+    polyline :
+      segment :
+        start : x : 1320.0 y : 215.0
+        end :   x : 1140.0 y : 215.0
+    anchors :
+      start :
+        point : x : 1320.0 y : 215.0
+        shape : waitingongames
+      end :
+        point : x : 1140.0 y : 215.0
+        shape : servicinglobby
+    texts :
+      text :
+        bounds : x : 1192.0 y : 180.0 width : 113.0 height : 36.0 where : middle
+  connector : waitingongames____ArenaTournament3__outoftime
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::waiting on games::ArenaTournament3: out of time"
+    polyline :
+      segment :
+        start : x : 1367.0 y : 325.0
+        end :   x : 1367.0 y : 563.0
+      segment :
+        start : x : 1367.0 y : 563.0
+        end :   x : 1092.0 y : 563.0
+    anchors :
+      start :
+        point : x : 1367.0 y : 325.0
+        shape : waitingongames
+      end :
+        point : x : 1367.0 y : 563.0
+        shape : timeisup
+    texts :
+      text :
+        bounds : x : 1249.0 y : 523.0 width : 113.0 height : 36.0 where : middle
+  connector : timeisup____ArenaTournament6__allgamescomplete
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::time is up::ArenaTournament6: all games complete"
+    polyline :
+      segment :
+        start : x : 983.0 y : 636.0
+        end :   x : 983.0 y : 756.0
+    anchors :
+      start :
+        point : x : 983.0 y : 636.0
+        shape : timeisup
+      end :
+        point : x : 983.0 y : 756.0
+        shape : completed
+    texts :
+      text :
+        bounds : x : 1004.0 y : 697.0 width : 113.0 height : 49.0 where : middle
+  connector : timeisup____ArenaTournament5__gameover
+    render : transition "tournaments::components::Tournament Runner::tournaments::Arena Tournament::Instance State Machine::time is up::ArenaTournament5: game over"
+    polyline :
+      segment :
+        start : x : 923.0 y : 635.0
+        end :   x : 923.0 y : 685.0
+      segment :
+        start : x : 923.0 y : 685.0
+        end :   x : 849.0 y : 685.0
+      segment :
+        start : x : 849.0 y : 685.0
+        end :   x : 849.0 y : 562.0
+      segment :
+        start : x : 849.0 y : 562.0
+        end :   x : 898.0 y : 562.0
+    anchors :
+      start :
+        point : x : 923.0 y : 635.0
+        shape : timeisup
+      end :
+        point : x : 923.0 y : 685.0
+        shape : timeisup
+    texts :
+      text :
+        bounds : x : 699.0 y : 634.0 width : 113.0 height : 36.0 where : middle

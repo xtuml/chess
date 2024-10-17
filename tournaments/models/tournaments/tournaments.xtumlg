@@ -1,0 +1,11 @@
+render : "tournaments"
+
+shapes :
+  shape : components
+    render : package "tournaments::components"
+    bounds : x : 0.0 y : 0.0 width : 200.0 height : 150.0
+  shape : system
+    render : package "tournaments::system"
+    bounds : x : 220.0 y : 0.0 width : 200.0 height : 150.0
+
+connectors :

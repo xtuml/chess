@@ -1,0 +1,71 @@
+render : "tournaments::components::Tournament Runner::tournaments::Tournament Game::Instance State Machine"
+
+shapes :
+  shape : created
+    render : state "tournaments::components::Tournament Runner::tournaments::Tournament Game::Instance State Machine::created"
+    bounds : x : 4236.0 y : 3192.0 width : 204.0 height : 144.0
+  shape : inprogress
+    render : state "tournaments::components::Tournament Runner::tournaments::Tournament Game::Instance State Machine::in progress"
+    bounds : x : 4572.0 y : 3192.0 width : 204.0 height : 144.0
+  shape : completed
+    render : state "tournaments::components::Tournament Runner::tournaments::Tournament Game::Instance State Machine::completed"
+    bounds : x : 4944.0 y : 3192.0 width : 217.0 height : 145.0
+
+connectors :
+  connector : created____Game1__gamestarted
+    render : transition "tournaments::components::Tournament Runner::tournaments::Tournament Game::Instance State Machine::created::Game1: game started"
+    polyline :
+      segment :
+        start : x : 4440.0 y : 3252.0
+        end :   x : 4572.0 y : 3252.0
+    anchors :
+      start :
+        point : x : 4440.0 y : 3252.0
+        shape : created
+      end :
+        point : x : 4572.0 y : 3252.0
+        shape : inprogress
+    texts :
+      text :
+        bounds : x : 4446.0 y : 3218.0 width : 0.0 height : 0.0 where : middle
+  connector : created____Game2__handlegame
+    render : transition "tournaments::components::Tournament Runner::tournaments::Tournament Game::Instance State Machine::created::Game2: handle game"
+    polyline :
+      segment :
+        start : x : 4320.0 y : 3192.0
+        end :   x : 4320.0 y : 3142.0
+      segment :
+        start : x : 4320.0 y : 3142.0
+        end :   x : 4186.0 y : 3142.0
+      segment :
+        start : x : 4186.0 y : 3142.0
+        end :   x : 4186.0 y : 3264.0
+      segment :
+        start : x : 4186.0 y : 3264.0
+        end :   x : 4236.0 y : 3264.0
+    anchors :
+      start :
+        point : x : 4320.0 y : 3192.0
+        shape : created
+      end :
+        point : x : 4320.0 y : 3142.0
+        shape : created
+    texts :
+      text :
+        bounds : x : 4204.0 y : 3104.0 width : 0.0 height : 0.0 where : middle
+  connector : inprogress____Game3__gameover
+    render : transition "tournaments::components::Tournament Runner::tournaments::Tournament Game::Instance State Machine::in progress::Game3: game over"
+    polyline :
+      segment :
+        start : x : 4776.0 y : 3252.0
+        end :   x : 4944.0 y : 3252.0
+    anchors :
+      start :
+        point : x : 4776.0 y : 3252.0
+        shape : inprogress
+      end :
+        point : x : 4944.0 y : 3252.0
+        shape : completed
+    texts :
+      text :
+        bounds : x : 4811.0 y : 3214.0 width : 0.0 height : 0.0 where : middle

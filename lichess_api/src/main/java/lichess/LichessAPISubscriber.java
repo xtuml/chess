@@ -4,7 +4,9 @@ import lichess.types.APIException;
 import lichess.types.Challenge;
 import lichess.types.Game;
 import lichess.types.GameEventInfo;
+import lichess.types.GameOverview;
 import lichess.types.GameState;
+import lichess.types.GameUpdate;
 import lichess.types.Room;
 
 public interface LichessAPISubscriber {
@@ -26,7 +28,9 @@ public interface LichessAPISubscriber {
 	void opponentGone(LichessAPIProvider provider, String gameId, boolean gone, int claimWinInSeconds);
 	
 	void error(LichessAPIProvider provider, APIException error);
+	
+	void gameOverview(LichessAPIProvider provider, String gameId, GameOverview gameOverview);
 
-	void connected(LichessAPIProvider provider);
+	void gameUpdate(LichessAPIProvider provider, String gameId, GameUpdate gameUpdate);
 
 }

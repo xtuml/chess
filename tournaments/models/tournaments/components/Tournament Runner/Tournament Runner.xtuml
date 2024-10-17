@@ -1,0 +1,150 @@
+// BP 7.1.6 content: Component syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components is
+
+  component 'Tournament Runner' is
+
+    package functions;
+    package tournaments;
+
+    required port chess implements LichessAPI is
+
+      @dialect("oal");
+      message abort(game_id: in string) return boolean to provider;
+
+      @dialect("oal");
+      message acceptChallenge(challenge_id: in string) return boolean to provider;
+
+      @dialect("oal");
+      message account() return User to provider;
+
+      message bulkPairing(players: in string, clock_limit: in integer, clock_increment: in integer, days: in integer, pair_at: in integer, start_clocks_at: in integer, rated: in boolean, variant: in Variant, fen: in string, msg: in string, rules: in string) return BulkPairing to provider;
+
+      @dialect("oal");
+      message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
+
+      @dialect("oal");
+      message claimVictory(game_id: in string) return boolean to provider;
+
+      @dialect("oal");
+      message createChallenge(user: in string, rated: in boolean, clock_limit: in integer, clock_increment: in integer, color: in Color, variant: in Variant, fen: in string) return boolean to provider;
+
+      @dialect("oal");
+      message declineChallenge(challenge_id: in string, reason: in DeclineReason) return boolean to provider;
+
+      @dialect("oal");
+      message draw(game_id: in string, accept: in boolean) return boolean to provider;
+
+      @dialect("oal");
+      message initialize(properties: in Properties) return boolean to provider;
+
+      @dialect("oal");
+      message move(game_id: in string, move: in string) return boolean to provider;
+
+      @dialect("oal");
+      message resign(game_id: in string) return boolean to provider;
+
+      @dialect("oal");
+      message takeback(game_id: in string, accept: in boolean) return boolean to provider;
+
+      @dialect("oal");
+      message upgradeToBot() return User to provider;
+
+      @dialect("oal");
+      message challenge(challenge: in Challenge) from provider;
+
+      @dialect("oal");
+      message challengeCanceled(challenge: in Challenge) from provider;
+
+      @dialect("oal");
+      message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
+
+      @dialect("oal");
+      message error(error: in APIException) from provider is
+        @noparse
+        route = "/api/stream/game/";
+        route_index = STRING::indexof(haystack: param.error.error, needle: route);
+        if param.error.status == 404 and route_index != -1 then
+          game_id = STRING::substr(s: param.error.error, begin: route_index + STRING::strlen(s: route), end: route_index + STRING::strlen(s: route) + 8);
+          select any game from instances of Game where selected.id == game_id;
+          if not empty game then
+            LOG::LogInfo(message: "Game not created yet. Trying again: " + game_id);
+            create event instance evt of Game2:'handle game' to game;
+            t = TIM::timer_start(event_inst: evt, microseconds: game.timeout_ms * 1000);
+          else
+            LOG::LogFailure(message:"API error: " +  param.error.error);
+          end if;
+        else
+          LOG::LogFailure(message:"API error: " +  param.error.error);
+        end if;
+        @endnoparse
+      end message;
+
+      @dialect("oal");
+      message gameFinish(game_event: in GameEventInfo) from provider;
+
+      @dialect("oal");
+      message gameFull(game: in Game) from provider;
+
+      @dialect("oal");
+      message gameOverview(game_id: in string, game_overview: in GameOverview) from provider is
+        @noparse
+        LOG::LogInfo(message:"Game overview: " + param.game_id);
+
+        // check if the game is over
+        select any game from instances of Game where selected.id == param.game_id;
+        if not empty game then
+          game.status = param.game_overview.status;
+          game.completed = not (game.status == GameStatus::CREATED or game.status == GameStatus::STARTED);
+          if game.status == GameStatus::STARTED then
+            generate Game1:'game started' to game;
+          elif not (game.status == GameStatus::CREATED or game.status == GameStatus::STARTED) then
+            game.winner = param.game_overview.winner;
+            generate Game3:'game over' to game;
+          end if;
+        end if;
+        @endnoparse
+      end message;
+
+      @dialect("oal");
+      message gameStart(game_event: in GameEventInfo) from provider;
+
+      @dialect("oal");
+      message gameState(game_id: in string, game_state: in GameState) from provider;
+
+      @dialect("oal");
+      message gameUpdate(game_id: in string, game_update: in GameUpdate) from provider is
+        @noparse
+        //LOG::LogInfo(message:"Game update: " + param.game_id + " FEN: " + param.game_update.fen);
+        @endnoparse
+      end message;
+
+      @dialect("oal");
+      message handleBotEvents() to provider;
+
+      @dialect("oal");
+      message handleBotGameEvents(game_id: in string) to provider;
+
+      @dialect("oal");
+      message handleGameEvents(game_id: in string) to provider;
+
+      @dialect("oal");
+      message opponentGone(game_id: in string, gone: in boolean, claim_win_in_seconds: in integer) from provider;
+
+    end port;
+
+    provided port inst implements Instrumentation is
+
+      @dialect("oal");
+      @message_num(1);
+      message init() to provider is
+        @noparse
+        ::init();
+        @endnoparse
+      end message;
+
+    end port;
+
+  end component;
+
+end;

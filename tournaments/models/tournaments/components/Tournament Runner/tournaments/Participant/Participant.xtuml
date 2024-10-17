@@ -1,0 +1,64 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("Participant");
+  @class_num(3);
+  class Participant is
+
+    user_id: string;
+
+    access_token: string;
+
+    score: real;
+
+    rank: integer;
+
+    preferred identifier is (user_id);
+
+    @dialect("oal");
+    @operation_num(1);
+    operation dispose() is
+      @noparse
+      select one tournament related by self->Tournament[R2];
+      if not empty tournament then
+        unrelate self from tournament across R2;
+      end if;
+
+      select one wait_in_lobby related by self->WaitInLobby[R6];
+      if not empty wait_in_lobby then
+        wait_in_lobby.dispose();
+      end if;
+
+      select any white_game related by self->Game[R3];
+      while not empty white_game loop
+        unrelate self from white_game across R3;
+        white_game.dispose();
+        select any white_game related by self->Game[R3];
+      end while;
+
+      select any black_game related by self->Game[R7];
+      while not empty black_game loop
+        unrelate self from black_game across R7;
+        black_game.dispose();
+        select any black_game related by self->Game[R7];
+      end while;
+
+      select one recent_participation related by self->Participation[R11];
+      if not empty recent_participation then
+        unrelate self from recent_participation across R11;
+      end if;
+
+      select any participation related by self->Participation[R9];
+      while not empty participation loop
+        participation.dispose();
+        select any participation related by self->Participation[R9];
+      end while;
+
+      delete object instance self;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

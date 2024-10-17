@@ -1,0 +1,287 @@
+render : "tournaments::components::Tournament Runner::tournaments"
+
+shapes :
+  shape : TournamentGame
+    render : class "tournaments::components::Tournament Runner::tournaments::Tournament Game"
+    bounds : x : 4896.0 y : 3192.0 width : 204.0 height : 168.0
+  shape : Manager
+    render : class "tournaments::components::Tournament Runner::tournaments::Manager"
+    bounds : x : 4128.0 y : 2892.0 width : 200.0 height : 150.0
+  shape : Tournament
+    render : class "tournaments::components::Tournament Runner::tournaments::Tournament"
+    bounds : x : 4500.0 y : 2904.0 width : 216.0 height : 120.0
+  shape : Participant
+    render : class "tournaments::components::Tournament Runner::tournaments::Participant"
+    bounds : x : 4884.0 y : 2928.0 width : 216.0 height : 121.0
+  shape : ArenaTournament
+    render : class "tournaments::components::Tournament Runner::tournaments::Arena Tournament"
+    bounds : x : 4512.0 y : 2688.0 width : 156.0 height : 120.0
+  shape : Lobby
+    render : class "tournaments::components::Tournament Runner::tournaments::Lobby"
+    bounds : x : 4872.0 y : 2712.0 width : 132.0 height : 97.0
+  shape : WaitInLobby
+    render : class "tournaments::components::Tournament Runner::tournaments::Wait In Lobby"
+    bounds : x : 5064.0 y : 2820.0 width : 121.0 height : 84.0
+  shape : Participation
+    render : class "tournaments::components::Tournament Runner::tournaments::Participation"
+    bounds : x : 5304.0 y : 3036.0 width : 193.0 height : 121.0
+
+connectors :
+  connector : R1
+    render : association "tournaments::components::Tournament Runner::tournaments::R1"
+    polyline :
+      segment :
+        start : x : 4620.0 y : 3024.0
+        end :   x : 4620.0 y : 3264.0
+      segment :
+        start : x : 4620.0 y : 3264.0
+        end :   x : 4896.0 y : 3264.0
+    anchors :
+      start :
+        point : x : 4620.0 y : 3024.0
+        shape : Tournament
+      end :
+        point : x : 4620.0 y : 3264.0
+        shape : TournamentGame
+    texts :
+      text :
+        bounds : x : 4630.0 y : 3034.0 width : 0.0 height : 0.0 where : start
+      text :
+        bounds : x : 4630.0 y : 3233.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 4862.0 y : 3263.0 width : 0.0 height : 0.0 where : end
+  connector : R2
+    render : association "tournaments::components::Tournament Runner::tournaments::R2"
+    polyline :
+      segment :
+        start : x : 4716.0 y : 2970.0
+        end :   x : 4884.0 y : 2970.0
+    anchors :
+      start :
+        point : x : 4716.0 y : 2970.0
+        shape : Tournament
+      end :
+        point : x : 4884.0 y : 2970.0
+        shape : Participant
+    texts :
+      text :
+        bounds : x : 4726.0 y : 2980.0 width : 0.0 height : 0.0 where : start
+      text :
+        bounds : x : 4793.0 y : 2932.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 4855.0 y : 2990.0 width : 0.0 height : 0.0 where : end
+  connector : R3
+    render : association "tournaments::components::Tournament Runner::tournaments::R3"
+    polyline :
+      segment :
+        start : x : 4944.0 y : 3192.0
+        end :   x : 4944.0 y : 3049.0
+    anchors :
+      start :
+        point : x : 4944.0 y : 3192.0
+        shape : TournamentGame
+      end :
+        point : x : 4944.0 y : 3049.0
+        shape : Participant
+    texts :
+      text :
+        bounds : x : 4950.0 y : 3154.0 width : 51.0 height : 36.0 where : start
+      text :
+        bounds : x : 4917.0 y : 3110.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 4951.0 y : 3051.0 width : 61.0 height : 36.0 where : end
+  connector : R4
+    render : supertype "tournaments::components::Tournament Runner::tournaments::R4"
+    polyline :
+      segment :
+        start : x : 4596.0 y : 2904.0
+        end :   x : 4596.0 y : 2880.0
+    anchors :
+      start :
+        point : x : 4596.0 y : 2904.0
+        shape : Tournament
+      end :
+        point : x : 4596.0 y : 2880.0
+    texts :
+      text :
+        bounds : x : 4606.0 y : 2863.0 width : 0.0 height : 0.0 where : end
+  connector : R4____ArenaTournament
+    render : subtype "tournaments::components::Tournament Runner::tournaments::R4::Arena Tournament"
+    polyline :
+      segment :
+        start : x : 4596.0 y : 2808.0
+        end :   x : 4596.0 y : 2880.0
+    anchors :
+      start :
+        point : x : 4596.0 y : 2808.0
+        shape : ArenaTournament
+      end :
+        point : x : 4596.0 y : 2880.0
+        connector : R4
+    texts :
+  connector : R5
+    render : association "tournaments::components::Tournament Runner::tournaments::R5"
+    polyline :
+      segment :
+        start : x : 4668.0 y : 2760.0
+        end :   x : 4872.0 y : 2760.0
+    anchors :
+      start :
+        point : x : 4668.0 y : 2760.0
+        shape : ArenaTournament
+      end :
+        point : x : 4872.0 y : 2760.0
+        shape : Lobby
+    texts :
+      text :
+        bounds : x : 4672.0 y : 2762.0 width : 73.0 height : 49.0 where : start
+      text :
+        bounds : x : 4763.0 y : 2722.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 4815.0 y : 2767.0 width : 0.0 height : 0.0 where : end
+  connector : R6
+    render : association "tournaments::components::Tournament Runner::tournaments::R6"
+    polyline :
+      segment :
+        start : x : 4967.0 y : 2928.0
+        end :   x : 4968.0 y : 2809.0
+    anchors :
+      start :
+        point : x : 4967.0 y : 2928.0
+        shape : Participant
+      end :
+        point : x : 4968.0 y : 2809.0
+        shape : Lobby
+    texts :
+      text :
+        bounds : x : 4977.0 y : 2905.0 width : 0.0 height : 0.0 where : start
+      text :
+        bounds : x : 4927.0 y : 2862.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 4978.0 y : 2819.0 width : 0.0 height : 0.0 where : end
+  connector : R7
+    render : association "tournaments::components::Tournament Runner::tournaments::R7"
+    polyline :
+      segment :
+        start : x : 5051.0 y : 3049.0
+        end :   x : 5051.0 y : 3192.0
+    anchors :
+      start :
+        point : x : 5051.0 y : 3049.0
+        shape : Participant
+      end :
+        point : x : 5051.0 y : 3192.0
+        shape : TournamentGame
+    texts :
+      text :
+        bounds : x : 5059.0 y : 3054.0 width : 61.0 height : 36.0 where : start
+      text :
+        bounds : x : 5058.0 y : 3106.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 5055.0 y : 3154.0 width : 51.0 height : 36.0 where : end
+  connector : R6____WaitInLobby
+    render : associative_link "tournaments::components::Tournament Runner::tournaments::R6::Wait In Lobby"
+    polyline :
+      segment :
+        start : x : 5064.0 y : 2868.0
+        end :   x : 4967.0 y : 2866.0
+    anchors :
+      start :
+        point : x : 5064.0 y : 2868.0
+        shape : WaitInLobby
+      end :
+        point : x : 4967.0 y : 2866.0
+        connector : R6
+    texts :
+  connector : R9
+    render : association "tournaments::components::Tournament Runner::tournaments::R9"
+    polyline :
+      segment :
+        start : x : 5100.0 y : 3010.0
+        end :   x : 5243.0 y : 3010.0
+      segment :
+        start : x : 5243.0 y : 3010.0
+        end :   x : 5243.0 y : 3251.0
+      segment :
+        start : x : 5243.0 y : 3251.0
+        end :   x : 5100.0 y : 3251.0
+    anchors :
+      start :
+        point : x : 5100.0 y : 3010.0
+        shape : Participant
+      end :
+        point : x : 5243.0 y : 3010.0
+        shape : TournamentGame
+    texts :
+      text :
+        bounds : x : 5110.0 y : 3020.0 width : 0.0 height : 0.0 where : start
+      text :
+        bounds : x : 5214.0 y : 3074.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 5110.0 y : 3228.0 width : 0.0 height : 0.0 where : end
+  connector : R9____Participation
+    render : associative_link "tournaments::components::Tournament Runner::tournaments::R9::Participation"
+    polyline :
+      segment :
+        start : x : 5304.0 y : 3083.0
+        end :   x : 5243.0 y : 3083.0
+    anchors :
+      start :
+        point : x : 5304.0 y : 3083.0
+        shape : Participation
+      end :
+        point : x : 5243.0 y : 3083.0
+        connector : R9
+    texts :
+  connector : R10
+    render : association "tournaments::components::Tournament Runner::tournaments::R10"
+    polyline :
+      segment :
+        start : x : 5435.0 y : 3036.0
+        end :   x : 5435.0 y : 2987.0
+      segment :
+        start : x : 5435.0 y : 2987.0
+        end :   x : 5543.0 y : 2987.0
+      segment :
+        start : x : 5543.0 y : 2987.0
+        end :   x : 5543.0 y : 3082.0
+      segment :
+        start : x : 5543.0 y : 3082.0
+        end :   x : 5497.0 y : 3082.0
+    anchors :
+      start :
+        point : x : 5435.0 y : 3036.0
+        shape : Participation
+      end :
+        point : x : 5435.0 y : 2987.0
+        shape : Participation
+    texts :
+      text :
+        bounds : x : 5445.0 y : 3012.0 width : 0.0 height : 0.0 where : start
+      text :
+        bounds : x : 5461.0 y : 2947.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 5509.0 y : 3091.0 width : 0.0 height : 0.0 where : end
+  connector : R11
+    render : association "tournaments::components::Tournament Runner::tournaments::R11"
+    polyline :
+      segment :
+        start : x : 5100.0 y : 2951.0
+        end :   x : 5327.0 y : 2951.0
+      segment :
+        start : x : 5327.0 y : 2951.0
+        end :   x : 5327.0 y : 3036.0
+    anchors :
+      start :
+        point : x : 5100.0 y : 2951.0
+        shape : Participant
+      end :
+        point : x : 5327.0 y : 2951.0
+        shape : Participation
+    texts :
+      text :
+        bounds : x : 5110.0 y : 2961.0 width : 0.0 height : 0.0 where : start
+      text :
+        bounds : x : 5306.0 y : 2915.0 width : 0.0 height : 0.0 where : middle
+      text :
+        bounds : x : 5336.0 y : 2985.0 width : 44.0 height : 49.0 where : end

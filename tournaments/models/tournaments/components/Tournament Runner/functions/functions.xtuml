@@ -1,0 +1,51 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner' is
+
+  package functions is
+    @dialect("oal");
+    @function_num(1);
+    function init() is
+      @noparse
+      // load configuration properties
+      select any mgr from instances of Manager;
+      if empty mgr then
+        create object instance mgr of Manager;
+        mgr.config = PROP::loadProperties(file_name:"lichess_bot.properties");
+      end if;
+
+      // connect to the Lichess API and start listening for events
+      r = chess::initialize(properties: mgr.config);
+
+      // create an arena tournament
+      tournament = ArenaTournament::create_new(
+        clock_limit: Manager::getInteger(name: "clock_limit", default_value: 60),
+        clock_increment: Manager::getInteger(name: "clock_increment", default_value: 0),
+        duration: Manager::getInteger(name: "duration", default_value: 300)
+      );
+
+      // participants are passed in as a semicolon delimited list
+      participant_list = Manager::getString(name: "participants", default_value: "") + ";";
+      i = 0;
+      token_end = STRING::indexof(haystack: STRING::substr(s: participant_list, begin: i, end: -1), needle: ";");
+      while token_end != -1 loop
+        token = STRING::substr(s: participant_list, begin: i, end: i + token_end);
+
+        // each entry is a pair of values separated by a comma
+        comma_index = STRING::indexof(haystack: token, needle: ",");
+        user_id = STRING::substr(s: token, begin: 0, end: comma_index);
+        auth_token = STRING::substr(s: token, begin: comma_index + 1, end: -1);
+
+        tournament.add_participant(user_id: user_id, token: auth_token);
+
+        i = i + token_end + 1;
+        token_end = STRING::indexof(haystack: STRING::substr(s: participant_list, begin: i, end: -1), needle: ";");
+      end while;
+
+      LOG::LogInfo(message: "Initialization complete");
+      @endnoparse
+    end function;
+
+  end package;
+
+end;

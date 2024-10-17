@@ -1,0 +1,149 @@
+// BP 7.1.6 content: ModelClass syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner'::tournaments is
+
+  @key_letters("Tournament");
+  @class_num(2);
+  class Tournament is
+
+    unique id: integer;
+
+    clock_limit: integer;
+
+    clock_increment: integer;
+
+    preferred identifier is (id);
+
+    @dialect("oal");
+    @operation_num(3);
+    operation create_matchup(white: in instance of Participant, black: in instance of Participant) return set of instance of 'Tournament Game' is
+      @noparse
+      white_player = param.white;
+      black_player = param.black;
+
+      // start the game
+      r = chess::bulkPairing(
+        players: white_player.access_token + ":" + black_player.access_token,
+        clock_limit: self.clock_limit,
+        clock_increment: self.clock_increment,
+        days: -1,
+        pair_at: -1,
+        start_clocks_at: -1,
+        rated: false,
+        variant: Variant::STANDARD,
+        fen: "",
+        msg: "",
+        rules: ""
+      );
+
+      // start handling events for each of the created games
+      select many games from instances of Game where false;
+      i = 0;
+      while i < r.games.length loop
+        // create the game
+        create object instance game of Game;
+        game.id = r.games[i].id;
+        game.winner = Color::RANDOM;  // This just means "not black" and "not white" for scoring purposes
+        relate game to self across R1;
+
+        // link the white player
+        create object instance white_participation of Participation;
+        white_participation.active = true;
+        relate white_player to game across R9 using white_participation;
+        select one recent_white_participation related by white_player->Participation[R11];
+        if not empty recent_white_participation then
+          relate white_participation to recent_white_participation across R10.'follows';
+          unrelate recent_white_participation from white_player across R11;
+          relate white_participation to white_player across R11;
+        end if;
+        relate white_player to game across R3;
+
+        // link the black player
+        create object instance black_participation of Participation;
+        black_participation.active = true;
+        relate black_player to game across R9 using black_participation;
+        select one recent_black_participation related by black_player->Participation[R11];
+        if not empty recent_black_participation then
+          relate black_participation to recent_black_participation across R10.'follows';
+          unrelate recent_black_participation from black_player across R11;
+          relate black_participation to black_player across R11;
+        end if;
+        relate black_player to game across R7;
+
+        // start listening for events
+        generate Game2:'handle game' to game;
+
+        i = i + 1;
+        games = games + game;
+      end while;
+
+      return games;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(4);
+    operation start() is
+      @noparse
+      // TODO this event should be polymorphic
+      select one arena related by self->ArenaTournament[R4];
+      if not empty arena then
+        generate ArenaTournament1:'start' to arena;
+      end if;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(1);
+    operation output_results() is
+      @noparse
+      // TODO deferred operation
+      select one arena related by self->ArenaTournament[R4];
+      if not empty arena then
+        arena.output_results();
+      end if;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(2);
+    operation dispose() is
+      @noparse
+      select one arena related by self->ArenaTournament[R4];
+      if not empty arena then
+        unrelate arena from self across R4;
+        arena.dispose();
+      end if;
+
+      select any game related by self->Game[R1];
+      while not empty game loop
+        unrelate game from self across R1;
+        game.dispose();
+        select any game related by self->Game[R1];
+      end while;
+
+      select any participant related by self->Participant[R2];
+      while not empty participant loop
+        unrelate participant from self across R2;
+        participant.dispose();
+        select any participant related by self->Participant[R2];
+      end while;
+
+      delete object instance self;
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(5);
+    operation add_participant(user_id: in string, token: in string) is
+      @noparse
+      create object instance participant of Participant;
+      participant.user_id = param.user_id;
+      participant.access_token = param.token;
+      relate participant to self across R2;
+      @endnoparse
+    end operation;
+
+  end class;
+
+end;

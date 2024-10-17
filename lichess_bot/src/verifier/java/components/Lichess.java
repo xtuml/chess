@@ -9,12 +9,15 @@ import lichess.LichessAPIConnection;
 import lichess.LichessAPIProvider;
 import lichess.LichessAPISubscriber;
 import lichess.types.APIException;
+import lichess.types.BulkPairing;
 import lichess.types.Challenge;
 import lichess.types.Color;
 import lichess.types.DeclineReason;
 import lichess.types.Game;
 import lichess.types.GameEventInfo;
+import lichess.types.GameOverview;
 import lichess.types.GameState;
+import lichess.types.GameUpdate;
 import lichess.types.Room;
 import lichess.types.User;
 import lichess.types.Variant;
@@ -22,18 +25,16 @@ import lichess.types.Variant;
 public class Lichess implements ILichessAPIToProvider {
 
 	private final ILichessAPIFromProvider engine;
-	private LichessAPIConnection lichess;
+	private final LichessAPIConnection lichess;
 
 	public Lichess(ILichessAPIFromProvider engine) {
 		this.engine = engine;
+		lichess = new LichessAPIConnection(() -> CorePlugin.out, () -> CorePlugin.err, new LichessAPIHandler());
 	}
 
 	@Override
-	public void connect(ComponentInstance_c senderReceiver, Properties properties) {
-		if (lichess == null) {
-			lichess = new LichessAPIConnection(CorePlugin.out, CorePlugin.err, new LichessAPIHandler(), properties);
-			lichess.initialize();
-		}
+	public boolean initialize(ComponentInstance_c senderReceiver, Properties properties) {
+		return lichess.initialize(properties);
 	}
 
 	@Override
@@ -92,57 +93,91 @@ public class Lichess implements ILichessAPIToProvider {
 		return lichess.claimVictory(gameId);
 	}
 
-	private class LichessAPIHandler implements LichessAPISubscriber {
+	@Override
+	public BulkPairing bulkPairing(ComponentInstance_c senderReceiver, String players, int clock_limit, int clock_increment,
+			int days, int pair_at, int start_clocks_at, Boolean rated, Variant variant, String fen, String msg,
+			String rules) {
+		return lichess.bulkPairing(players, clock_limit, clock_increment, days, pair_at, start_clocks_at, rated, variant, fen, msg, rules);
+	}
 
+	@Override
+	public User upgradeToBot(ComponentInstance_c senderReceiver) {
+		return lichess.upgradeToBot();
+	}
+
+	@Override
+	public void handleBotEvents(ComponentInstance_c senderReceiver) {
+		lichess.handleBotEvents();
+	}
+
+	@Override
+	public void handleBotGameEvents(ComponentInstance_c senderReceiver, String game_id) {
+		lichess.handleBotGameEvents(game_id);
+	}
+
+	@Override
+	public void handleGameEvents(ComponentInstance_c senderReceiver, String game_id) {
+		lichess.handleGameEvents(game_id);
+	}
+
+	private class LichessAPIHandler implements LichessAPISubscriber {
+	
 		@Override
 		public void gameStart(LichessAPIProvider provider, GameEventInfo gameEvent) {
 			engine.gameStart(null, gameEvent);
 		}
-
+	
 		@Override
 		public void gameFinish(LichessAPIProvider provider, GameEventInfo gameEvent) {
 			engine.gameFinish(null, gameEvent);
 		}
-
+	
 		@Override
 		public void challenge(LichessAPIProvider provider, Challenge challenge) {
 			engine.challenge(null, challenge);
 		}
-
+	
 		@Override
 		public void challengeCanceled(LichessAPIProvider provider, Challenge challenge) {
 			engine.challengeCanceled(null, challenge);
 		}
-
+	
 		@Override
 		public void gameFull(LichessAPIProvider provider, Game game) {
 			engine.gameFull(null, game);
 		}
-
+	
 		@Override
 		public void gameState(LichessAPIProvider provider, String gameId, GameState gameState) {
 			engine.gameState(null, gameId, gameState);
 		}
-
+	
 		@Override
 		public void chatLine(LichessAPIProvider provider, String gameId, String username, String text, Room room) {
 			engine.chatLine(null, gameId, username, text, room);
 		}
-
+	
 		@Override
 		public void opponentGone(LichessAPIProvider provider, String gameId, boolean gone, int claimWinInSeconds) {
 			engine.opponentGone(null, gameId, gone, claimWinInSeconds);
 		}
-
+	
 		@Override
 		public void error(LichessAPIProvider provider, APIException error) {
 			engine.error(null, error);
 		}
 
 		@Override
-		public void connected(LichessAPIProvider provider) {
-			engine.connected(null);
+		public void gameOverview(LichessAPIProvider provider, String gameId, GameOverview gameOverview) {
+			engine.gameOverview(null, gameId, gameOverview);
 		}
+
+		@Override
+		public void gameUpdate(LichessAPIProvider provider, String gameId, GameUpdate gameUpdate) {
+			engine.gameUpdate(null, gameId, gameUpdate);
+			
+		}
+	
 	}
 
 }

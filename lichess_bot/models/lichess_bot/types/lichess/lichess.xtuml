@@ -10,6 +10,7 @@ within lichess_bot::types is
     type GameSpeed;
     type GameState;
     type GameStatus;
+    type PairedGame;
     type Player;
     type Room;
     type TimeControl;
@@ -18,6 +19,18 @@ within lichess_bot::types is
     type APIException is structure
       error: string;
       status: integer;
+    end structure;
+
+    type BulkPairing is structure
+      id: string;
+      games: sequence of PairedGame;
+      variant: Variant;
+      clock: TimeControl;
+      pairAt: timestamp;
+      pairedAt: timestamp;
+      rated: boolean;
+      startClocksAt: timestamp;
+      scheduledAt: timestamp;
     end structure;
 
     type Challenge is structure
@@ -97,6 +110,14 @@ within lichess_bot::types is
       winner: Color;
     end structure;
 
+    type GameOverview is structure
+      id: string;
+      status: GameStatus;
+      winner: Color;
+      white: Player;
+      black: Player;
+    end structure;
+
     type GameSource is enum (
       LOBBY, 
       FRIEND, 
@@ -151,6 +172,18 @@ within lichess_bot::types is
       UNKNOWNFINISH, 
       VARIANTEND
     );
+
+    type GameUpdate is structure
+      fen: string;
+      wc: integer;
+      bc: integer;
+    end structure;
+
+    type PairedGame is structure
+      id: string;
+      white: string;
+      black: string;
+    end structure;
 
     type Player is structure
       id: string;

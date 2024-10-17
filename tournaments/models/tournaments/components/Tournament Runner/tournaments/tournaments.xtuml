@@ -1,0 +1,47 @@
+// BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+within tournaments::components::'Tournament Runner' is
+
+  package tournaments is
+    class 'Arena Tournament';
+    class Lobby;
+    class Manager;
+    class Participant;
+    class Participation;
+    class Tournament;
+    class 'Tournament Game';
+    class 'Wait In Lobby';
+    relationship R1 is 'Tournament Game' unconditionally 'is hosted by' one Tournament,
+                       Tournament conditionally hosts many 'Tournament Game';
+
+    relationship R2 is Participant unconditionally 'participates in' one Tournament,
+                       Tournament conditionally has many Participant;
+
+    relationship R3 is 'Tournament Game' unconditionally 'white played by' one Participant,
+                       Participant conditionally 'plays white in' many 'Tournament Game';
+
+    relationship R4 is Tournament is_a ('Arena Tournament');
+
+    relationship R5 is 'Arena Tournament' unconditionally services one Lobby,
+                       Lobby unconditionally 'holds participants for' one 'Arena Tournament';
+
+    relationship R6 is Lobby conditionally holds many Participant,
+                       Participant conditionally 'is waiting in' one Lobby
+                       using one 'Wait In Lobby';
+
+    relationship R7 is 'Tournament Game' unconditionally 'black played by' one Participant,
+                       Participant conditionally 'plays black in' many 'Tournament Game';
+
+    relationship R9 is 'Tournament Game' unconditionally 'played by' many Participant,
+                       Participant conditionally plays many 'Tournament Game'
+                       using one Participation;
+
+    relationship R10 is Participation conditionally follows one Participation,
+                        Participation conditionally precedes one Participation;
+
+    relationship R11 is Participant conditionally 'has most recent' one Participation,
+                        Participation conditionally 'is most recent for' one Participant;
+
+  end package;
+
+end;

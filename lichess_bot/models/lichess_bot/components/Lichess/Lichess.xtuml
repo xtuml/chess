@@ -16,6 +16,9 @@ within lichess_bot::components is
       message account() return User to provider;
 
       @dialect("oal");
+      message bulkPairing(players: in string, clock_limit: in integer, clock_increment: in integer, days: in integer, pair_at: in integer, start_clocks_at: in integer, rated: in boolean, variant: in Variant, fen: in string, msg: in string, rules: in string) return BulkPairing to provider;
+
+      @dialect("oal");
       message chat(game_id: in string, text: in string, room: in Room) return boolean to provider;
 
       @dialect("oal");
@@ -31,6 +34,9 @@ within lichess_bot::components is
       message draw(game_id: in string, accept: in boolean) return boolean to provider;
 
       @dialect("oal");
+      message initialize(properties: in Properties) return boolean to provider;
+
+      @dialect("oal");
       message move(game_id: in string, move: in string) return boolean to provider;
 
       @dialect("oal");
@@ -38,6 +44,9 @@ within lichess_bot::components is
 
       @dialect("oal");
       message takeback(game_id: in string, accept: in boolean) return boolean to provider;
+
+      @dialect("oal");
+      message upgradeToBot() return User to provider;
 
       @dialect("oal");
       message challenge(challenge: in Challenge) from provider;
@@ -49,12 +58,6 @@ within lichess_bot::components is
       message chatLine(game_id: in string, username: in string, text: in string, room: in Room) from provider;
 
       @dialect("oal");
-      message connect(properties: in Properties) to provider;
-
-      @dialect("oal");
-      message connected() from provider;
-
-      @dialect("oal");
       message error(error: in APIException) from provider;
 
       @dialect("oal");
@@ -64,10 +67,25 @@ within lichess_bot::components is
       message gameFull(game: in Game) from provider;
 
       @dialect("oal");
+      message gameOverview(game_id: in string, game_overview: in GameOverview) from provider;
+
+      @dialect("oal");
       message gameStart(game_event: in GameEventInfo) from provider;
 
       @dialect("oal");
       message gameState(game_id: in string, game_state: in GameState) from provider;
+
+      @dialect("oal");
+      message gameUpdate(game_id: in string, game_update: in GameUpdate) from provider;
+
+      @dialect("oal");
+      message handleBotEvents() to provider;
+
+      @dialect("oal");
+      message handleBotGameEvents(game_id: in string) to provider;
+
+      @dialect("oal");
+      message handleGameEvents(game_id: in string) to provider;
 
       @dialect("oal");
       message opponentGone(game_id: in string, gone: in boolean, claim_win_in_seconds: in integer) from provider;
