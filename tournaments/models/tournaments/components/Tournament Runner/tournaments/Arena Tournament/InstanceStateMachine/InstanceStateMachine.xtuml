@@ -105,7 +105,6 @@ within tournaments::components::'Tournament Runner'::tournaments::'Arena Tournam
     // get the longest waiting player
     select any player1 related by lobby->Participant[R6];
     select many players related by lobby->Participant[R6];
-    two_players = cardinality players == 2;
     for each player in players loop
       select one wait_in_lobby related by player->WaitInLobby[R6];
       select one longest_wait related by player1->WaitInLobby[R6];
@@ -115,6 +114,8 @@ within tournaments::components::'Tournament Runner'::tournaments::'Arena Tournam
     end for;
 
     // get the opponent
+    select many total_players related by self->Tournament[R4]->Participant[R2];
+    two_players = cardinality total_players == 2;
     if not empty player1 then
       most_recent_opponent_id = "";
       select any most_recent_opponent related by player1->Participation[R11]->Game[R9]->Participant[R9] where selected.user_id != player1.user_id;

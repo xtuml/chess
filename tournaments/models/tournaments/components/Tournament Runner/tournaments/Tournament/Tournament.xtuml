@@ -54,8 +54,8 @@ within tournaments::components::'Tournament Runner'::tournaments is
         if not empty recent_white_participation then
           relate white_participation to recent_white_participation across R10.'follows';
           unrelate recent_white_participation from white_player across R11;
-          relate white_participation to white_player across R11;
         end if;
+        relate white_participation to white_player across R11;
         relate white_player to game across R3;
 
         // link the black player
@@ -66,8 +66,8 @@ within tournaments::components::'Tournament Runner'::tournaments is
         if not empty recent_black_participation then
           relate black_participation to recent_black_participation across R10.'follows';
           unrelate recent_black_participation from black_player across R11;
-          relate black_participation to black_player across R11;
         end if;
+        relate black_participation to black_player across R11;
         relate black_player to game across R7;
 
         // start listening for events

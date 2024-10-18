@@ -53,7 +53,7 @@ within tournaments::components::'Tournament Runner'::tournaments is
     @operation_num(3);
     operation output_results() is
       @noparse
-      blank_20 = "        ";
+      blank_20 = "  ";
 
       // calculate scores
       select many participants related by self->Tournament[R4]->Participant[R2];
@@ -97,6 +97,8 @@ within tournaments::components::'Tournament Runner'::tournaments is
           len = len + 1;
         end if;
         line = line + STRING::substr(s: score, begin: 0, end: len - 1) + "." + STRING::substr(s: score, begin: len - 1, end: len);
+        select many games_played related by participant->Game[R9];
+        line = line + " " + STRING::itoa(i: cardinality games_played);
         LOG::LogInfo(message: line);
         i = i + 1;
       end while;
