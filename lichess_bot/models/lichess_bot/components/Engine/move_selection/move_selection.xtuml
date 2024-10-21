@@ -9,7 +9,7 @@ within lichess_bot::components::Engine is
       @noparse
       move_count = param.move_count;
       
-      // Loop through legal moves.  Find the move that maximises file increase.
+      // Loop through legal moves.  Find the move that maximises rank increase.
       i = 0; max_index = 0; max_advance = 0; advance = 0;
       while ( i < move_count )
         rank_start = STRING::atoi(s:STRING::substr(s:param.legal_moves[i], begin:1, end:2)) - 1;
