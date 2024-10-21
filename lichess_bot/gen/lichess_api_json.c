@@ -357,43 +357,6 @@ lichess_bot_GameStatus_t encode_GameStatus( char * s )
 #define json_get_number( NUMVAR ) strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len ); s[len] = 0; NUMVAR = atoi(s)
 #define json_get_boolean( BOOLVAR ) strncpy( s, json_buffer + t[i+1].start, ( len > 1024 ) ? 1024 : len ); s[len] = 0; BOOLVAR = (s[0] == 't') ? 1 : 0
 
-
-void api_connected( const int, const int );
-void api_connected( const int starting_token_offset, const int token_count )
-{
-  Engine_chess_connected();
-}
-
-/* This one is not used but was for practice.  */
-void api_connect( const int, const int );
-void api_connect( const int starting_token_offset, const int token_count )
-{
-  int i, len;
-  char s[1024];
-  char api_base_url[1024];
-  char access_token[1024];
-  int max_games;
-  bool auto_open_challenge_url;
-  bool enable_debug_logging;
-  for (i = starting_token_offset; i < token_count; i++) {
-    len = t[i+1].end - t[i+1].start;
-    if ( json_detect_key("api_base_url") ) {
-      json_get_string( api_base_url );
-    } else if ( json_detect_key("access_token") ) {
-      json_get_string( access_token );
-    } else if ( json_detect_key("max_games") ) {
-      json_get_number( max_games );
-    } else if ( json_detect_key("auto_open_challenge_url") ) {
-      json_get_boolean( auto_open_challenge_url );
-    } else if ( json_detect_key("enable_debug_logging") ) {
-      json_get_boolean( enable_debug_logging );
-    } else {
-      debug_fprintf("Unexpected key: %.*s\n", t[i].end - t[i].start, json_buffer + t[i].start);
-    }
-    i++;
-  }
-}
-
 void api_challenge( const int, const int );
 void api_challenge( const int starting_token_offset, const int token_count )
 {
@@ -853,11 +816,7 @@ int lichess_api_json( char * filename )
       i++;
       i++;
       /* Put switch statement here for various messages.  */
-      if (0 == strcmp(command, "connect")) {
-        api_connect( i, r );
-      } else if (0 == strcmp(command, "connected")) {
-        api_connected( i, r );
-      } else if (0 == strcmp(command, "challenge")) {
+      if (0 == strcmp(command, "challenge")) {
         api_challenge( i, r );
       } else if (0 == strcmp(command, "gameFull")) {
         api_gameFull( i, r );
