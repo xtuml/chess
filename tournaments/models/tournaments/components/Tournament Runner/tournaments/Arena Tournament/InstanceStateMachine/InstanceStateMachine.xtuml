@@ -108,7 +108,7 @@ within tournaments::components::'Tournament Runner'::tournaments::'Arena Tournam
     for each player in players loop
       select one wait_in_lobby related by player->WaitInLobby[R6];
       select one longest_wait related by player1->WaitInLobby[R6];
-      if wait_in_lobby.start_time < longest_wait.start_time then
+      if wait_in_lobby.start_time < longest_wait.start_time or (TIM::current_clock() / 1000) % 3 == 0 then  // add a little random chance to prevent patterns from emerging
         player1 = player;
       end if;
     end for;
@@ -135,10 +135,15 @@ within tournaments::components::'Tournament Runner'::tournaments::'Arena Tournam
       if not empty player1 and not empty player2 then
 
         // figure out who is white and who is black
+        // check who has played white against each other the most
         select any white_player from instances of Participant where false;
         select any black_player from instances of Participant where false;
+        select many player1_all_games related by player1->Game[R9];
         select many player1_white_games related by player1->Game[R3];
+        select many player2_all_games related by player2->Game[R9];
         select many player2_white_games related by player2->Game[R3];
+        player1_white_games = player1_white_games & player2_all_games;
+        player2_white_games = player2_white_games & player1_all_games;
         if cardinality player1_white_games <= cardinality player2_white_games then
           white_player = player1;
           black_player = player2;
@@ -186,6 +191,8 @@ within tournaments::components::'Tournament Runner'::tournaments::'Arena Tournam
 
   state completed is
     @noparse
+    self.end_time = TIM::current_clock();
+
     // output results
     select one tournament related by self->Tournament[R4];
     tournament.output_results();

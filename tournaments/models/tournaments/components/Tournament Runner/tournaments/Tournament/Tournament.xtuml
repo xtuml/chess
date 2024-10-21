@@ -21,6 +21,8 @@ within tournaments::components::'Tournament Runner'::tournaments is
       white_player = param.white;
       black_player = param.black;
 
+      LOG::LogInfo(message: "Creating matchup: " + white_player.user_id + " vs. " + black_player.user_id);
+
       // start the game
       r = chess::bulkPairing(
         players: white_player.access_token + ":" + black_player.access_token,

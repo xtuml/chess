@@ -16,6 +16,8 @@ within tournaments::components::'Tournament Runner'::tournaments is
 
     start_time: timestamp;
 
+    end_time: timestamp;
+
     timeout_ms: integer = 5000;
 
     preferred identifier is (id);
