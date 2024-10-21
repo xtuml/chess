@@ -4,6 +4,38 @@ within tournaments::components::'Tournament Runner' is
 
   package functions is
     @dialect("oal");
+    @function_num(2);
+    function format_duration(duration: in timestamp, include_hours: in boolean) return string is
+      @noparse
+      total_seconds = param.duration / 1000000;
+
+      // compute hours
+      hours = STRING::itoa(i: total_seconds / 3600);
+      if STRING::strlen(s: hours) < 2 then
+        hours = "0" + hours;
+      end if;
+
+      // compute minutes
+      mins = STRING::itoa(i: (total_seconds % 3600) / 60);
+      if STRING::strlen(s: mins) < 2 then
+        mins = "0" + mins;
+      end if;
+
+      // compute seconds
+      secs = STRING::itoa(i: (total_seconds % 3600) % 60);
+      if STRING::strlen(s: secs) < 2 then
+        secs = "0" + secs;
+      end if;
+
+      time_string = mins + ":" + secs;
+      if param.include_hours then
+        time_string = hours + ":" + time_string;
+      end if;
+      return time_string;
+      @endnoparse
+    end function;
+
+    @dialect("oal");
     @function_num(1);
     function init() is
       @noparse

@@ -75,12 +75,20 @@ public class LichessAPIStandalone {
 	}
 
 	void run() {
-		// send account information
-		sub.sendMessage("account", Map.of("user", lichess.account()));
-
 		// initialize the Lichess connection
 		lichess.initialize(props);
+		
+		// upgrade to bot account
+		lichess.upgradeToBot();
 
+		// send account information
+		sub.sendMessage("account", Map.of("user", lichess.account()));
+		
+		// start listening for events
+		lichess.handleBotEvents();
+		
+		System.out.println("Initialization complete");
+		
 		// loop and wait for commands
 		while (true) {
 
@@ -170,6 +178,7 @@ public class LichessAPIStandalone {
 		@Override
 		public void gameStart(LichessAPIProvider provider, GameEventInfo gameEvent) {
 			sendMessage("gameStart", Map.of("game_event", gameEvent));
+			provider.handleBotGameEvents(gameEvent.getId());
 		}
 
 		@Override

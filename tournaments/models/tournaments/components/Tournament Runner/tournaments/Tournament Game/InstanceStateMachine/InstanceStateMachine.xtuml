@@ -50,6 +50,7 @@ within tournaments::components::'Tournament Runner'::tournaments::'Tournament Ga
 
   state completed is
     @noparse
+    self.end_time = TIM::current_clock();
     select one arena related by self->Tournament[R1]->ArenaTournament[R4];
     generate ArenaTournament5:'game over' to arena;
     @endnoparse

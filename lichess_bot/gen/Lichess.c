@@ -66,6 +66,18 @@ Lichess_API_account()
 /*
  * Interface:  LichessAPI
  * Provided Port:  API
+ * To Provider Message:  bulkPairing
+ */
+lichess_bot_sdt_BulkPairing _bulk_pairing;
+lichess_bot_sdt_BulkPairing
+Lichess_API_bulkPairing( const i_t p_clock_increment, const i_t p_clock_limit, const i_t p_days, c_t p_fen[ESCHER_SYS_MAX_STRING_LEN], c_t p_msg[ESCHER_SYS_MAX_STRING_LEN], const i_t p_pair_at, c_t p_players[ESCHER_SYS_MAX_STRING_LEN], const bool p_rated, c_t p_rules[ESCHER_SYS_MAX_STRING_LEN], const i_t p_start_clocks_at, const lichess_bot_Variant_t p_variant )
+{
+  return _bulk_pairing;
+}
+
+/*
+ * Interface:  LichessAPI
+ * Provided Port:  API
  * From Provider Message:  challenge
  */
 void
@@ -93,7 +105,6 @@ Lichess_API_challengeCanceled( lichess_bot_sdt_Challenge p_challenge )
 bool
 Lichess_API_chat( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN], const lichess_bot_Room_t p_room, c_t p_text[ESCHER_SYS_MAX_STRING_LEN] )
 {
-  return true;
 }
 
 /*
@@ -116,27 +127,6 @@ bool
 Lichess_API_claimVictory( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN] )
 {
   return true;
-}
-
-/*
- * Interface:  LichessAPI
- * Provided Port:  API
- * To Provider Message:  connect
- */
-void
-Lichess_API_connect( i_t p_properties )
-{
-}
-
-/*
- * Interface:  LichessAPI
- * Provided Port:  API
- * From Provider Message:  connected
- */
-void
-Lichess_API_connected()
-{
-  Engine_chess_connected();
 }
 
 /*
@@ -226,6 +216,17 @@ Lichess_API_gameFull( lichess_bot_sdt_Game p_game )
 /*
  * Interface:  LichessAPI
  * Provided Port:  API
+ * From Provider Message:  gameOverview
+ */
+void
+Lichess_API_gameOverview( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN], lichess_bot_sdt_GameOverview p_game_overview )
+{
+  Engine_chess_gameOverview(  p_game_id, p_game_overview );
+}
+
+/*
+ * Interface:  LichessAPI
+ * Provided Port:  API
  * From Provider Message:  gameStart
  */
 void
@@ -243,6 +244,58 @@ void
 Lichess_API_gameState( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN], lichess_bot_sdt_GameState p_game_state )
 {
   Engine_chess_gameState(  p_game_id, p_game_state );
+}
+
+/*
+ * Interface:  LichessAPI
+ * Provided Port:  API
+ * From Provider Message:  gameUpdate
+ */
+void
+Lichess_API_gameUpdate( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN], lichess_bot_sdt_GameUpdate p_game_update )
+{
+  Engine_chess_gameUpdate(  p_game_id, p_game_update );
+}
+
+/*
+ * Interface:  LichessAPI
+ * Provided Port:  API
+ * To Provider Message:  handleBotEvents
+ */
+void
+Lichess_API_handleBotEvents()
+{
+}
+
+/*
+ * Interface:  LichessAPI
+ * Provided Port:  API
+ * To Provider Message:  handleBotGameEvents
+ */
+void
+Lichess_API_handleBotGameEvents( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN] )
+{
+}
+
+/*
+ * Interface:  LichessAPI
+ * Provided Port:  API
+ * To Provider Message:  handleGameEvents
+ */
+void
+Lichess_API_handleGameEvents( c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN] )
+{
+}
+
+/*
+ * Interface:  LichessAPI
+ * Provided Port:  API
+ * To Provider Message:  initialize
+ */
+bool
+Lichess_API_initialize( i_t p_properties )
+{
+  return true;
 }
 
 /*
@@ -299,4 +352,15 @@ bool
 Lichess_API_takeback( const bool p_accept, c_t p_game_id[ESCHER_SYS_MAX_STRING_LEN] )
 {
   return true;
+}
+
+/*
+ * Interface:  LichessAPI
+ * Provided Port:  API
+ * To Provider Message:  upgradeToBot
+ */
+lichess_bot_sdt_User
+Lichess_API_upgradeToBot()
+{
+  return _bot_user;
 }

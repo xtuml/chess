@@ -8,6 +8,8 @@ within tournaments::components::'Tournament Runner'::tournaments is
 
     start_time: timestamp;
 
+    end_time: timestamp;
+
     duration: timestamp;
 
     timeout: timer;
@@ -53,7 +55,6 @@ within tournaments::components::'Tournament Runner'::tournaments is
     @operation_num(3);
     operation output_results() is
       @noparse
-      blank_20 = "        ";
 
       // calculate scores
       select many participants related by self->Tournament[R4]->Participant[R2];
@@ -82,6 +83,11 @@ within tournaments::components::'Tournament Runner'::tournaments is
         unranked_participants = unranked_participants - best_participant;
       end while;
 
+      // print total duration
+      total_time = (self.end_time - self.start_time);
+      LOG::LogInfo(message: "");
+      LOG::LogInfo(message: "Total time: " + ::format_duration(duration: total_time, include_hours: true));
+
       // print score
       LOG::LogInfo(message: "");
       LOG::LogInfo(message: "Leaderboard:");
@@ -89,7 +95,7 @@ within tournaments::components::'Tournament Runner'::tournaments is
       i = 0;
       while i < cardinality participants loop
         select any participant related by self->Tournament[R4]->Participant[R2] where selected.rank == i + 1;
-        line = STRING::itoa(i: i + 1) + ". " + participant.user_id + STRING::substr(s: blank_20, begin: STRING::strlen(s: participant.user_id), end: -1) + ": ";
+        line = STRING::itoa(i: i + 1) + ". " + participant.user_id + ": ";
         score = STRING::itoa(i: participant.score * 10);
         len = STRING::strlen(s: score);
         if len < 2 then
@@ -97,6 +103,8 @@ within tournaments::components::'Tournament Runner'::tournaments is
           len = len + 1;
         end if;
         line = line + STRING::substr(s: score, begin: 0, end: len - 1) + "." + STRING::substr(s: score, begin: len - 1, end: len);
+        select many games_played related by participant->Game[R9];
+        line = line + " " + STRING::itoa(i: cardinality games_played);
         LOG::LogInfo(message: line);
         i = i + 1;
       end while;
@@ -108,13 +116,14 @@ within tournaments::components::'Tournament Runner'::tournaments is
       header = "   ";
       i = 0;
       while i < cardinality participants loop
-        header = header + STRING::itoa(i: i + 1) + ".  ";
+        header = header + STRING::itoa(i: i + 1) + ".   ";
         i = i + 1;
       end while;
       LOG::LogInfo(message: header);
       i = 0;
       while i < cardinality participants loop
         select any partA related by self->Tournament[R4]->Participant[R2] where selected.rank == i + 1;
+        select many all_games related by partA->Game[R9];
       	select many won_as_white_games related by partA->Game[R3] where selected.completed and selected.winner == Color::WHITE;
       	select many drew_as_white_games related by partA->Game[R3] where selected.completed and selected.winner == Color::RANDOM;
       	select many won_as_black_games related by partA->Game[R7] where selected.completed and selected.winner == Color::BLACK;
@@ -125,21 +134,25 @@ within tournaments::components::'Tournament Runner'::tournaments is
         j = 0;
         while j < cardinality participants loop
           if j == i then
-            line = line + "    ";  // blank cell for self matchup
+            line = line + "     ";  // blank cell for self matchup
           else
       			select any partB related by self->Tournament[R4]->Participant[R2] where selected.rank == j + 1;
-      			select many partB_white_games related by partB->Game[R3];
-      			select many partB_black_games related by partB->Game[R7];
-      			won_against_partB_games = (won_as_white_games | won_as_black_games) & (partB_white_games | partB_black_games);
-      			drew_against_partB_games = (drew_as_white_games | drew_as_black_games) & (partB_white_games | partB_black_games);
-      			score_against_partB = cardinality won_against_partB_games + (cardinality drew_against_partB_games) * 0.5;
-      			score = STRING::itoa(i: score_against_partB * 10);
-      			len = STRING::strlen(s: score);
-      			if len < 2 then
-      				score = "0" + score;
-      				len = len + 1;
-      			end if;
-      			line = line + STRING::substr(s: score, begin: 0, end: len - 1) + "." + STRING::substr(s: score, begin: len - 1, end: len) + " ";
+      			select many all_partB_games related by partB->Game[R9];
+      			played_against_partB_games = all_games & all_partB_games;
+      			if cardinality played_against_partB_games > 0 then
+      				select many partB_white_games related by partB->Game[R3];
+      				select many partB_black_games related by partB->Game[R7];
+      				won_against_partB_games = (won_as_white_games | won_as_black_games) & (partB_white_games | partB_black_games);
+      				drew_against_partB_games = (drew_as_white_games | drew_as_black_games) & (partB_white_games | partB_black_games);
+      				score_against_partB = (cardinality won_against_partB_games + (cardinality drew_against_partB_games) * 0.5) / (cardinality played_against_partB_games);
+      				score = STRING::itoa(i: score_against_partB * 100);
+      				while STRING::strlen(s: score) < 3 loop
+      				  score = "0" + score;
+      				end while;
+      				line = line + STRING::substr(s: score, begin: 0, end: 1) + "." + STRING::substr(s: score, begin: 1, end: -1) + " ";
+      		  else
+      		    line = line + "N/A  ";
+      		  end if;
       		end if;
           j = j + 1;
         end while;
@@ -164,7 +177,7 @@ within tournaments::components::'Tournament Runner'::tournaments is
       	line = "https://lichess.org/" + first_game.id + " ";
       	select one white_player related by first_game->Participant[R3];
       	select one black_player related by first_game->Participant[R7];
-      	line = line + white_player.user_id + STRING::substr(s: blank_20, begin: STRING::strlen(s: white_player.user_id), end: -1) + " vs. " + black_player.user_id + STRING::substr(s: blank_20, begin: STRING::strlen(s: white_player.user_id), end: -1) + " ";
+      	line = line + white_player.user_id + " vs. " + black_player.user_id + " ";
       	if first_game.winner == Color::WHITE then
       		line = line + "W";
       	elif first_game.winner == Color::BLACK then
@@ -172,6 +185,8 @@ within tournaments::components::'Tournament Runner'::tournaments is
       	else
       		line = line + "-";
       	end if;
+      	game_duration = first_game.end_time - first_game.start_time;
+      	line = line + " " + ::format_duration(duration: game_duration, include_hours: false);
       	games = games - first_game;
       	LOG::LogInfo(message: line);
       end while;
@@ -182,17 +197,8 @@ within tournaments::components::'Tournament Runner'::tournaments is
     @operation_num(4);
     operation print_time_remaining() is
       @noparse
-      seconds_remaining = TIM::timer_remaining_time(timer_inst_ref: self.timeout) / 1000000;
-      time_string = "";
-      if seconds_remaining < 60 then
-        time_string = "0";
-      end if;
-      mins = STRING::itoa(i: seconds_remaining / 60);
-      secs = STRING::itoa(i: seconds_remaining % 60);
-      if STRING::strlen(s: secs) < 2 then
-        secs = "0" + secs;
-      end if;
-      LOG::LogInfo(message: "Time remaining: " + mins + ":" + secs);
+      time_remaining = TIM::timer_remaining_time(timer_inst_ref: self.timeout);
+      LOG::LogInfo(message: "Time remaining: " + ::format_duration(duration: time_remaining, include_hours: false));
       @endnoparse
     end operation;
 
