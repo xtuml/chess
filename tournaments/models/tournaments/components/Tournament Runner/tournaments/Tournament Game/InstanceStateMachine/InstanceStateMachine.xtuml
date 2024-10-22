@@ -30,7 +30,7 @@ within tournaments::components::'Tournament Runner'::tournaments::'Tournament Ga
 
     |                  | 'game started'   | 'handle game'    | 'game over'      | 'game cancelled' |
     | ---------------- | ---------------- | ---------------- | ---------------- | ---------------- |
-    | created          | 'in progress'    | created          | cannot_happen    | cannot_happen    |
+    | created          | 'in progress'    | created          | ignore           | cannot_happen    |
     | 'in progress'    | cannot_happen    | cannot_happen    | completed        | cannot_happen    |
     | completed        | cannot_happen    | cannot_happen    | cannot_happen    | cannot_happen    |
 

@@ -43,7 +43,7 @@ within tournaments::components::'Tournament Runner'::tournaments is
       tournament.clock_limit = param.clock_limit;
       tournament.clock_increment = param.clock_increment;
       create object instance arena of ArenaTournament;
-      arena.duration = param.duration * 1000000;
+      arena.duration = param.duration;
       relate arena to tournament across R4;
       create object instance lobby of Lobby;
       relate lobby to arena across R5;
@@ -55,7 +55,6 @@ within tournaments::components::'Tournament Runner'::tournaments is
     @operation_num(3);
     operation output_results() is
       @noparse
-
       // calculate scores
       select many participants related by self->Tournament[R4]->Participant[R2];
       for each participant in participants loop
@@ -199,6 +198,14 @@ within tournaments::components::'Tournament Runner'::tournaments is
       @noparse
       time_remaining = TIM::timer_remaining_time(timer_inst_ref: self.timeout);
       LOG::LogInfo(message: "Time remaining: " + ::format_duration(duration: time_remaining, include_hours: false));
+      @endnoparse
+    end operation;
+
+    @dialect("oal");
+    @operation_num(5);
+    operation timeout_early() is
+      @noparse
+      generate ArenaTournament3:'out of time' to self;
       @endnoparse
     end operation;
 

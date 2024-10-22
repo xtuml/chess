@@ -51,9 +51,9 @@ within tournaments::components::'Tournament Runner'::tournaments::'Arena Tournam
     | created                   | 'setting up participants' | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             |
     | 'setting up participants' | cannot_happen             | 'servicing lobby'         | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             |
     | 'servicing lobby'         | cannot_happen             | 'servicing lobby'         | 'time is up'              | 'waiting on games'        | cannot_happen             | cannot_happen             |
-    | 'time is up'              | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             | 'time is up'              | completed                 |
+    | 'time is up'              | cannot_happen             | cannot_happen             | ignore                    | cannot_happen             | 'time is up'              | completed                 |
     | 'waiting on games'        | cannot_happen             | cannot_happen             | 'time is up'              | cannot_happen             | 'servicing lobby'         | cannot_happen             |
-    | completed                 | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             | cannot_happen             |
+    | completed                 | cannot_happen             | cannot_happen             | ignore                    | cannot_happen             | cannot_happen             | cannot_happen             |
 
   end state model;
 
@@ -73,7 +73,7 @@ within tournaments::components::'Tournament Runner'::tournaments::'Arena Tournam
 
     // schedule the end of the tournament
     create event instance evt of ArenaTournament3:'out of time' to self;
-    self.timeout = TIM::timer_start(event_inst: evt, microseconds: self.duration);
+    self.timeout = TIM::timer_start(event_inst: evt, microseconds: self.duration * 1000000);
 
     generate ArenaTournament2:'participants in lobby' to self;
     @endnoparse
