@@ -59,7 +59,7 @@ dependencies for the xtUML project itself.
 
 Run the following command in the terminal.
 ```
-mvn dependency:get -DgroupId=io.ciera -DartifactId=runtime -Dversion=2.7.2
+mvn dependency:get -DgroupId=io.ciera -DartifactId=runtime -Dversion=2.7.3
 ```
 
 
@@ -72,7 +72,7 @@ mvn dependency:get -DgroupId=io.ciera -DartifactId=runtime -Dversion=2.7.2
 2. Import the runtime library. Select "File" > "Import..." then "General" >
    "Existing Projects into Workspace". Tick "Select archive file" and type the
    following path in the text entry:
-   `<PATH_TO_MAVEN_REPO>/io/ciera/runtime/2.7.2/runtime-2.7.2.jar`. Make sure the
+   `<PATH_TO_MAVEN_REPO>/io/ciera/runtime/2.7.3/runtime-2.7.3.jar`. Make sure the
    "runtime" project is selected and click "Finish" to import.
 
    _NOTE: In a normal maven installation, the maven repository is located in a
